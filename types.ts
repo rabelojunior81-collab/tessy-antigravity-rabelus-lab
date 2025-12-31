@@ -92,6 +92,7 @@ export interface Template {
   id: string;
   category: 'Código' | 'Escrita' | 'Análise' | 'Ensino' | 'Criativo' | 'Personalizado';
   label: string;
+  description?: string;
   content: string;
   isCustom?: boolean;
   createdAt?: number;

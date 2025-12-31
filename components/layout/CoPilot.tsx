@@ -1,10 +1,10 @@
-
-import React, { useRef, useEffect } from 'react';
-import { Send, Paperclip, MessageSquare, Bot, User, ChevronRight, RotateCcw, Globe } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
+import { Send, Paperclip, MessageSquare, Bot, User, RotateCcw, Globe, FileText, Wand2, Save, Share2 } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
 import ReactMarkdown from 'https://esm.sh/react-markdown@^9.0.1';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as prismTheme } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import TemplateModal from '../modals/TemplateModal';
 
 const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { 
@@ -21,6 +21,7 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     statusMessage
   } = useChat();
 
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -47,6 +48,14 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const toolbarItems = [
+    { icon: FileText, label: 'Templates', onClick: () => setIsTemplateModalOpen(true) },
+    { icon: Wand2, label: 'Otimizar Prompt', onClick: () => console.log('Otimizar') },
+    { icon: Save, label: 'Salvar Conversa', onClick: () => console.log('Salvar') },
+    { icon: Share2, label: 'Compartilhar', onClick: () => console.log('Compartilhar') },
+    { icon: RotateCcw, label: 'Reiniciar Conversa', onClick: () => newConversation() },
+  ];
+
   return (
     <aside className="fixed lg:relative bottom-0 right-0 w-full lg:w-[450px] lg:h-full h-[60vh] lg:h-full bg-[#111111] border-l border-gray-800 flex flex-col z-[60] shrink-0 transition-all duration-300">
       <div className="h-12 sm:h-14 flex items-center justify-between px-4 sm:px-6 border-b border-gray-800 bg-[#0a0a0a]/80 backdrop-blur-md shrink-0">
@@ -58,14 +67,6 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button 
-            onClick={newConversation}
-            className="p-1.5 text-gray-500 hover:text-emerald-500 transition-all active:scale-90"
-            title="Resetar Protocolo"
-          >
-            <RotateCcw size={14} />
-          </button>
-          <div className="h-3 w-px bg-gray-800"></div>
           <span className="text-[8px] font-black text-emerald-500/40 uppercase tracking-widest">STABLE</span>
         </div>
       </div>
@@ -153,6 +154,23 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           )}
         </div>
 
+        {/* Toolbar Integration */}
+        <div className="px-4 py-2 border-t border-gray-800 bg-[#0a0a0a] flex items-center justify-around shrink-0">
+          {toolbarItems.map((item, idx) => (
+            <button 
+              key={idx}
+              onClick={item.onClick}
+              title={item.label}
+              className="p-2 text-gray-500 hover:text-emerald-500 transition-all hover:bg-emerald-500/5 relative group"
+            >
+              <item.icon size={20} />
+              <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-black border border-gray-700 text-[7px] font-black uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+                {item.label}
+              </span>
+            </button>
+          ))}
+        </div>
+
         <div className="p-4 bg-[#0a0a0a] border-t border-gray-800 space-y-3 shrink-0">
           {attachedFiles.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-2">
@@ -197,6 +215,14 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </div>
       </div>
+
+      <TemplateModal 
+        isOpen={isTemplateModalOpen} 
+        onClose={() => setIsTemplateModalOpen(false)}
+        onSelect={(content) => {
+          setInputText(content);
+        }}
+      />
     </aside>
   );
 };
