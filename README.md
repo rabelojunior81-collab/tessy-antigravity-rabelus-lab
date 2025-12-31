@@ -1,41 +1,46 @@
-# Tessy by Rabelus Lab 🧪
 
-![Tessy Interface Placeholder](https://via.placeholder.com/1200x600/0f172a/10b981?text=Tessy+by+Rabelus+Lab+Interface)
+# Tessy Alpha v3.1 🧪 by Rabelus Lab
 
-**Tessy** é uma assistente avançada de engenharia de prompts e gerenciamento de intenções, projetada para o **Rabelus Lab**. Construída com React, TypeScript e a poderosa API Gemini, Tessy oferece uma interface brutalista moderna e fluxos de trabalho otimizados para profissionais de IA.
+Tessy is an advanced intent-driven AI assistant powered by **Google Gemini**, designed specifically for complex project workflows, GitHub synchronization, and precision prompt engineering.
 
-## 🚀 Funcionalidades Principais
+![Tessy Interface](https://via.placeholder.com/1200x600/0a0a0a/10b981?text=Tessy+Antigravity+v3.1)
 
-- **Interpretação Semântica**: Traduz linguagem natural em intenções estruturadas.
-- **Grounding Transparente**: Busca em tempo real via Google Search integrada diretamente no fluxo de conversação.
-- **Controle de Fatores**: Ajuste tom, nível de detalhe, público-alvo e formatação via painel lateral.
-- **Otimização de Prompts**: Diagnóstico avançado com Gemini Pro para refinar seus comandos.
-- **Biblioteca de Templates**: Salve e carregue protocolos pré-definidos para tarefas repetitivas.
-- **Exportação Multiformato**: Gere relatórios profissionais em PDF, HTML ou Markdown.
-- **Compartilhamento via Código**: Sincronize conversas entre instâncias através de códigos de 6 dígitos.
-- **Persistência Local**: Histórico completo e biblioteca salvos de forma segura no navegador.
-- **Interface Adaptativa**: Design responsivo (mobile-ready) com temas Escuro e Claro.
+## 🚀 Key Features
 
-## 🛠️ Tecnologias
+- **Multimodal Context**: Seamlessly attach images, documents, audio, and video to your AI conversations.
+- **GitHub Sync**: Direct repository integration. Explore files, search code, and get AI insights directly on your source code.
+- **Dynamic Controllers**: Precision-tune AI responses with Professional Toggles, Detail Sliders, and System Instructions.
+- **Active Grounding**: Real-time web searching via Google Search to prevent hallucination and provide up-to-date facts.
+- **Project-Centric**: Organize work into isolated "Protocols" (Projects) with persistent local storage via Dexie (IndexedDB).
+- **Embedded Terminal**: Lightweight terminal for quick system checks and future automation.
+- **Brutalist Antigravity Design**: A modern, dark-themed UI focused on productivity and technical aesthetics.
 
-- **Frontend**: React 19, TypeScript, Tailwind CSS.
-- **IA**: @google/genai (Gemini 2.5/3 Flash & Pro).
-- **Utilitários**: jsPDF (exportação), LocalStorage (persistência), Webkit Backdrop Filters.
+## 🛠️ Tech Stack
 
-## ⌨️ Atalhos de Teclado
+- **Core**: React 19 + TypeScript
+- **Intelligence**: Google Gemini 2.5/3 (Flash & Pro)
+- **Database**: Dexie.js (IndexedDB)
+- **Styling**: Tailwind CSS + Glassmorphism
+- **Icons**: Lucide React
+- **Export**: jsPDF, Markdown, HTML
 
-- `Ctrl + K`: Focar no campo de entrada.
-- `Ctrl + Enter`: Transmitir comando atual.
-- `Ctrl + N`: Iniciar novo protocolo (conversa).
+## 📂 Project Structure
 
-## 📦 Instalação
+- `src/components/layout`: Core layout components (Sidebar, CentralCanvas, CoPilot, etc.)
+- `src/components/viewers`: Sidebar modules (History, Library, Projects, GitHub)
+- `src/services`: API connectors (Gemini, GitHub) and Database logic
+- `src/contexts`: Global state management for Chat and Layout
 
-Como este projeto utiliza módulos ES6 diretamente:
+## ⌨️ Shortcuts
 
-1. Clone o repositório.
-2. Certifique-se de ter uma chave de API válida configurada no ambiente (`process.env.API_KEY`).
-3. Abra o `index.html` em um servidor local.
+- `Enter`: Send message (in CoPilot)
+- `Shift + Enter`: New line
+- `Cmd/Ctrl + K`: Focus terminal (upcoming)
+
+## 🛠️ Setup
+
+1. Ensure `process.env.API_KEY` is configured with your Google AI Studio key.
+2. For GitHub integration, provide a Personal Access Token (PAT) with `repo` scope within the app.
 
 ---
-
-*Desenvolvido com excelência por Rabelus Lab.*
+*Developed with precision by **Rabelus Lab**.*

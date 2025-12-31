@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { loadConversation } from '../services/storageService';
+import { db } from '../services/dbService';
 import { Conversation } from '../types';
 
 interface ShareModalProps {
@@ -57,7 +57,8 @@ const ShareModal: React.FC<ShareModalProps> = ({
     });
   };
 
-  const handleImport = () => {
+  // Fix: Made handleImport async and used db.conversations.get for data retrieval
+  const handleImport = async () => {
     const code = importCode.trim().toUpperCase();
     if (code.length !== 6) {
       setStatusMessage({ text: 'O CÓDIGO DEVE TER 6 CARACTERES.', type: 'error' });
@@ -66,13 +67,18 @@ const ShareModal: React.FC<ShareModalProps> = ({
 
     const linkedId = localStorage.getItem(`tessy-shared-${code}`);
     if (linkedId) {
-      const conversation = loadConversation(linkedId);
-      if (conversation) {
-        setStatusMessage({ text: 'CONVERSA LOCALIZADA E CARREGADA!', type: 'success' });
-        if (onImportSuccess) onImportSuccess(conversation);
-        setTimeout(handleClose, 1500);
-      } else {
-        setStatusMessage({ text: 'CONVERSA NÃO ENCONTRADA NO BANCO LOCAL.', type: 'error' });
+      try {
+        const conversation = await db.conversations.get(linkedId);
+        if (conversation) {
+          setStatusMessage({ text: 'CONVERSA LOCALIZADA E CARREGADA!', type: 'success' });
+          if (onImportSuccess) onImportSuccess(conversation);
+          setTimeout(handleClose, 1500);
+        } else {
+          setStatusMessage({ text: 'CONVERSA NÃO ENCONTRADA NO BANCO LOCAL.', type: 'error' });
+        }
+      } catch (err) {
+        console.error("Import failed:", err);
+        setStatusMessage({ text: 'ERRO AO ACESSAR O BANCO DE DADOS.', type: 'error' });
       }
     } else {
       setStatusMessage({ text: 'CÓDIGO DE COMPARTILHAMENTO INVÁLIDO.', type: 'error' });

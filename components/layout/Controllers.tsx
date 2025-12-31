@@ -1,46 +1,44 @@
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Settings2, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, Settings2 } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
 
 const Controllers: React.FC = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const { factors, updateFactor } = useChat();
 
-  const toggleExpanded = () => setIsExpanded(!isExpanded);
-
   return (
-    <div className={`flex flex-col bg-[#111111] border-b border-gray-800 transition-all duration-300 ${isExpanded ? 'h-[300px]' : 'h-[44px]'}`}>
+    <div className="flex flex-col bg-[#111111] border-b border-gray-800 transition-all duration-300">
       <div 
-        onClick={toggleExpanded}
-        className="h-[44px] flex items-center justify-between px-5 bg-[#0a0a0a]/50 cursor-pointer hover:bg-[#151515] transition-colors shrink-0"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="h-[40px] flex items-center justify-between px-5 bg-[#0a0a0a]/50 cursor-pointer hover:bg-[#151515] transition-colors shrink-0"
       >
         <div className="flex items-center gap-2.5">
-          <Settings2 size={14} className="text-emerald-500" />
-          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Controladores de Sistema</h3>
+          <Settings2 size={12} className="text-emerald-500" />
+          <h3 className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-500">Controladores</h3>
         </div>
-        <button className="text-gray-500 hover:text-white transition-colors">
-          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        <button className="text-gray-500">
+          {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
       </div>
 
-      {isExpanded && (
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+      <div className={`overflow-hidden transition-all duration-300 ${isExpanded ? 'max-h-[400px] border-t border-gray-800/50' : 'max-h-0'}`}>
+        <div className="p-4 sm:p-5 space-y-5 bg-[#0d0d0d]">
+          <div className="grid grid-cols-2 gap-3">
             {factors.map((factor) => {
               if (factor.type === 'toggle') {
                 return (
-                  <div key={factor.id} className="flex items-center justify-between p-3 bg-[#0a0a0a] border border-gray-800 hover:border-emerald-500/20 transition-all group">
-                    <span className={`text-[9px] font-black uppercase tracking-widest ${factor.enabled ? 'text-emerald-500' : 'text-gray-500'}`}>
+                  <div key={factor.id} className="flex items-center justify-between p-2.5 bg-[#0a0a0a] border border-gray-800 hover:border-emerald-500/10 transition-all">
+                    <span className={`text-[8px] font-black uppercase tracking-widest ${factor.enabled ? 'text-emerald-500' : 'text-gray-600'}`}>
                       {factor.label}
                     </span>
                     <button
                       onClick={() => updateFactor(factor.id)}
-                      className={`w-10 h-5 border transition-all flex items-center px-0.5 ${
+                      className={`w-8 h-4 border transition-all flex items-center px-0.5 ${
                         factor.enabled ? 'bg-emerald-600/20 border-emerald-500' : 'bg-gray-800 border-gray-700'
                       }`}
                     >
-                      <div className={`w-3.5 h-3.5 bg-emerald-500 transition-transform ${factor.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                      <div className={`w-2.5 h-2.5 bg-emerald-500 transition-transform ${factor.enabled ? 'translate-x-4' : 'translate-x-0'}`} />
                     </button>
                   </div>
                 );
@@ -49,14 +47,14 @@ const Controllers: React.FC = () => {
             })}
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-5">
             {factors.map((factor) => {
               if (factor.type === 'slider') {
                 return (
-                  <div key={factor.id} className="space-y-3">
+                  <div key={factor.id} className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{factor.label}</label>
-                      <span className="text-[9px] font-mono text-emerald-500">LVL {factor.value ?? 3}</span>
+                      <label className="text-[8px] font-black text-gray-600 uppercase tracking-widest">{factor.label}</label>
+                      <span className="text-[8px] font-mono text-emerald-500">LVL {factor.value ?? 3}</span>
                     </div>
                     <input
                       type="range" min={factor.min || 1} max={factor.max || 5} value={factor.value ?? 3}
@@ -67,12 +65,12 @@ const Controllers: React.FC = () => {
                 );
               } else if (factor.type === 'dropdown') {
                 return (
-                  <div key={factor.id} className="space-y-2">
-                    <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{factor.label}</label>
+                  <div key={factor.id} className="space-y-1.5">
+                    <label className="text-[8px] font-black text-gray-600 uppercase tracking-widest">{factor.label}</label>
                     <select
                       value={factor.value ?? 'intermediario'}
                       onChange={(e) => updateFactor(factor.id, e.target.value)}
-                      className="w-full bg-[#0a0a0a] border border-gray-800 p-2.5 text-[10px] font-black text-gray-400 uppercase outline-none focus:border-emerald-500 transition-all"
+                      className="w-full bg-[#0a0a0a] border border-gray-800 p-2 text-[9px] font-black text-gray-400 uppercase outline-none focus:border-emerald-500/40"
                     >
                       {factor.options?.map(opt => (
                         <option key={opt} value={opt}>{opt.toUpperCase()}</option>
@@ -82,13 +80,13 @@ const Controllers: React.FC = () => {
                 );
               } else if (factor.type === 'text') {
                 return (
-                  <div key={factor.id} className="space-y-2">
-                    <label className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{factor.label}</label>
+                  <div key={factor.id} className="space-y-1.5">
+                    <label className="text-[8px] font-black text-gray-600 uppercase tracking-widest">{factor.label}</label>
                     <textarea
                       value={factor.value ?? ''}
                       onChange={(e) => updateFactor(factor.id, e.target.value)}
-                      placeholder="Instruções extras de sistema..."
-                      className="w-full bg-[#0a0a0a] border border-gray-800 p-3 text-[10px] font-medium text-gray-400 h-24 resize-none outline-none focus:border-emerald-500 transition-all custom-scrollbar"
+                      placeholder="Instruções de sistema..."
+                      className="w-full bg-[#0a0a0a] border border-gray-800 p-2 text-[9px] font-medium text-gray-400 h-16 resize-none outline-none focus:border-emerald-500/40 custom-scrollbar"
                     />
                   </div>
                 );
@@ -97,9 +95,9 @@ const Controllers: React.FC = () => {
             })}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-export default Controllers;
+export default React.memo(Controllers);

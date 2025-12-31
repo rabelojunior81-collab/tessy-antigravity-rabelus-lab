@@ -1,11 +1,10 @@
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import LoadingSpinner from './components/LoadingSpinner';
-import ProjectSwitcher from './components/ProjectSwitcher';
 import ProjectModal from './components/ProjectModal';
 import { DateAnchor } from './components/DateAnchor';
-import { db, migrateToIndexedDB, getGitHubToken } from './services/dbService';
-import { RepositoryItem, Conversation } from './types';
+import { db, migrateToIndexedDB } from './services/dbService';
+import { RepositoryItem } from './types';
 
 // Layout & Context Imports
 import { LayoutProvider } from './contexts/LayoutContext';
@@ -19,8 +18,9 @@ import HistoryViewer from './components/viewers/HistoryViewer';
 import LibraryViewer from './components/viewers/LibraryViewer';
 import ProjectsViewer from './components/viewers/ProjectsViewer';
 import GitHubViewer from './components/viewers/GitHubViewer';
-import FactorPanel from './components/FactorPanel';
 import GitHubTokenModal from './components/GitHubTokenModal';
+import { Menu, Moon, Sun, X } from 'lucide-react';
+import { useLayoutContext } from './contexts/LayoutContext';
 
 const TessyLogo = React.memo(() => (
   <div className="relative w-8 h-8 sm:w-10 flex items-center justify-center shrink-0">
@@ -37,21 +37,21 @@ const TessyLogo = React.memo(() => (
   </div>
 ));
 
-// Wrapper to inject context-dependent content into MainLayout
 const MainContentWrapper: React.FC<{
   currentProjectId: string;
   handleNewConversation: () => void;
   handleSwitchProject: (id: string) => void;
   handleOpenProjectModal: (id?: string | null) => void;
-}> = (props) => {
-  const { viewerAberto } = useViewer();
+}> = React.memo((props) => {
+  const { viewerAberto, fecharViewer } = useViewer();
   const { currentConversation, loadConversation, deleteConversation, setInputText } = useChat();
 
   const handleSelectItem = useCallback((item: RepositoryItem) => {
     if (item.content) {
       setInputText(item.content);
+      fecharViewer();
     }
-  }, [setInputText]);
+  }, [setInputText, fecharViewer]);
 
   const viewerContent = useMemo(() => {
     switch (viewerAberto) {
@@ -60,9 +60,9 @@ const MainContentWrapper: React.FC<{
           <HistoryViewer 
             currentProjectId={props.currentProjectId} 
             activeId={currentConversation?.id || ''} 
-            onLoad={loadConversation} 
+            onLoad={(conv) => { loadConversation(conv); fecharViewer(); }} 
             onDelete={deleteConversation}
-            onNew={props.handleNewConversation}
+            onNew={() => { props.handleNewConversation(); fecharViewer(); }}
           />
         );
       case 'library':
@@ -76,29 +76,26 @@ const MainContentWrapper: React.FC<{
         return (
           <ProjectsViewer 
             currentProjectId={props.currentProjectId} 
-            onSwitch={props.handleSwitchProject}
+            onSwitch={(id) => { props.handleSwitchProject(id); fecharViewer(); }}
             onOpenModal={() => props.handleOpenProjectModal()}
             onEditProject={(id) => props.handleOpenProjectModal(id)}
           />
         );
-      case 'controllers':
-        // Legacy FactorPanel if needed, but we now have Controllers.tsx in CoPilot
-        return <div className="p-8 text-[10px] font-black uppercase text-gray-500 tracking-widest">Os controladores foram movidos para o painel lateral direito (CoPilot).</div>;
       case 'github':
         return <GitHubViewer />;
       default:
         return null;
     }
-  }, [viewerAberto, props, currentConversation, loadConversation, deleteConversation, handleSelectItem]);
+  }, [viewerAberto, props, currentConversation, loadConversation, deleteConversation, handleSelectItem, fecharViewer]);
 
   return <MainLayout viewerContent={viewerContent} />;
-};
+});
 
 const AppContent: React.FC = () => {
   const [isMigrating, setIsMigrating] = useState(true);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [currentProjectId, setCurrentProjectId] = useState('default-project');
-  const [isRotatingTheme, setIsRotatingTheme] = useState(false);
+  const { isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutContext();
   
   const { newConversation, factors } = useChat();
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
@@ -128,9 +125,7 @@ const AppContent: React.FC = () => {
   }, [theme]);
 
   const toggleTheme = useCallback(() => {
-    setIsRotatingTheme(true);
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-    setTimeout(() => setIsRotatingTheme(false), 300);
   }, []);
 
   const handleSwitchProject = useCallback(async (id: string) => {
@@ -157,47 +152,57 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-emerald-600/30 bg-antigravity-bg text-gray-100">
-      <header className="h-14 sm:h-16 flex items-center justify-between px-3 sm:px-6 border-b border-gray-800 bg-[#0a0a0a]/80 backdrop-blur-xl z-[60] shrink-0">
-        <div className="flex items-center space-x-4 min-w-0">
+      <header className="h-14 sm:h-16 flex items-center justify-between px-4 sm:px-6 border-b border-gray-800 bg-[#0a0a0a]/80 backdrop-blur-xl z-[70] shrink-0">
+        <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 text-gray-400 hover:text-emerald-500 transition-colors"
+          >
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
           <TessyLogo />
           <div className="flex flex-col min-w-0">
-            <h1 className="text-base sm:text-lg font-black tracking-tight leading-none text-white uppercase glow-text-green truncate">
+            <h1 className="text-sm sm:text-lg font-black tracking-tight leading-none text-white uppercase glow-text-green truncate">
               tessy <span className="hidden xs:inline text-emerald-500 font-light italic text-[10px] sm:text-xs lowercase">by rabelus lab</span>
             </h1>
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-6">
-          <ProjectSwitcher currentProjectId={currentProjectId} onSwitch={handleSwitchProject} onOpenModal={() => handleOpenProjectModal()} onEditProject={(id) => handleOpenProjectModal(id)} />
+        <div className="hidden lg:flex items-center gap-6">
+          <div className="text-[10px] font-black uppercase text-gray-600 tracking-widest border border-gray-800 px-3 py-1.5">
+            SISTEMA OPERACIONAL V3.1
+          </div>
           <DateAnchor groundingEnabled={groundingStatus} />
         </div>
         
         <div className="flex items-center space-x-3">
-          <button onClick={toggleTheme} className={`w-8 h-8 flex items-center justify-center bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 active:scale-90 transition-all ${isRotatingTheme ? 'animate-rotate-theme' : ''}`}>
-            {theme === 'dark' ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" /></svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" /></svg>
-            )}
+          <button 
+            onClick={toggleTheme} 
+            className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-gray-800/50 text-emerald-500 border border-gray-700 hover:border-emerald-500/50 transition-all rounded-sm"
+          >
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>
         </div>
       </header>
 
-      <div className="flex-1 overflow-hidden">
-        <MainContentWrapper 
-          currentProjectId={currentProjectId}
-          handleNewConversation={newConversation}
-          handleSwitchProject={handleSwitchProject}
-          handleOpenProjectModal={handleOpenProjectModal}
-        />
+      <div className="flex-1 overflow-hidden relative">
+        <Suspense fallback={<LoadingSpinner />}>
+          <MainContentWrapper 
+            currentProjectId={currentProjectId}
+            handleNewConversation={newConversation}
+            handleSwitchProject={handleSwitchProject}
+            handleOpenProjectModal={handleOpenProjectModal}
+          />
+        </Suspense>
       </div>
 
-      <footer className="h-8 border-t border-gray-800 bg-[#0a0a0a] px-6 flex items-center justify-between text-[8px] text-gray-500 font-black tracking-[0.2em] shrink-0 z-[60]">
-        <div className="flex items-center space-x-6">
+      <footer className="h-8 border-t border-gray-800 bg-[#0a0a0a] px-4 sm:px-6 flex items-center justify-between text-[7px] sm:text-[8px] text-gray-600 font-black tracking-[0.2em] shrink-0 z-[70]">
+        <div className="flex items-center space-x-4 sm:space-x-6">
           <span className="uppercase">© 2024 RABELUS LAB</span>
         </div>
-        <div className="flex items-center space-x-8">
-          <span className="uppercase text-emerald-500 font-black">NÚCLEO ANTIGRAVITY ATIVO</span>
+        <div className="flex items-center space-x-4 sm:space-x-8">
+          <span className="uppercase text-emerald-500/60 font-black hidden xs:inline">NÚCLEO ANTIGRAVITY ATIVO</span>
+          <span className="uppercase">V3.1.0-STABLE</span>
         </div>
       </footer>
 

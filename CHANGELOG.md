@@ -1,21 +1,21 @@
-# Changelog - Tessy by Rabelus Lab
 
-## [v2.8.0-POLISHED] - 2025-05-20
-### Adicionado
-- **Responsividade Full**: Interface agora adaptável para dispositivos móveis com drawers laterais.
-- **Compatibilidade Safari/Firefox**: Fallbacks implementados para `backdrop-filter` e Clipboard API.
-- **Documentação Completa**: Inclusão de README.md, QUICKSTART.md e COMPATIBILITY.md.
-- **Melhorias de UI**: Botões com áreas de toque ampliadas (44px) e animações otimizadas para GPU.
+# Changelog - Tessy Alpha
 
-### Alterado
-- Header redesenhado para incluir botões de acesso rápido em telas menores.
-- Modais agora expandem para tela cheia em dispositivos móveis.
+## [v3.1.0-STABLE] - 2024-05-25
+### Final Polish & Cleanup
+- **Responsiveness**: Full support for Mobile and Tablet. Sidebar becomes a drawer, viewers are full-screen overlays on small screens.
+- **Cleanup**: Deleted legacy components (`HistorySidebar.tsx`, `TemplateLibraryModal.tsx`, `ProjectSwitcher.tsx`, `GitHubPanel.tsx`, `Canvas.tsx`, `FactorPanel.tsx`).
+- **Optimization**: Integrated `React.memo` across core components to reduce re-renders.
+- **UI/UX**: Added collapsible animation to Controllers, improved terminal scroll, and refined the CoPilot messaging interface.
+- **Refinement**: Consolidated `generateUUID` into `dbService.ts`.
 
-## [v2.7.5-OPTIMIZED] - 2025-05-10
-### Adicionado
-- Integração com Gemini Pro para o módulo de otimização de prompts.
-- Exportação para PDF formatada profissionalmente.
+## [v3.0.0-ANTIGRAVITY] - 2024-05-20
+### Architectural Reboot
+- **New Layout**: Three-pane modern terminal-style layout (Sidebar, Canvas, CoPilot).
+- **GitHub Viewer**: Native file tree explorer for synced repositories.
+- **Enhanced Terminal**: Functional terminal component for system status.
+- **Contextual Viewers**: Integrated history, library, and project management into the sidebar drawer.
 
-## [v2.0.0-EMERALD] - 2025-04-15
-- Reboot completo da interface com design brutalista/glassmorphism.
-- Sistema de interpretação de intenção em duas etapas.
+## [v2.5.0] - 2024-04-10
+- Initial Gemini 3 implementation.
+- Introduced Grounding via Google Search.

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { getAllTags } from '../services/storageService';
+import { db } from '../services/dbService';
 
 interface SavePromptModalProps {
   isOpen: boolean;
@@ -18,9 +18,21 @@ const SavePromptModal: React.FC<SavePromptModalProps> = ({ isOpen, onClose, onSa
   const [isClosing, setIsClosing] = useState(false);
   const existingTags = useRef<string[]>([]);
 
+  // Fix: Fetch tags from IndexedDB asynchronously instead of using deprecated storageService
   useEffect(() => {
     if (isOpen) {
-      existingTags.current = getAllTags();
+      const fetchTags = async () => {
+        try {
+          const items = await db.library.toArray();
+          const tagSet = new Set<string>();
+          items.forEach(item => item.tags?.forEach(t => tagSet.add(t.toLowerCase())));
+          existingTags.current = Array.from(tagSet);
+        } catch (err) {
+          console.error("Failed to fetch tags for suggestions:", err);
+          existingTags.current = [];
+        }
+      };
+      fetchTags();
       setIsClosing(false);
     }
   }, [isOpen]);
@@ -62,7 +74,7 @@ const SavePromptModal: React.FC<SavePromptModalProps> = ({ isOpen, onClose, onSa
   };
 
   const handleTagKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ',') {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       handleAddTag(tagInput);
     }
@@ -110,7 +122,7 @@ const SavePromptModal: React.FC<SavePromptModalProps> = ({ isOpen, onClose, onSa
               value={tagInput} 
               onChange={(e) => setTagInput(e.target.value)} 
               onKeyDown={handleTagKeyDown}
-              placeholder="Adicione tags (Enter ou vírgula)..." 
+              placeholder="Adicione tags (Enter ou espaço)..." 
               className="w-full bg-slate-100 dark:bg-slate-900/60 border-2 border-emerald-500/10 p-4 text-slate-800 dark:text-white font-bold placeholder-emerald-900/20 dark:placeholder-emerald-900/30 focus:outline-none focus:border-emerald-500 transition-all !rounded-none" 
             />
             {showSuggestions && (
