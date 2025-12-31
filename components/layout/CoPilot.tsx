@@ -10,6 +10,7 @@ import SaveModal from '../modals/SaveModal';
 import ShareModal from '../modals/ShareModal';
 import RestartModal from '../modals/RestartModal';
 import ControllersModal from '../modals/ControllersModal';
+import FilePreview from '../FilePreview';
 
 const CoPilot: React.FC = () => {
   const { 
@@ -90,6 +91,7 @@ const CoPilot: React.FC = () => {
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col bg-transparent">
+        {/* MENSAGENS */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 pb-10">
           {currentConversation?.turns.length === 0 && !isLoading && (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-40 animate-fade-in">
@@ -159,7 +161,8 @@ const CoPilot: React.FC = () => {
           )}
         </div>
 
-        <div className="px-4 py-2 border-t border-border-subtle bg-bg-primary/30 backdrop-blur-md flex items-center justify-around shrink-0">
+        {/* TOOLBAR - POSICIONADA ACIMA DO INPUT */}
+        <div className="px-4 py-2 border-t border-b border-border-subtle bg-bg-primary/30 backdrop-blur-md flex items-center justify-around shrink-0">
           {toolbarItems.map((item, idx) => (
             <button 
               key={idx}
@@ -173,7 +176,15 @@ const CoPilot: React.FC = () => {
           ))}
         </div>
 
-        <div className="p-4 bg-bg-primary border-t border-border-subtle shrink-0">
+        {/* ÁREA DE INPUT - SEM BORDAS SUPERIORES (TOOLBAR JÁ POSSUI border-b) */}
+        <div className="p-4 bg-bg-primary shrink-0">
+          {/* File Preview INTEGRADO */}
+          {attachedFiles.length > 0 && (
+            <div className="mb-4">
+              <FilePreview files={attachedFiles} onRemove={removeFile} />
+            </div>
+          )}
+          
           <div className="flex items-end gap-3 bg-bg-tertiary/60 backdrop-blur-lg border border-border-subtle p-4 focus-within:border-accent-primary transition-all shadow-inner">
             <button onClick={() => fileInputRef.current?.click()} className="p-1 text-text-tertiary hover:text-accent-primary shrink-0 transition-colors">
               <Paperclip size={20} />
