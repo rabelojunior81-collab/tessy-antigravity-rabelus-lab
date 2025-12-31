@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { X, RotateCcw, AlertTriangle } from 'lucide-react';
+import { X, RotateCcw, AlertTriangle, ShieldAlert } from 'lucide-react';
 
 interface RestartModalProps {
   isOpen: boolean;
@@ -26,61 +25,66 @@ const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm 
       onConfirm();
       setIsRestarting(false);
       handleClose();
-    }, 200);
+    }, 300);
   };
 
   if (!isOpen) return null;
 
   return (
     <div 
-      className={`fixed inset-0 z-[120] flex items-center justify-center p-0 sm:p-6 bg-black/80 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+      className={`fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
       onClick={handleClose}
     >
       <div 
-        className={`w-full h-full sm:h-auto sm:max-w-sm bg-[#111111] border border-gray-800 flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
+        className={`w-full max-w-sm bg-[#0a0a0a] border-4 border-red-600/30 flex flex-col shadow-[20px_20px_0_rgba(220,38,38,0.1)] ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
         onClick={e => e.stopPropagation()}
       >
-        <div className="px-6 py-5 border-b border-gray-800 bg-[#0a0a0a] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-red-600/20 bg-red-600/5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <RotateCcw className="text-red-500" size={18} />
-            <h2 className="text-sm font-black uppercase tracking-[0.2em] text-white">Reiniciar</h2>
+            <ShieldAlert className="text-red-500" size={18} />
+            <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-red-500">Destruição de Dados</h2>
           </div>
-          <button onClick={handleClose} className="p-2 text-gray-500 hover:text-white transition-all">
+          <button onClick={handleClose} className="p-2 text-gray-600 hover:text-white transition-all active:scale-90">
             <X size={20} />
           </button>
         </div>
 
-        <div className="p-8 sm:p-10 flex flex-col items-center text-center space-y-6">
-          <div className="w-16 h-16 bg-red-500/10 border border-red-500/30 flex items-center justify-center animate-pulse">
-            <AlertTriangle className="text-red-500" size={32} />
+        <div className="p-10 flex flex-col items-center text-center space-y-8">
+          <div className="relative">
+             <div className="w-20 h-20 bg-red-600/5 border-2 border-red-600/20 flex items-center justify-center rotate-45">
+                <AlertTriangle className="text-red-600 -rotate-45" size={40} />
+             </div>
+             <div className="absolute inset-0 bg-red-600/10 animate-pulse rotate-45 pointer-events-none"></div>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-[14px] font-black uppercase text-white tracking-tight">Reiniciar Protocolo Atual?</h3>
-            <div className="space-y-2">
+            <h3 className="text-lg font-black uppercase text-white tracking-tighter leading-none">Purgar Protocolo?</h3>
+            <div className="space-y-3">
               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-relaxed">
-                Todas as mensagens atuais serão perdidas permanentemente.
+                Toda a memória de contexto desta sessão será permanentemente removida do buffer local.
               </p>
-              <p className="text-[10px] font-black text-red-500/60 uppercase tracking-widest">
-                ESTA AÇÃO NÃO PODE SER DESFEITA.
-              </p>
+              <div className="py-2 px-4 bg-red-600/10 border border-red-600/20 inline-block">
+                <p className="text-[9px] font-black text-red-500 uppercase tracking-[0.2em]">
+                  AÇÃO IRREVERSÍVEL
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="p-6 border-t border-gray-800 bg-[#0a0a0a] flex gap-3 shrink-0">
+        <div className="p-6 border-t border-gray-800 bg-black flex gap-4 shrink-0">
           <button 
             onClick={handleClose}
-            className="flex-1 py-4 bg-gray-900 hover:bg-gray-800 text-gray-500 font-black uppercase tracking-widest text-[10px] border border-gray-800 transition-all"
+            className="flex-1 py-4 bg-transparent hover:bg-white/5 text-gray-600 font-black uppercase tracking-widest text-[10px] border border-gray-800 transition-all active:scale-95"
           >
             Cancelar
           </button>
           <button 
             onClick={handleConfirm}
             disabled={isRestarting}
-            className="flex-1 py-4 bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest text-[10px] transition-all shadow-[6px_6px_0_#991b1b]"
+            className="flex-1 py-4 bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest text-[10px] border border-black transition-all active:scale-95 shadow-[6px_6px_0_rgba(153,27,27,0.5)]"
           >
-            {isRestarting ? 'Executando...' : 'Reiniciar Agora'}
+            {isRestarting ? 'PURGANDO...' : 'CONFIRMAR PURGA'}
           </button>
         </div>
       </div>
@@ -88,4 +92,4 @@ const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm 
   );
 };
 
-export default RestartModal;
+export default React.memo(RestartModal);

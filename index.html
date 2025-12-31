@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>tessy by Rabelus Lab</title>
+    <meta name="description" content="Tessy by Rabelus Lab - Advanced AI Prompt Engineering IDE">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>tessy // Rabelus Lab</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -11,7 +13,7 @@
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Inter', 'sans-serif'],
+              sans: ['Inter', 'system-ui', 'sans-serif'],
               mono: ['JetBrains Mono', 'monospace'],
             },
             screens: {
@@ -21,8 +23,49 @@
               antigravity: {
                 bg: '#0a0a0a',
                 panel: '#111111',
-                terminal: '#1e1e1e',
+                terminal: '#050505',
                 emerald: '#10b981',
+                jade: '#14b8a6',
+                slate: {
+                  800: '#1e293b',
+                  900: '#0f172a',
+                  950: '#020617',
+                }
+              }
+            },
+            animation: {
+              'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
+              'fade-in': 'fadeIn 0.3s ease-out forwards',
+              'fade-out': 'fadeOut 0.2s ease-in forwards',
+              'zoom-in': 'zoomIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'zoom-out': 'zoomOut 0.2s ease-in forwards',
+              'slide-in-right': 'slideInRight 0.3s ease-out forwards',
+              'spin-slow': 'spin 8s linear infinite',
+            },
+            keyframes: {
+              pulseSoft: {
+                '0%, 100%': { opacity: 1 },
+                '50%': { opacity: 0.6 },
+              },
+              fadeIn: {
+                from: { opacity: 0 },
+                to: { opacity: 1 },
+              },
+              fadeOut: {
+                from: { opacity: 1 },
+                to: { opacity: 0 },
+              },
+              zoomIn: {
+                from: { opacity: 0, transform: 'scale(0.95) translateY(10px)' },
+                to: { opacity: 1, transform: 'scale(1) translateY(0)' },
+              },
+              zoomOut: {
+                from: { opacity: 1, transform: 'scale(1) translateY(0)' },
+                to: { opacity: 0, transform: 'scale(0.95) translateY(10px)' },
+              },
+              slideInRight: {
+                from: { opacity: 0, transform: 'translateX(20px)' },
+                to: { opacity: 1, transform: 'translateX(0)' },
               }
             }
           },
@@ -31,25 +74,19 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #10b981;
-            --secondary: #14b8a6;
-            --accent: #84cc16;
-            --bg-body: #f0f4f8;
-            --text-body: #1e293b;
-            --bg-overlay: linear-gradient(rgba(240, 244, 248, 0.90), rgba(240, 244, 248, 0.95));
-        }
-        .dark {
             --bg-body: #0a0a0a;
-            --text-body: #ffffff;
-            --bg-overlay: linear-gradient(rgba(10, 10, 10, 0.75), rgba(10, 10, 10, 0.85));
+            --text-body: #f8fafc;
         }
+        
         * {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
             -webkit-tap-highlight-color: transparent;
+            outline-color: var(--primary);
         }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-body);
@@ -57,63 +94,79 @@
             margin: 0;
             height: 100vh;
             overflow: hidden;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
         }
         
-        /* Safari & Firefox Glassmorphism Fixes */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(16, 185, 129, 0.02); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.15); border-radius: 0px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.3); }
+
         .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-        .dark .glass-panel {
-            background: rgba(10, 10, 10, 0.6);
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.1);
         }
 
         .brutalist-button {
             border-radius: 0 !important;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(16, 185, 129, 0.05); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 10px; }
-
-        pre, code { font-family: 'JetBrains Mono', monospace; }
-        .glow-text-green { text-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
-
-        /* Antigravity Specific */
-        .sidebar-icon {
-            @apply flex items-center justify-center transition-all duration-200 cursor-pointer;
-            width: 40px;
-            height: 40px;
-        }
-        .sidebar-icon:hover {
-            @apply text-emerald-500 bg-emerald-500/10;
-        }
-        .sidebar-icon.active {
-            @apply text-emerald-500 bg-emerald-500/20;
-            border-right: 2px solid #10b981;
+        .glow-text-green { 
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.3); 
         }
 
-        /* Resize Handle */
+        /* Selection */
+        ::selection {
+            background: rgba(16, 185, 129, 0.3);
+            color: white;
+        }
+
+        /* Resize Handles */
         .resize-handle-v {
             cursor: ns-resize;
             height: 4px;
             transition: background 0.2s;
         }
         .resize-handle-v:hover {
-            background: #10b981;
+            background: rgba(16, 185, 129, 0.5);
         }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        
+        /* Prose customization for Markdown */
+        .prose pre {
+            background-color: #050505 !important;
+            border: 1px solid rgba(16, 185, 129, 0.1) !important;
+            border-radius: 0 !important;
+            padding: 1rem !important;
+        }
+        .prose code {
+            color: #10b981 !important;
+            background: rgba(16, 185, 129, 0.1) !important;
+            padding: 0.2em 0.4em !important;
+            border-radius: 2px !important;
+            font-size: 0.9em !important;
+        }
+        .prose a {
+            color: #10b981 !important;
+            text-decoration: underline !important;
+            text-underline-offset: 4px !important;
+        }
+        .prose h1, .prose h2, .prose h3 {
+            color: #fff !important;
+            font-weight: 900 !important;
+            text-transform: uppercase !important;
+            letter-spacing: -0.02em !important;
+        }
     </style>
 <script type="importmap">
 {
@@ -125,6 +178,7 @@
     "jspdf": "https://esm.sh/jspdf@^2.5.1",
     "dexie": "https://esm.sh/dexie@^4.0.11",
     "lucide-react": "https://esm.sh/lucide-react@0.460.0",
+    "react-markdown": "https://esm.sh/react-markdown@^9.0.1",
     "react-syntax-highlighter": "https://esm.sh/react-syntax-highlighter@15.6.1",
     "react-syntax-highlighter/dist/esm/styles/prism": "https://esm.sh/react-syntax-highlighter@15.6.1/dist/esm/styles/prism",
     "react-syntax-highlighter/": "https://esm.sh/react-syntax-highlighter@^16.1.0/"
@@ -132,7 +186,7 @@
 }
 </script>
 </head>
-<body class="overflow-hidden">
+<body class="overflow-hidden bg-antigravity-bg">
     <div id="root"></div>
 </body>
 </html>

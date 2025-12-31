@@ -1,5 +1,8 @@
 {
-  "name": "tessy - Antigravity Version by Rabelus Lab",
-  "description": "A modern AI-powered intent interpreter and prompt management tool built for Rabelus Lab.",
-  "requestFramePermissions": []
+  "name": "tessy // Rabelus Lab",
+  "description": "Professional AI Prompt Engineering IDE powered by Gemini 3. Advanced context management, GitHub synchronization, and precision intent interpretation.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
 }

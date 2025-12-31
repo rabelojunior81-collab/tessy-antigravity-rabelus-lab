@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Library, Folder, Github, X } from 'lucide-react';
+import { Clock, Library, Folder, Github, X, Command } from 'lucide-react';
 import { useViewer } from '../../hooks/useViewer';
 import { ViewerType, useLayoutContext } from '../../contexts/LayoutContext';
 
@@ -16,8 +16,8 @@ const Sidebar: React.FC = () => {
 
   const sidebarClasses = `
     fixed md:relative top-0 left-0 h-full bg-[#0a0a0a] border-r border-gray-800 
-    flex flex-col items-center py-6 gap-6 z-[80] shrink-0 transition-transform duration-300
-    ${isMobileMenuOpen ? 'translate-x-0 w-[40px]' : '-translate-x-full md:translate-x-0 w-[40px]'}
+    flex flex-col items-center py-6 gap-6 z-[80] shrink-0 transition-all duration-300 ease-in-out
+    ${isMobileMenuOpen ? 'translate-x-0 w-[48px]' : '-translate-x-full md:translate-x-0 w-[48px]'}
   `;
 
   return (
@@ -25,38 +25,45 @@ const Sidebar: React.FC = () => {
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[75] md:hidden"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[75] md:hidden animate-fade-in"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       <aside className={sidebarClasses}>
-        {isMobileMenuOpen && (
-          <button 
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="md:hidden p-2 text-gray-500 hover:text-white mb-4"
-          >
-            <X size={24} />
-          </button>
-        )}
+        <div className="flex flex-col items-center gap-6 w-full">
+          {items.map((item) => {
+            const isActive = viewerAberto === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => abrirViewer(item.id)}
+                title={item.label}
+                className={`w-10 h-10 flex items-center justify-center transition-all duration-200 group relative border-r-2 ${
+                  isActive 
+                    ? 'text-emerald-500 bg-emerald-500/10 border-emerald-500' 
+                    : 'text-gray-600 border-transparent hover:text-gray-300 hover:bg-white/5'
+                }`}
+              >
+                <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                
+                {/* Tooltip */}
+                <span className="absolute left-full ml-3 px-3 py-1.5 bg-gray-950 text-white text-[8px] font-black uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 z-50 border border-emerald-500/20 shadow-xl">
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-        {items.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => abrirViewer(item.id)}
-            title={item.label}
-            className={`sidebar-icon p-2 rounded-none transition-all duration-200 group relative ${
-              viewerAberto === item.id 
-                ? 'text-emerald-500 bg-emerald-500/10 border-r-2 border-emerald-500' 
-                : 'text-gray-500 hover:text-gray-300'
-            }`}
+        <div className="mt-auto flex flex-col items-center gap-6 w-full">
+          <button 
+            className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-emerald-500 transition-colors"
+            title="Shortcuts"
           >
-            <item.icon size={20} strokeWidth={2.5} />
-            <span className="absolute left-full ml-3 px-2 py-1 bg-gray-900 text-white text-[8px] font-black uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 border border-gray-700">
-              {item.label}
-            </span>
+            <Command size={18} />
           </button>
-        ))}
+        </div>
       </aside>
     </>
   );

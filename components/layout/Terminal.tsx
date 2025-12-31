@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLayout } from '../../hooks/useLayout';
-import { Terminal as TerminalIcon, XCircle, Trash2, Command } from 'lucide-react';
+import { Terminal as TerminalIcon, Trash2, Command, ShieldCheck } from 'lucide-react';
 
 interface TerminalLine {
   type: 'input' | 'output' | 'error' | 'system';
@@ -13,10 +12,10 @@ const Terminal: React.FC = () => {
   const [isResizing, setIsResizing] = useState(false);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<TerminalLine[]>([
-    { type: 'system', content: 'TESSY OS [Version 3.1.0-ANTIGRAVITY]' },
-    { type: 'system', content: '(c) 2024 Rabelus Lab. Todos os direitos reservados.' },
-    { type: 'system', content: 'Conexão estabelecida com NÚCLEO_GEMINI_V3.' },
-    { type: 'output', content: 'Digite "help" para ver os comandos disponíveis.' },
+    { type: 'system', content: 'TESSY OS [Build 3.1.0-STABLE]' },
+    { type: 'system', content: 'Iniciando Kernel Antigravity...' },
+    { type: 'system', content: 'Conexão segura estabelecida via Gemini 3 Nucleus.' },
+    { type: 'output', content: 'Digite "help" para ver os comandos de sistema.' },
   ]);
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -30,7 +29,6 @@ const Terminal: React.FC = () => {
     outputEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [history]);
 
-  // Focus input on click anywhere in terminal
   const handleTerminalClick = () => {
     inputRef.current?.focus();
   };
@@ -52,53 +50,53 @@ const Terminal: React.FC = () => {
 
     switch (baseCmd) {
       case 'help':
-        output = `Comandos disponíveis:
-  ls        - Listar diretórios do projeto
-  pwd       - Mostrar diretório atual
-  clear     - Limpar o terminal
-  echo [t]  - Repetir texto
-  date      - Data e hora atual
+        output = `COMANDOS DISPONÍVEIS:
+  ls        - Listar diretórios virtuais
+  pwd       - Diretório atual de trabalho
+  clear     - Limpar buffer de saída
+  echo [t]  - Repetir texto na saída
+  date      - Data e hora sincronizada
   whoami    - Identificação do operador
-  tessy     - Status do núcleo de IA
-  help      - Mostrar esta mensagem`;
+  tessy     - Status vital do núcleo
+  help      - Mostrar este guia`;
         break;
       case 'ls':
-        output = 'src/  public/  node_modules/  package.json  README.md  tessy.config.js';
+        output = 'src/  public/  assets/  config/  lib/  manifest.json  readme.md';
         break;
       case 'pwd':
-        output = '/workspace/rabelus-lab/tessy-core';
+        output = '/workspace/rabelus-lab/tessy-nucleus-01';
         break;
       case 'clear':
         setHistory([]);
         setInput('');
         return;
       case 'echo':
-        output = args.join(' ');
+        output = args.length > 0 ? args.join(' ') : ' ';
         break;
       case 'date':
         output = new Date().toLocaleString('pt-BR');
         break;
       case 'whoami':
-        output = 'tessy-operator@rabelus-lab';
+        output = 'tessy-operator@rabelus-nucleus';
         break;
       case 'tessy':
-        output = `STATUS DO NÚCLEO:
-  Modelo Ativo: Gemini 3 Flash
-  Latência: 142ms
-  Grounding: ATIVO
-  Memória de Contexto: 128k tokens
-  Integridade: 100%`;
+        output = `RELATÓRIO DE STATUS:
+  Núcleo: Ativo (Gemini 3)
+  Latência: 118ms (Nominal)
+  Grounding: Online
+  Tokens Disponíveis: 128k
+  Sincronização: 100% Estável`;
         type = 'system';
         break;
       default:
-        output = `Comando não reconhecido: ${baseCmd}. Digite "help" para assistência.`;
+        output = `Comando desconhecido: "${baseCmd}". Digite help.`;
         type = 'error';
     }
 
     if (output) {
       setTimeout(() => {
         setHistory(prev => [...prev, { type, content: output! }]);
-      }, 100);
+      }, 80);
     }
   }, []);
 
@@ -126,7 +124,6 @@ const Terminal: React.FC = () => {
     }
   };
 
-  // Resize logic
   const startResizing = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsResizing(true);
@@ -137,7 +134,7 @@ const Terminal: React.FC = () => {
   const resize = useCallback((e: MouseEvent) => {
     if (isResizing) {
       const newHeight = window.innerHeight - e.clientY;
-      if (newHeight >= 120 && newHeight <= window.innerHeight * 0.7) {
+      if (newHeight >= 100 && newHeight <= window.innerHeight * 0.6) {
         ajustarAlturaTerminal(newHeight);
       }
     }
@@ -161,50 +158,55 @@ const Terminal: React.FC = () => {
     <div 
       ref={terminalRef}
       style={{ height: `${alturaTerminal}px` }}
-      className="bg-[#050505] border-t border-gray-800 flex flex-col shrink-0 relative transition-[height] duration-75"
+      className="bg-[#050505] border-t border-gray-800 flex flex-col shrink-0 relative transition-[height] duration-75 select-none"
       onClick={handleTerminalClick}
     >
       <div 
         onMouseDown={startResizing}
-        className="resize-handle-v absolute top-0 left-0 right-0 h-[4px] z-20 hover:bg-emerald-500/50 transition-colors"
+        className="resize-handle-v absolute top-0 left-0 right-0 h-[4px] z-20 hover:bg-emerald-500/40 transition-colors"
       />
       
-      <div className="flex items-center justify-between px-4 py-1.5 border-b border-gray-800 bg-[#0a0a0a] shrink-0">
-        <div className="flex items-center gap-3">
-          <TerminalIcon size={14} className="text-emerald-500" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500/80">Terminal v3.1</span>
-          <div className="flex gap-1.5 ml-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-red-500/40"></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-amber-500/40"></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/40"></div>
+      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-800/50 bg-[#080808] shrink-0">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <TerminalIcon size={14} className="text-emerald-500/60" />
+            <span className="text-[9px] font-black uppercase tracking-[0.3em] text-emerald-500/80">Tessy Shell v3.1</span>
+          </div>
+          <div className="flex gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-none bg-emerald-500/20"></div>
+            <div className="w-1.5 h-1.5 rounded-none bg-emerald-500/40"></div>
+            <div className="w-1.5 h-1.5 rounded-none bg-emerald-500/60"></div>
           </div>
         </div>
         <div className="flex items-center gap-4">
           <button 
             onClick={(e) => { e.stopPropagation(); setHistory([]); }}
-            className="text-gray-500 hover:text-white transition-colors flex items-center gap-1.5"
+            className="text-gray-600 hover:text-red-500 transition-colors flex items-center gap-2 group"
           >
-            <Trash2 size={12} />
-            <span className="text-[8px] font-black uppercase">Limpar</span>
+            <Trash2 size={12} className="opacity-50 group-hover:opacity-100" />
+            <span className="text-[8px] font-black uppercase tracking-widest">Limpar</span>
           </button>
-          <div className="h-3 w-px bg-gray-800"></div>
-          <span className="text-[8px] font-mono text-gray-600 uppercase">SSH: localhost:3001</span>
+          <div className="h-4 w-px bg-gray-800"></div>
+          <div className="flex items-center gap-2 text-[8px] font-mono text-emerald-500/40 uppercase">
+             <ShieldCheck size={10} />
+             Secure_Layer: Active
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-4 font-mono text-xs leading-relaxed">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-5 font-mono text-[11px] leading-relaxed cursor-text selection:bg-emerald-500/20">
         {history.map((line, idx) => (
           <div key={idx} className="mb-1.5 animate-fade-in">
             {line.type === 'input' ? (
-              <div className="flex gap-2">
-                <span className="text-emerald-500 font-black">$</span>
+              <div className="flex gap-3">
+                <span className="text-emerald-500 font-black">λ</span>
                 <span className="text-gray-200">{line.content}</span>
               </div>
             ) : (
               <div className={`whitespace-pre-wrap ${
-                line.type === 'error' ? 'text-red-500' : 
+                line.type === 'error' ? 'text-red-500/90' : 
                 line.type === 'system' ? 'text-emerald-500/40 italic' : 
-                'text-emerald-500/80'
+                'text-emerald-500/70'
               }`}>
                 {line.content}
               </div>
@@ -212,8 +214,8 @@ const Terminal: React.FC = () => {
           </div>
         ))}
         
-        <div className="flex items-center gap-2 mt-2">
-          <span className="text-emerald-500 font-black">$</span>
+        <div className="flex items-center gap-3 mt-3">
+          <span className="text-emerald-500 font-black">λ</span>
           <input
             ref={inputRef}
             type="text"
@@ -221,25 +223,25 @@ const Terminal: React.FC = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
-            className="flex-1 bg-transparent border-none outline-none text-gray-200 font-mono caret-emerald-500"
+            className="flex-1 bg-transparent border-none outline-none text-gray-200 font-mono text-[11px] caret-emerald-500"
             spellCheck={false}
             autoComplete="off"
           />
         </div>
-        <div ref={outputEndRef} />
+        <div ref={outputEndRef} className="h-4" />
       </div>
 
-      <div className="px-4 py-1 border-t border-gray-800 bg-[#0a0a0a] flex items-center justify-between shrink-0">
+      <div className="px-4 py-1.5 border-t border-gray-800 bg-[#070707] flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <Command size={10} className="text-gray-600" />
-            <span className="text-[7px] font-black text-gray-600 uppercase tracking-widest">Help: Digite help</span>
+          <div className="flex items-center gap-2">
+            <Command size={10} className="text-gray-700" />
+            <span className="text-[7px] font-black text-gray-700 uppercase tracking-widest">Comando: help</span>
           </div>
         </div>
-        <span className="text-[7px] font-mono text-emerald-500/40 uppercase">Tessy-Shell-v3.1-Stable</span>
+        <span className="text-[7px] font-mono text-gray-800 uppercase">TTY: /dev/nucleus_01</span>
       </div>
     </div>
   );
 };
 
-export default Terminal;
+export default React.memo(Terminal);

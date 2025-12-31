@@ -1,21 +1,26 @@
-
 # Changelog - Tessy Alpha
 
+## [v3.1.5-POLISH] - 2024-05-30
+### Refinement & Production Prep
+- **Visual Overhaul**: Standardized "Brutalist Antigravity" design with sharper borders, flat shadows, and consistent spacing.
+- **Enhanced Typography**: Improved Markdown rendering with specialized prose styles for better code and header readability.
+- **UI Micro-interactions**: Added subtle scale animations to buttons, polished terminal response times, and refined modal transitions.
+- **Responsive Core**: Completely audited mobile views. Sidebars now behave as drawers with professional backdrops.
+- **Loading Sequence**: Added a branded boot sequence with the tessy logo and system status indicators.
+- **Performance**: Optimized rendering cycles using `React.memo` on all static and large layout components.
+- **Bug Fixes**: Corrected z-index conflicts between resize handles and modal overlays.
+
 ## [v3.1.0-STABLE] - 2024-05-25
-### Final Polish & Cleanup
+### Final Layout Polish
 - **Responsiveness**: Full support for Mobile and Tablet. Sidebar becomes a drawer, viewers are full-screen overlays on small screens.
-- **Cleanup**: Deleted legacy components (`HistorySidebar.tsx`, `TemplateLibraryModal.tsx`, `ProjectSwitcher.tsx`, `GitHubPanel.tsx`, `Canvas.tsx`, `FactorPanel.tsx`).
+- **Cleanup**: Deleted legacy components (`HistorySidebar.tsx`, `TemplateLibraryModal.tsx`, etc.).
 - **Optimization**: Integrated `React.memo` across core components to reduce re-renders.
-- **UI/UX**: Added collapsible animation to Controllers, improved terminal scroll, and refined the CoPilot messaging interface.
-- **Refinement**: Consolidated `generateUUID` into `dbService.ts`.
 
 ## [v3.0.0-ANTIGRAVITY] - 2024-05-20
 ### Architectural Reboot
 - **New Layout**: Three-pane modern terminal-style layout (Sidebar, Canvas, CoPilot).
 - **GitHub Viewer**: Native file tree explorer for synced repositories.
 - **Enhanced Terminal**: Functional terminal component for system status.
-- **Contextual Viewers**: Integrated history, library, and project management into the sidebar drawer.
 
-## [v2.5.0] - 2024-04-10
-- Initial Gemini 3 implementation.
-- Introduced Grounding via Google Search.
+---
+*Protocolo Finalizado por Rabelus Lab Core.*
