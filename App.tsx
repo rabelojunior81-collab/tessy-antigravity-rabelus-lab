@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useCallback, Suspense, lazy, useMemo } from 'react';
 import LoadingSpinner from './components/LoadingSpinner';
 import Canvas from './components/Canvas';
@@ -12,6 +11,7 @@ import { Factor, RepositoryItem, AttachedFile, OptimizationResult, ConversationT
 
 // Layout Imports
 import { LayoutProvider } from './contexts/LayoutContext';
+import { GitHubProvider } from './contexts/GitHubContext';
 import MainLayout from './components/layout/MainLayout';
 import { useViewer } from './hooks/useViewer';
 
@@ -19,6 +19,7 @@ import { useViewer } from './hooks/useViewer';
 import HistoryViewer from './components/viewers/HistoryViewer';
 import LibraryViewer from './components/viewers/LibraryViewer';
 import ProjectsViewer from './components/viewers/ProjectsViewer';
+import GitHubViewer from './components/viewers/GitHubViewer';
 
 // Lazy Loaded Components
 const OptimizationModal = lazy(() => import('./components/OptimizationModal'));
@@ -113,11 +114,7 @@ const MainContentWrapper: React.FC<{
       case 'controllers':
         return <FactorPanel factors={props.factors} onToggle={props.handleToggleFactor} />;
       case 'github':
-        return (
-          <div className="p-12 text-center text-gray-500 uppercase font-black text-[10px] tracking-[0.3em] italic border border-dashed border-gray-800 m-4">
-            GitHub Sync Panel <br/><br/>(Integração em Desenvolvimento)
-          </div>
-        );
+        return <GitHubViewer />;
       default:
         return null;
     }
@@ -536,120 +533,123 @@ const App: React.FC = () => {
 
   return (
     <LayoutProvider>
-      <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-emerald-600/30 bg-antigravity-bg text-gray-100">
-        <header className="h-14 sm:h-16 flex items-center justify-between px-3 sm:px-6 border-b border-gray-800 bg-[#0a0a0a]/80 backdrop-blur-xl z-[60] shrink-0">
-          <div className="flex items-center space-x-4 min-w-0">
-            <TessyLogo />
-            <div className="flex flex-col min-w-0">
-              <h1 className="text-base sm:text-lg font-black tracking-tight leading-none text-white uppercase glow-text-green truncate">
-                tessy <span className="hidden xs:inline text-emerald-500 font-light italic text-[10px] sm:text-xs lowercase">by rabelus lab</span>
-              </h1>
-              <span className="text-[7px] sm:text-[9px] font-black text-gray-500 tracking-[0.2em] uppercase mt-0.5 line-clamp-1">
-                {currentConversation?.title || 'Protocolo...'}
+      <GitHubProvider>
+        <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-emerald-600/30 bg-antigravity-bg text-gray-100">
+          <header className="h-14 sm:h-16 flex items-center justify-between px-3 sm:px-6 border-b border-gray-800 bg-[#0a0a0a]/80 backdrop-blur-xl z-[60] shrink-0">
+            <div className="flex items-center space-x-4 min-w-0">
+              <TessyLogo />
+              <div className="flex flex-col min-w-0">
+                <h1 className="text-base sm:text-lg font-black tracking-tight leading-none text-white uppercase glow-text-green truncate">
+                  tessy <span className="hidden xs:inline text-emerald-500 font-light italic text-[10px] sm:text-xs lowercase">by rabelus lab</span>
+                </h1>
+                <span className="text-[7px] sm:text-[9px] font-black text-gray-500 tracking-[0.2em] uppercase mt-0.5 line-clamp-1">
+                  {currentConversation?.title || 'Protocolo...'}
+                </span>
+              </div>
+            </div>
+
+            <div className="hidden md:flex items-center gap-6">
+              <ProjectSwitcher currentProjectId={currentProjectId} onSwitch={handleSwitchProject} onOpenModal={() => handleOpenProjectModal()} onEditProject={(id) => handleOpenProjectModal(id)} />
+              <DateAnchor groundingEnabled={groundingStatus} />
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <button 
+                onClick={() => setIsGitHubTokenModalOpen(true)}
+                className="w-8 h-8 flex items-center justify-center bg-gray-900 text-gray-500 hover:text-emerald-500 border border-gray-800 transition-all active:scale-95"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              </button>
+              <button onClick={toggleTheme} className={`w-8 h-8 flex items-center justify-center bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 active:scale-90 transition-all ${isRotatingTheme ? 'animate-rotate-theme' : ''}`}>
+                {theme === 'dark' ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" /></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" /></svg>
+                )}
+              </button>
+            </div>
+          </header>
+
+          <div className="flex-1 overflow-hidden">
+            <MainContentWrapper 
+              currentProjectId={currentProjectId}
+              currentConversation={currentConversation}
+              handleLoadConversationFromHistory={handleLoadConversationFromHistory}
+              handleDeleteConversationFromHistory={handleDeleteConversationFromHistory}
+              handleSelectItem={handleSelectItem}
+              handleNewConversation={handleNewConversation}
+              handleSwitchProject={handleSwitchProject}
+              handleOpenProjectModal={handleOpenProjectModal}
+              factors={factors}
+              handleToggleFactor={handleToggleFactor}
+              result={result}
+              isLoading={isLoading}
+              isOptimizing={isOptimizing}
+              isUploadingFiles={isUploadingFiles}
+              handleSaveToRepository={handleSaveToRepository}
+              handleOptimize={handleOptimize}
+              attachedFiles={attachedFiles}
+              handleRemoveFile={handleRemoveFile}
+              inputText={inputText}
+              setInputText={setInputText}
+              fileInputRef={fileInputRef}
+              textInputRef={textInputRef}
+              handleFileUpload={handleFileUpload}
+              handleInterpret={handleInterpret}
+              handleKeyDown={(e: any) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                  e.preventDefault();
+                  handleInterpret();
+                }
+              }}
+              pendingUserMessage={pendingUserMessage}
+              pendingFiles={pendingFiles}
+            />
+          </div>
+
+          <footer className="h-8 border-t border-gray-800 bg-[#0a0a0a] px-6 flex items-center justify-between text-[8px] text-gray-500 font-black tracking-[0.2em] shrink-0 z-[60]">
+            <div className="flex items-center space-x-6">
+              <span className="uppercase">© 2024 RABELUS LAB</span>
+              <span className="flex items-center space-x-2">
+                <span className={`w-1.5 h-1.5 rounded-full ${isLoading || isUploadingFiles ? 'bg-amber-500 animate-pulse' : 'bg-emerald-600'}`}></span>
+                <span className="uppercase text-white truncate">MOTOR: {isUploadingFiles ? 'CARREGANDO' : statusMessage}</span>
               </span>
             </div>
-          </div>
+            <div className="flex items-center space-x-8">
+              <span className="uppercase text-emerald-500 font-black">NÚCLEO ATIVO</span>
+            </div>
+          </footer>
 
-          <div className="hidden md:flex items-center gap-6">
-            <DateAnchor groundingEnabled={groundingStatus} />
-          </div>
-          
-          <div className="flex items-center space-x-3">
-            <button 
-              onClick={() => setIsGitHubTokenModalOpen(true)}
-              className="w-8 h-8 flex items-center justify-center bg-gray-900 text-gray-500 hover:text-emerald-500 border border-gray-800 transition-all active:scale-95"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-            </button>
-            <button onClick={toggleTheme} className={`w-8 h-8 flex items-center justify-center bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 active:scale-90 transition-all ${isRotatingTheme ? 'animate-rotate-theme' : ''}`}>
-              {theme === 'dark' ? (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" /></svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" /></svg>
-              )}
-            </button>
-          </div>
-        </header>
+          {/* Global Overlays */}
+          {toastVisible && (
+            <div className={`fixed bottom-12 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 font-bold text-[10px] uppercase tracking-widest shadow-2xl border border-emerald-500/20 bg-[#111111] animate-fade-in ${
+              toastType === 'success' ? 'text-emerald-400' :
+              toastType === 'error' ? 'text-red-400' :
+              'text-blue-400'
+            }`}>
+              {toastMessage}
+            </div>
+          )}
 
-        <div className="flex-1 overflow-hidden">
-          <MainContentWrapper 
-            currentProjectId={currentProjectId}
-            currentConversation={currentConversation}
-            handleLoadConversationFromHistory={handleLoadConversationFromHistory}
-            handleDeleteConversationFromHistory={handleDeleteConversationFromHistory}
-            handleSelectItem={handleSelectItem}
-            handleNewConversation={handleNewConversation}
-            handleSwitchProject={handleSwitchProject}
-            handleOpenProjectModal={handleOpenProjectModal}
-            factors={factors}
-            handleToggleFactor={handleToggleFactor}
-            result={result}
-            isLoading={isLoading}
-            isOptimizing={isOptimizing}
-            isUploadingFiles={isUploadingFiles}
-            handleSaveToRepository={handleSaveToRepository}
-            handleOptimize={handleOptimize}
-            attachedFiles={attachedFiles}
-            handleRemoveFile={handleRemoveFile}
-            inputText={inputText}
-            setInputText={setInputText}
-            fileInputRef={fileInputRef}
-            textInputRef={textInputRef}
-            handleFileUpload={handleFileUpload}
-            handleInterpret={handleInterpret}
-            handleKeyDown={(e: any) => {
-              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                handleInterpret();
-              }
-            }}
-            pendingUserMessage={pendingUserMessage}
-            pendingFiles={pendingFiles}
+          <Suspense fallback={<LoadingSpinner />}>
+            {isOptModalOpen && optimizationResult && (
+              <OptimizationModal isOpen={isOptModalOpen} result={optimizationResult} onClose={() => setIsOptModalOpen(false)} onApply={handleApplyOptimization} />
+            )}
+            <GitHubTokenModal 
+              isOpen={isGitHubTokenModalOpen} 
+              onClose={() => setIsGitHubTokenModalOpen(false)} 
+              onSuccess={() => { setRefreshKey(k => k + 1); showToast('Token GitHub atualizado!', 'success'); }} 
+            />
+          </Suspense>
+
+          <ProjectModal
+            isOpen={isProjectModalOpen}
+            onClose={() => setIsProjectModalOpen(false)}
+            projectId={editingProjectId}
+            onSuccess={handleProjectSuccess}
           />
         </div>
-
-        <footer className="h-8 border-t border-gray-800 bg-[#0a0a0a] px-6 flex items-center justify-between text-[8px] text-gray-500 font-black tracking-[0.2em] shrink-0 z-[60]">
-          <div className="flex items-center space-x-6">
-            <span className="uppercase">© 2024 RABELUS LAB</span>
-            <span className="flex items-center space-x-2">
-              <span className={`w-1.5 h-1.5 rounded-full ${isLoading || isUploadingFiles ? 'bg-amber-500 animate-pulse' : 'bg-emerald-600'}`}></span>
-              <span className="uppercase text-white truncate">MOTOR: {isUploadingFiles ? 'CARREGANDO' : statusMessage}</span>
-            </span>
-          </div>
-          <div className="flex items-center space-x-8">
-            <span className="uppercase text-emerald-500 font-black">NÚCLEO ATIVO</span>
-          </div>
-        </footer>
-
-        {/* Global Overlays */}
-        {toastVisible && (
-          <div className={`fixed bottom-12 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 font-bold text-[10px] uppercase tracking-widest shadow-2xl border border-emerald-500/20 bg-[#111111] animate-fade-in ${
-            toastType === 'success' ? 'text-emerald-400' :
-            toastType === 'error' ? 'text-red-400' :
-            'text-blue-400'
-          }`}>
-            {toastMessage}
-          </div>
-        )}
-
-        <Suspense fallback={<LoadingSpinner />}>
-          {isOptModalOpen && optimizationResult && (
-            <OptimizationModal isOpen={isOptModalOpen} result={optimizationResult} onClose={() => setIsOptModalOpen(false)} onApply={handleApplyOptimization} />
-          )}
-          <GitHubTokenModal 
-            isOpen={isGitHubTokenModalOpen} 
-            onClose={() => setIsGitHubTokenModalOpen(false)} 
-            onSuccess={() => { setRefreshKey(k => k + 1); showToast('Token GitHub atualizado!', 'success'); }} 
-          />
-        </Suspense>
-
-        <ProjectModal
-          isOpen={isProjectModalOpen}
-          onClose={() => setIsProjectModalOpen(false)}
-          projectId={editingProjectId}
-          onSuccess={handleProjectSuccess}
-        />
-      </div>
+      </GitHubProvider>
     </LayoutProvider>
   );
 };
