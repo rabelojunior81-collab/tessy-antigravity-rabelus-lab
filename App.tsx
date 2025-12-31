@@ -18,19 +18,14 @@ import LibraryViewer from './components/viewers/LibraryViewer';
 import ProjectsViewer from './components/viewers/ProjectsViewer';
 import GitHubViewer from './components/viewers/GitHubViewer';
 import GitHubTokenModal from './components/GitHubTokenModal';
-import { Menu, Moon, Sun, X, Cpu } from 'lucide-react';
+import { Menu, Moon, Sun, X } from 'lucide-react';
 import { useLayoutContext } from './contexts/LayoutContext';
 
 const TessyLogo = React.memo(() => (
-  <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
+  <div className="relative w-6 h-6 flex items-center justify-center shrink-0">
     <svg viewBox="0 0 100 100" className="w-full h-full filter drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]">
-      <defs>
-        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: '#3B82F6', stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: '#60A5FA', stopOpacity: 1 }} />
-        </linearGradient>
-      </defs>
-      <path d="M25 25 H75 V35 H55 V85 H45 V35 H25 Z" fill="url(#logoGrad)" />
+      <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#3B82F6" strokeWidth="8" />
+      <path d="M35 60 H65" fill="none" stroke="#3B82F6" strokeWidth="8" />
     </svg>
   </div>
 ));
@@ -111,7 +106,7 @@ const AppContent: React.FC = () => {
       } catch (err) {
         console.error("Boot error:", err);
       } finally {
-        setTimeout(() => setIsMigrating(false), 500);
+        setTimeout(() => setIsMigrating(false), 800);
       }
     };
     boot();
@@ -141,9 +136,13 @@ const AppContent: React.FC = () => {
 
   if (isMigrating) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-bg-primary/80 backdrop-blur-md">
-        <TessyLogo />
-        <p className="mt-4 font-bold uppercase tracking-[0.3em] text-[10px] text-accent-primary animate-pulse-soft">Sincronizando Nucleo...</p>
+      <div className="h-screen w-full flex flex-col items-center justify-center bg-bg-primary">
+        <div className="w-12 h-12 flex items-center justify-center animate-pulse">
+           <svg viewBox="0 0 100 100" className="w-full h-full">
+            <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#3B82F6" strokeWidth="8" />
+          </svg>
+        </div>
+        <p className="mt-6 font-bold uppercase tracking-[0.4em] text-[10px] text-accent-primary animate-pulse-soft">initializing core...</p>
       </div>
     );
   }
@@ -151,19 +150,21 @@ const AppContent: React.FC = () => {
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-accent-primary/30 bg-bg-primary text-text-primary">
       <header className="h-16 flex items-center justify-between px-6 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md z-[70] shrink-0">
-        <div className="flex items-center space-x-6 min-w-0">
+        <div className="flex items-center space-x-4 min-w-0">
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-text-tertiary hover:text-accent-primary transition-colors border border-border-subtle bg-bg-tertiary/40 backdrop-blur-lg"
+            className="md:hidden p-2 text-text-tertiary hover:text-accent-primary transition-colors border border-border-subtle bg-bg-tertiary/40"
           >
             {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
-          <TessyLogo />
-          <div className="flex flex-col min-w-0">
-            <h1 className="text-[16px] font-semibold tracking-tight leading-none text-text-primary uppercase glow-text-blue truncate">
-              tessy <span className="text-accent-primary font-normal text-[10px] tracking-widest lowercase opacity-60">alpha v3.1</span>
-            </h1>
-            <span className="hidden xs:inline text-[11px] font-normal uppercase tracking-[0.1em] text-text-tertiary mt-1">Rabelus Lab Engine</span>
+          <div className="flex items-center gap-3">
+            <TessyLogo />
+            <div className="flex flex-col">
+              <h1 className="text-[18px] font-semibold tracking-tight leading-none text-text-primary uppercase glow-text-blue">
+                tessy
+              </h1>
+              <span className="text-[11px] font-normal text-text-tertiary mt-0.5 whitespace-nowrap">by Rabelus Lab</span>
+            </div>
           </div>
         </div>
 
@@ -193,12 +194,12 @@ const AppContent: React.FC = () => {
         </Suspense>
       </div>
 
-      <footer className="h-8 border-t border-border-subtle bg-bg-primary/80 backdrop-blur-md px-6 flex items-center justify-between text-[10px] text-text-tertiary font-semibold tracking-[0.2em] shrink-0 z-[70]">
-        <span className="uppercase">© 2024 RABELUS LAB</span>
+      <footer className="h-8 border-t border-border-subtle bg-bg-primary/80 backdrop-blur-md px-6 flex items-center justify-between text-[10px] text-text-tertiary font-normal tracking-[0.1em] shrink-0 z-[70]">
+        <span className="opacity-60">© 2024 RABELUS LAB</span>
         <div className="flex items-center space-x-6">
           <div className="flex items-center gap-2">
-             <div className="w-1.5 h-1.5 bg-accent-primary animate-pulse"></div>
-             <span className="uppercase text-accent-primary hidden xs:inline">STATUS: STABLE</span>
+             <div className="w-1 h-1 bg-accent-primary animate-pulse shadow-[0_0_5px_#3B82F6]"></div>
+             <span className="uppercase text-accent-primary hidden xs:inline opacity-80">STABLE</span>
           </div>
         </div>
       </footer>

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
-import { Send, Paperclip, Bot, User, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
+import { Send, Paperclip, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -35,6 +35,19 @@ const CoPilot: React.FC = () => {
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize logic
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      const scrollHeight = textareaRef.current.scrollHeight;
+      // 13px font-size * 1.5 line-height = ~20px per line
+      // Min height: 40px (2 lines), Max height: 200px (10 lines)
+      const newHeight = Math.min(Math.max(scrollHeight, 40), 200);
+      textareaRef.current.style.height = `${newHeight}px`;
+    }
+  }, [inputText]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -65,8 +78,8 @@ const CoPilot: React.FC = () => {
     <aside className="w-[400px] h-full bg-bg-secondary/60 backdrop-blur-xl border-l border-border-subtle flex flex-col z-[60] shrink-0">
       <div className="h-16 flex items-center justify-between px-4 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
-          <div className={`w-2 h-2 ${isLoading ? 'bg-accent-secondary animate-pulse' : 'bg-accent-primary shadow-[0_0_8px_#3B82F6]'}`}></div>
-          <h2 className="text-[12px] font-bold text-text-primary uppercase tracking-[0.05em]">Célula IA</h2>
+          <div className={`w-1.5 h-1.5 ${isLoading ? 'bg-accent-secondary animate-pulse shadow-[0_0_8px_#60A5FA]' : 'bg-accent-primary shadow-[0_0_8px_#3B82F6]'}`}></div>
+          <h2 className="text-[12px] font-bold text-text-primary uppercase tracking-[0.05em]">CORE ASSISTANT</h2>
         </div>
         <button 
           onClick={() => setIsControllersModalOpen(true)}
@@ -80,14 +93,14 @@ const CoPilot: React.FC = () => {
         <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 pb-10">
           {currentConversation?.turns.length === 0 && !isLoading && (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-40 animate-fade-in">
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em]">Ready to assist</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-text-tertiary">ready for instruction</p>
             </div>
           )}
 
           {currentConversation?.turns.map((turn) => (
             <div key={turn.id} className="space-y-4 animate-fade-in">
               <div className="flex flex-col items-start gap-1.5">
-                <div className="w-full bg-bg-tertiary/60 backdrop-blur-lg border border-border-subtle p-4 text-[13px] text-text-primary leading-relaxed">
+                <div className="w-full bg-bg-tertiary/60 backdrop-blur-lg border border-border-subtle p-4 text-[13px] text-text-primary leading-relaxed shadow-sm">
                   {turn.userMessage}
                 </div>
               </div>
@@ -95,15 +108,15 @@ const CoPilot: React.FC = () => {
               <div className="flex flex-col items-start gap-1.5">
                 <div className="flex items-center gap-2 mb-1 px-1">
                    <ChevronDown size={10} className="text-text-tertiary" />
-                   <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Thought for &lt;1s</span>
+                   <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest opacity-60">Thought process active</span>
                 </div>
-                <div className="w-full bg-bg-tertiary/40 backdrop-blur-lg border border-border-subtle p-4 prose prose-invert max-w-none">
+                <div className="w-full bg-bg-tertiary/40 backdrop-blur-lg border border-border-subtle p-4 prose prose-invert max-w-none shadow-sm">
                   <ReactMarkdown
                     components={{
                       code({ node, inline, className, children, ...props }: any) {
                         const match = /language-(\w+)/.exec(className || '');
                         return !inline && match ? (
-                          <SyntaxHighlighter style={prismTheme as any} language={match[1]} PreTag="div" {...props}>
+                          <SyntaxHighlighter style={prismTheme as any} language={match[1]} PreTag="div" {...props} customStyle={{ margin: 0, padding: '12px', background: 'transparent' }}>
                             {String(children).replace(/\n$/, '')}
                           </SyntaxHighlighter>
                         ) : (
@@ -117,10 +130,10 @@ const CoPilot: React.FC = () => {
                   
                   <div className="flex items-center gap-3 mt-4 border-t border-border-subtle pt-3">
                     <button className="text-[10px] font-semibold uppercase px-3 py-1.5 bg-bg-primary/50 border border-border-subtle text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
-                       <ThumbsUp size={12} /> Good
+                       <ThumbsUp size={12} /> Positive
                     </button>
                     <button className="text-[10px] font-semibold uppercase px-3 py-1.5 bg-bg-primary/50 border border-border-subtle text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
-                       <ThumbsDown size={12} /> Bad
+                       <ThumbsDown size={12} /> Negative
                     </button>
                   </div>
                 </div>
@@ -139,9 +152,9 @@ const CoPilot: React.FC = () => {
           ))}
 
           {isLoading && (
-            <div className="flex flex-col items-start gap-2 animate-pulse">
+            <div className="flex flex-col items-start gap-2 animate-pulse px-4">
+              <div className="w-[80%] h-4 bg-bg-tertiary/40 border border-border-subtle"></div>
               <div className="w-[60%] h-4 bg-bg-tertiary/40 border border-border-subtle"></div>
-              <div className="w-[40%] h-4 bg-bg-tertiary/40 border border-border-subtle"></div>
             </div>
           )}
         </div>
@@ -161,19 +174,19 @@ const CoPilot: React.FC = () => {
         </div>
 
         <div className="p-4 bg-bg-primary border-t border-border-subtle shrink-0">
-          <div className="flex items-end gap-3 bg-bg-tertiary/60 backdrop-blur-lg border border-border-subtle p-4 focus-within:border-accent-primary transition-all">
+          <div className="flex items-end gap-3 bg-bg-tertiary/60 backdrop-blur-lg border border-border-subtle p-4 focus-within:border-accent-primary transition-all shadow-inner">
             <button onClick={() => fileInputRef.current?.click()} className="p-1 text-text-tertiary hover:text-accent-primary shrink-0 transition-colors">
               <Paperclip size={20} />
             </button>
             <input type="file" ref={fileInputRef} onChange={(e) => e.target.files && addFile(e.target.files[0])} className="hidden" />
             
             <textarea
+              ref={textareaRef}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask anything (Ctrl+L), @ to mention, / for workflows"
-              className="flex-1 bg-transparent border-none outline-none text-text-primary text-[13px] resize-none max-h-32 min-h-[24px] py-1 leading-relaxed placeholder:text-text-tertiary custom-scrollbar"
-              rows={1}
+              placeholder="Ask anything... (Shift+Enter for new line)"
+              className="flex-1 bg-transparent border-none outline-none text-text-primary text-[13px] resize-none min-h-[40px] py-1 leading-relaxed placeholder:text-text-tertiary/60 custom-scrollbar transition-[height] duration-200"
             />
             
             <button 

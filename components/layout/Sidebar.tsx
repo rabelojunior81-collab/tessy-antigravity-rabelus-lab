@@ -29,7 +29,7 @@ const Sidebar: React.FC = () => {
         />
       )}
 
-      <aside className={sidebarClasses}>
+      <aside className={sidebarClasses} style={{ width: '48px' }}>
         <div className="flex flex-col items-center gap-4 w-full">
           {items.map((item) => {
             const isActive = viewerAberto === item.id;
@@ -46,7 +46,7 @@ const Sidebar: React.FC = () => {
               >
                 <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                 
-                <span className="absolute left-full ml-4 px-3 py-1.5 bg-bg-primary/80 backdrop-blur-md text-text-primary text-[10px] font-semibold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 z-50 border border-border-visible shadow-xl">
+                <span className="absolute left-full ml-4 px-3 py-1.5 bg-bg-primary/95 backdrop-blur-md text-text-primary text-[10px] font-semibold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 z-[100] border border-border-visible shadow-xl">
                   {item.label}
                 </span>
               </button>

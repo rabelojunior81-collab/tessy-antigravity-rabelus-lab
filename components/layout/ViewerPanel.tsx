@@ -1,7 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import { useViewer } from '../../hooks/useViewer';
-import { useLayout } from '../../hooks/useLayout';
 
 interface ViewerPanelProps {
   title: string;
@@ -10,7 +9,6 @@ interface ViewerPanelProps {
 
 const ViewerPanel: React.FC<ViewerPanelProps> = ({ title, children }) => {
   const { viewerAberto, fecharViewer } = useViewer();
-  const { larguraViewer } = useLayout();
 
   if (!viewerAberto) return null;
 

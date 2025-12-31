@@ -85,6 +85,9 @@
             -webkit-tap-highlight-color: transparent;
             outline-color: var(--primary);
             border-radius: 0 !important;
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 200ms;
         }
 
         body {
@@ -98,10 +101,20 @@
             -webkit-font-smoothing: antialiased;
         }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-visible); }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        .custom-scrollbar::-webkit-scrollbar { 
+            width: 8px; 
+            height: 8px; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-track { 
+            background: rgba(17, 42, 69, 0.2); 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb { 
+            background: rgba(59, 130, 246, 0.3); 
+            border-radius: 0;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
+            background: rgba(59, 130, 246, 0.5); 
+        }
 
         .glow-text-blue { 
             text-shadow: 0 0 10px rgba(59, 130, 246, 0.3); 
@@ -112,15 +125,6 @@
             color: white;
         }
 
-        .resize-handle-v {
-            cursor: ns-resize;
-            height: 4px;
-            transition: background 0.2s;
-        }
-        .resize-handle-v:hover {
-            background: rgba(59, 130, 246, 0.5);
-        }
-        
         .prose {
             font-size: 13px !important;
             line-height: 1.6 !important;
@@ -132,28 +136,7 @@
             border: 1px solid var(--border-subtle) !important;
             padding: 16px !important;
             margin: 1rem 0 !important;
-        }
-        .prose code {
-            color: #3B82F6 !important;
-            background: rgba(59, 130, 246, 0.05) !important;
-            padding: 0.2em 0.4em !important;
-            font-family: 'JetBrains Mono', monospace !important;
-        }
-        .prose a {
-            color: #3B82F6 !important;
-            text-decoration: underline !important;
-        }
-        .prose h1, .prose h2, .prose h3 {
-            color: #E3E8EF !important;
-            font-size: 13px !important;
-            font-weight: 700 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.05em !important;
-            margin-top: 1.5em !important;
-            margin-bottom: 0.75em !important;
-        }
-        .prose p {
-            margin-bottom: 1em !important;
+            border-radius: 0 !important;
         }
     </style>
 <script type="importmap">

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useLayout } from '../../hooks/useLayout';
 import { Terminal as TerminalIcon, Trash2, ShieldCheck } from 'lucide-react';
 
 interface TerminalLine {
@@ -33,7 +32,6 @@ const Terminal: React.FC = () => {
 
     const parts = trimmedCmd.toLowerCase().split(' ');
     const baseCmd = parts[0];
-    const args = parts.slice(1);
 
     let output: string | null = null;
     let type: 'output' | 'error' | 'system' = 'output';
@@ -102,6 +100,7 @@ const Terminal: React.FC = () => {
     <div 
       className="h-[200px] bg-bg-secondary/60 backdrop-blur-xl border-t border-border-subtle flex flex-col shrink-0 relative select-none"
       onClick={() => inputRef.current?.focus()}
+      style={{ height: '200px' }}
     >
       <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
@@ -124,19 +123,19 @@ const Terminal: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-4 font-mono text-[12px] leading-relaxed cursor-text bg-bg-tertiary/40 backdrop-blur-lg">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-4 font-mono text-[12px] leading-relaxed cursor-text bg-bg-tertiary/20">
         {history.map((line, idx) => (
           <div key={idx} className="mb-1">
             {line.type === 'input' ? (
               <div className="flex gap-2">
-                <span className="text-accent-primary font-black">λ</span>
+                <span className="text-accent-primary font-black opacity-60">λ</span>
                 <span className="text-text-primary">{line.content}</span>
               </div>
             ) : (
               <div className={`whitespace-pre-wrap ${
                 line.type === 'error' ? 'text-red-400' : 
                 line.type === 'system' ? 'text-accent-primary/50' : 
-                'text-text-secondary'
+                'text-text-secondary opacity-80'
               }`}>
                 {line.content}
               </div>
@@ -145,7 +144,7 @@ const Terminal: React.FC = () => {
         ))}
         
         <div className="flex items-center gap-2">
-          <span className="text-accent-primary font-black">λ</span>
+          <span className="text-accent-primary font-black opacity-60">λ</span>
           <input
             ref={inputRef}
             type="text"
