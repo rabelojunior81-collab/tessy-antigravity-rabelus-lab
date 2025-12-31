@@ -5,12 +5,33 @@ import { db, generateUUID, getGitHubToken } from '../services/dbService';
 import { interpretIntent, applyFactorsAndGenerate } from '../services/geminiService';
 
 const INITIAL_FACTORS: Factor[] = [
-  { id: 'prof', type: 'toggle', label: 'Tom Profissional', enabled: false },
-  { id: 'flash', type: 'toggle', label: 'Modelo Flash', enabled: true },
-  { id: 'code', type: 'toggle', label: 'Formatação de Código', enabled: true },
+  { 
+    id: 'tone', 
+    type: 'dropdown', 
+    label: 'Tom da Resposta', 
+    enabled: true, 
+    value: 'profissional', 
+    options: ['profissional', 'casual', 'técnico', 'criativo', 'formal'] 
+  },
+  { 
+    id: 'model', 
+    type: 'dropdown', 
+    label: 'Modelo de Linguagem', 
+    enabled: true, 
+    value: 'gemini-3-flash-preview', 
+    options: ['gemini-3-flash-preview', 'gemini-3-pro-preview', 'gemini-2.5-flash-lite-latest'] 
+  },
+  { 
+    id: 'format', 
+    type: 'dropdown', 
+    label: 'Formato de Saída', 
+    enabled: true, 
+    value: 'markdown', 
+    options: ['markdown', 'texto plano', 'html', 'json'] 
+  },
   { id: 'grounding', type: 'toggle', label: 'Busca em Tempo Real', enabled: true },
   { id: 'detail_level', type: 'slider', label: 'Nível de Detalhe', enabled: true, value: 3, min: 1, max: 5 },
-  { id: 'audience', type: 'dropdown', label: 'Público-Alvo', enabled: true, value: 'intermediario', options: ['iniciante', 'intermediario', 'avancado', 'especialista'] },
+  { id: 'audience', type: 'dropdown', label: 'Público-Alvo', enabled: true, value: 'intermediario', options: ['iniciante', 'intermediario', 'avancado', 'especialista', 'executivo'] },
   { id: 'context', type: 'text', label: 'Contexto Adicional', enabled: true, value: '' },
 ];
 
@@ -26,6 +47,7 @@ interface ChatContextType {
   setInputText: (text: string) => void;
   setAttachedFiles: React.Dispatch<React.SetStateAction<AttachedFile[]>>;
   updateFactor: (id: string, value?: any) => void;
+  resetFactors: () => void;
   sendMessage: (forcedText?: string) => Promise<void>;
   newConversation: () => void;
   loadConversation: (conv: Conversation) => void;
@@ -93,6 +115,10 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
         ? { ...f, enabled: value !== undefined ? true : !f.enabled, value: value !== undefined ? value : f.value }
         : f
     ));
+  };
+
+  const resetFactors = () => {
+    setFactors(INITIAL_FACTORS);
   };
 
   const newConversation = () => {
@@ -224,6 +250,7 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
       setInputText,
       setAttachedFiles,
       updateFactor,
+      resetFactors,
       sendMessage,
       newConversation,
       loadConversation,

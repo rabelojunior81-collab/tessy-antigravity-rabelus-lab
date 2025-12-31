@@ -5,12 +5,10 @@ import ViewerPanel from './ViewerPanel';
 import CentralCanvas from './CentralCanvas';
 import Terminal from './Terminal';
 import CoPilot from './CoPilot';
-import Controllers from './Controllers';
 import { useViewer } from '../../hooks/useViewer';
 
 interface MainLayoutProps {
   viewerContent: React.ReactNode;
-  chatContent?: React.ReactNode; // No longer strictly needed as CoPilot is self-contained via context
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
@@ -21,7 +19,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
       case 'history': return 'Histórico de Sessões';
       case 'library': return 'Biblioteca de Prompts';
       case 'projects': return 'Protocolos Ativos';
-      case 'controllers': return 'Controladores de Sistema';
       case 'github': return 'GitHub Sync';
       default: return '';
     }
@@ -42,9 +39,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
         </div>
       </main>
 
-      <CoPilot>
-        <Controllers />
-      </CoPilot>
+      <CoPilot />
     </div>
   );
 };

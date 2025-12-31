@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type, FunctionDeclaration } from "@google/genai";
 import { Factor, AttachedFile, OptimizationResult, ConversationTurn, GroundingChunk } from "../types";
 import * as githubService from "./githubService";
@@ -368,30 +369,39 @@ IMPORTANTE: Se ferramenta retornar erro (arquivo não encontrado, etc), ADMITA o
     }
 
     if (groundingEnabled) {
-      systemInstruction += "\nUse busca em tempo real do Google (grounding) para fornecer informações ATUALIZADAS sobre tecnologias, modelos LLM e melhores práticas. Sempre cite fontes quando usar dados externos. ";
+      systemInstruction += "\nUse busca em tempo real do Google (grounding) para fornecer informações ATUALIZADAS. Sempre cite fontes quando usar dados externos. ";
     }
 
-    const isProfessional = factors.find(f => f.id === 'prof' && f.enabled);
-    const wantsCode = factors.find(f => f.id === 'code' && f.enabled);
+    const tone = factors.find(f => f.id === 'tone')?.value || 'profissional';
+    const modelChoice = factors.find(f => f.id === 'model')?.value || MODEL_FLASH;
+    const formatChoice = factors.find(f => f.id === 'format')?.value || 'markdown';
     const detailLevel = factors.find(f => f.id === 'detail_level')?.value || 3;
     const audience = factors.find(f => f.id === 'audience')?.value || 'intermediario';
     const additionalContext = factors.find(f => f.id === 'context')?.value || '';
 
-    if (isProfessional) {
-      systemInstruction += "Mantenha um tom estritamente profissional, executivo e conciso. ";
-    } else {
-      systemInstruction += "Mantenha um tom amigável, prestativo e acessível. ";
-    }
+    systemInstruction += `\nESTILO DE RESPOSTA:
+- Tom: ${tone}
+- Formato de Saída Obrigatório: ${formatChoice}
+- Público-Alvo: ${audience}
+- Nível de Detalhe: ${detailLevel}/5\n`;
+
+    if (tone === 'profissional') systemInstruction += "Mantenha um tom estritamente profissional, executivo e conciso. ";
+    else if (tone === 'casual') systemInstruction += "Mantenha um tom amigável, leve e conversacional. ";
+    else if (tone === 'técnico') systemInstruction += "Mantenha um tom altamente técnico, preciso e baseado em fatos. ";
+    else if (tone === 'criativo') systemInstruction += "Mantenha um tom imaginativo, poético ou inspirador. ";
+    else if (tone === 'formal') systemInstruction += "Mantenha um tom sério, educado e polido. ";
 
     if (detailLevel === 1) systemInstruction += "Seja extremamente conciso. ";
     else if (detailLevel === 2) systemInstruction += "Seja breve e direto. ";
     else if (detailLevel === 4) systemInstruction += "Forneça detalhes e exemplos. ";
     else if (detailLevel === 5) systemInstruction += "Forneça uma análise profunda e abrangente em várias seções. ";
 
-    if (audience === 'iniciante') systemInstruction += "Use linguagem simples. ";
-    else if (audience === 'especialista') systemInstruction += "Use terminologia técnica avançada. ";
+    if (audience === 'iniciante') systemInstruction += "Use linguagem simples e evite jargões sem explicá-los. ";
+    else if (audience === 'especialista') systemInstruction += "Use terminologia técnica avançada e complexa. ";
+    else if (audience === 'executivo') systemInstruction += "Foque em resultados, alto nível e visão estratégica. ";
 
-    if (wantsCode) systemInstruction += "Inclua blocos de código bem comentados. ";
+    if (formatChoice === 'json') systemInstruction += "Sua resposta DEVE ser um objeto JSON válido. ";
+    else if (formatChoice === 'html') systemInstruction += "Sua resposta DEVE usar tags HTML para estruturação. ";
 
     const contextSection = additionalContext ? `\nCONTEXTO ADICIONAL: ${additionalContext}` : '';
 
@@ -437,17 +447,14 @@ NOTA: Se esta tarefa envolver informações temporais (notícias, eventos recent
 
     // Build tools array
     const tools: any[] = [];
-    // Fix: Prioritize tools based on context. Only googleSearch is allowed when used, it cannot be combined with functionDeclarations.
     if (repoPath) {
-      // Use repository specific tools if available
       tools.push(githubTools);
     } else if (groundingEnabled) {
-      // Fallback to search grounding for general information
       tools.push({ googleSearch: {} });
     }
 
     let response = await ai.models.generateContent({
-      model: MODEL_FLASH,
+      model: modelChoice,
       contents: contents,
       config: {
         systemInstruction: systemInstruction,
@@ -487,7 +494,7 @@ NOTA: Se esta tarefa envolver informações temporais (notícias, eventos recent
       });
 
       response = await ai.models.generateContent({
-        model: MODEL_FLASH,
+        model: modelChoice,
         contents: contents,
         config: {
           systemInstruction: systemInstruction,

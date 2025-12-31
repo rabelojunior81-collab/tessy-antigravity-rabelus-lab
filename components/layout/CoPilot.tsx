@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
-import { Send, Paperclip, MessageSquare, Bot, User, RotateCcw, Globe, FileText, Wand2, Save, Share2 } from 'lucide-react';
+import { Send, Paperclip, MessageSquare, Bot, User, RotateCcw, Globe, FileText, Wand2, Save, Share2, Settings2 } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
 import ReactMarkdown from 'https://esm.sh/react-markdown@^9.0.1';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -10,8 +10,9 @@ import OptimizeModal from '../modals/OptimizeModal';
 import SaveModal from '../modals/SaveModal';
 import ShareModal from '../modals/ShareModal';
 import RestartModal from '../modals/RestartModal';
+import ControllersModal from '../modals/ControllersModal';
 
-const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const CoPilot: React.FC = () => {
   const { 
     currentConversation, 
     isLoading, 
@@ -23,8 +24,7 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     attachedFiles,
     addFile,
     removeFile,
-    isUploadingFiles,
-    statusMessage
+    isUploadingFiles
   } = useChat();
 
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
@@ -32,6 +32,7 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isRestartModalOpen, setIsRestartModalOpen] = useState(false);
+  const [isControllersModalOpen, setIsControllersModalOpen] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -110,11 +111,15 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[8px] font-black text-emerald-500/40 uppercase tracking-widest">STABLE</span>
+          <button 
+            onClick={() => setIsControllersModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/5 border border-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-widest hover:bg-emerald-500/10 transition-all"
+          >
+            <Settings2 size={12} />
+            Configurações
+          </button>
         </div>
       </div>
-      
-      {children}
 
       <div className="flex-1 overflow-hidden flex flex-col relative bg-[#0f0f0f]">
         <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-5 space-y-6">
@@ -294,6 +299,11 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         isOpen={isRestartModalOpen}
         onClose={() => setIsRestartModalOpen(false)}
         onConfirm={() => newConversation()}
+      />
+
+      <ControllersModal 
+        isOpen={isControllersModalOpen}
+        onClose={() => setIsControllersModalOpen(false)}
       />
     </aside>
   );
