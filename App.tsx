@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useCallback, Suspense, lazy, useMemo } from 'react';
 import LoadingSpinner from './components/LoadingSpinner';
 import HistorySidebar from './components/HistorySidebar';
@@ -10,6 +9,11 @@ import { DateAnchor } from './components/DateAnchor';
 import { interpretIntent, applyFactorsAndGenerate, optimizePrompt } from './services/geminiService';
 import { db, migrateToIndexedDB, generateUUID, getGitHubToken } from './services/dbService';
 import { Factor, RepositoryItem, AttachedFile, OptimizationResult, ConversationTurn, Conversation } from './types';
+
+// Layout Imports
+import { LayoutProvider } from './contexts/LayoutContext';
+import MainLayout from './components/layout/MainLayout';
+import { useViewer } from './hooks/useViewer';
 
 // Lazy Loaded Components
 const RepositoryBrowser = lazy(() => import('./components/RepositoryBrowser'));
@@ -28,51 +32,104 @@ const INITIAL_FACTORS: Factor[] = [
 ];
 
 const TessyLogo = React.memo(() => (
-  <div className="relative w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center shrink-0">
+  <div className="relative w-8 h-8 sm:w-10 flex items-center justify-center shrink-0">
     <svg viewBox="0 0 100 100" className="w-full h-full filter drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">
       <defs>
         <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style={{ stopColor: '#059669', stopOpacity: 1 }} />
           <stop offset="100%" style={{ stopColor: '#10b981', stopOpacity: 1 }} />
         </linearGradient>
-        <linearGradient id="logoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: '#14b8a6', stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: '#059669', stopOpacity: 1 }} />
-        </linearGradient>
-        <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" style={{ stopColor: '#84cc16', stopOpacity: 0.8 }} />
-          <stop offset="100%" style={{ stopColor: '#84cc16', stopOpacity: 0 }} />
-        </radialGradient>
       </defs>
-      <circle cx="50" cy="50" r="46" fill="none" stroke="url(#logoGrad)" strokeWidth="0.8" strokeDasharray="2 2" className="animate-[spin_25s_linear_infinite]" />
-      <circle cx="50" cy="50" r="40" fill="none" stroke="url(#logoGrad2)" strokeWidth="0.5" strokeDasharray="3 1" className="animate-[spin_18s_linear_infinite_reverse]" />
-      <circle cx="50" cy="50" r="34" fill="none" stroke="#10b981" strokeWidth="0.3" strokeDasharray="1 3" className="animate-[spin_12s_linear_infinite]" />
-      <circle cx="50" cy="50" r="10" fill="url(#centerGlow)" className="animate-pulse-soft" />
-      <path d="M50 15 L50 25 M50 85 L50 80 M30 30 L45 35 M70 30 L55 35 M30 70 L45 75 M70 70 L55 75" stroke="#10b981" strokeWidth="0.3" strokeDasharray="1 2" opacity="0.4" className="animate-pulse" />
+      <circle cx="50" cy="50" r="46" fill="none" stroke="url(#logoGrad)" strokeWidth="1" strokeDasharray="2 2" className="animate-[spin_25s_linear_infinite]" />
       <path d="M25 25 H75 V35 H55 V80 H45 V35 H25 Z" fill="url(#logoGrad)" />
-      <circle cx="50" cy="15" r="3.5" fill="#84cc16" className="animate-pulse" />
-      <circle cx="50" cy="85" r="3.5" fill="#14b8a6" className="animate-pulse" />
     </svg>
   </div>
 ));
 
-const AccordionHeader = React.memo(({ title, isOpen, onClick }: { title: string, isOpen: boolean, onClick: () => void }) => (
-  <button 
-    onClick={onClick}
-    className="w-full flex items-center justify-between px-6 py-5 bg-white/40 dark:bg-slate-900/40 hover:bg-emerald-500/10 transition-all duration-300 border-b-2 lg:border-b border-emerald-600/15 group cursor-pointer"
-  >
-    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform">
-      {title}
-    </span>
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      className={`h-4 w-4 text-emerald-600 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
-      fill="none" viewBox="0 0 24 24" stroke="currentColor"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
-    </svg>
-  </button>
-));
+// Wrapper to inject context-dependent content into MainLayout
+const MainContentWrapper: React.FC<{
+  currentProjectId: string;
+  currentConversation: Conversation | null;
+  historyRefreshKey: number;
+  refreshKey: number;
+  handleLoadConversationFromHistory: (conv: Conversation) => void;
+  handleDeleteConversationFromHistory: (id: string) => void;
+  handleSelectItem: (item: RepositoryItem) => void;
+  handleNewConversation: () => void;
+  handleOpenLibraryInDashboard: () => void;
+  handleRefreshHistoryInDashboard: () => void;
+  handleEditProjectInDashboard: (id: string) => void;
+  factors: Factor[];
+  handleToggleFactor: (id: string, value?: any) => void;
+  // Canvas Props
+  result: string;
+  isLoading: boolean;
+  isOptimizing: boolean;
+  isUploadingFiles: boolean;
+  handleSaveToRepository: any;
+  handleOptimize: any;
+  attachedFiles: any;
+  handleRemoveFile: any;
+  inputText: string;
+  setInputText: any;
+  fileInputRef: any;
+  textInputRef: any;
+  handleFileUpload: any;
+  handleInterpret: any;
+  handleKeyDown: any;
+  pendingUserMessage: any;
+  pendingFiles: any;
+  handleImportSuccess: any;
+}> = (props) => {
+  const { viewerAberto, fecharViewer } = useViewer();
+
+  const viewerContent = useMemo(() => {
+    switch (viewerAberto) {
+      case 'history':
+        return <HistorySidebar currentProjectId={props.currentProjectId} activeId={props.currentConversation?.id || ''} onLoad={props.handleLoadConversationFromHistory} onDelete={props.handleDeleteConversationFromHistory} refreshKey={props.historyRefreshKey} onClose={fecharViewer} />;
+      case 'library':
+        return <RepositoryBrowser currentProjectId={props.currentProjectId} onSelectItem={props.handleSelectItem} refreshKey={props.refreshKey} onClose={fecharViewer} />;
+      case 'projects':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ProjectDashboard projectId={props.currentProjectId} onNewConversation={props.handleNewConversation} onOpenLibrary={props.handleOpenLibraryInDashboard} onRefreshHistory={props.handleRefreshHistoryInDashboard} onEditProject={props.handleEditProjectInDashboard} />
+          </Suspense>
+        );
+      case 'controllers':
+        return <FactorPanel factors={props.factors} onToggle={props.handleToggleFactor} />;
+      case 'github':
+        return (
+          <div className="p-8 text-center text-gray-500 uppercase font-black text-[10px] tracking-widest italic">
+            GitHub Sync Panel (Integração vindo em breve...)
+          </div>
+        );
+      default:
+        return null;
+    }
+  }, [viewerAberto, props, fecharViewer]);
+
+  const chatContent = props.currentConversation ? (
+    <Canvas 
+      result={props.result} isLoading={props.isLoading} isOptimizing={props.isOptimizing} isUploadingFiles={props.isUploadingFiles}
+      onSavePrompt={props.handleSaveToRepository} onOptimize={props.handleOptimize}
+      attachedFiles={props.attachedFiles} onRemoveFile={props.handleRemoveFile}
+      conversationHistory={props.currentConversation.turns}
+      onNewConversation={props.handleNewConversation}
+      inputText={props.inputText} setInputText={props.setInputText}
+      fileInputRef={props.fileInputRef} textInputRef={props.textInputRef}
+      handleFileUpload={props.handleFileUpload} handleInterpret={props.handleInterpret}
+      handleKeyDown={props.handleKeyDown}
+      pendingUserMessage={props.pendingUserMessage}
+      pendingFiles={props.pendingFiles}
+      factors={props.factors}
+      conversationTitle={props.currentConversation.title}
+      conversationId={props.currentConversation.id}
+      onImportSuccess={props.handleImportSuccess}
+    />
+  ) : <LoadingSpinner />;
+
+  return <MainLayout viewerContent={viewerContent} chatContent={chatContent} />;
+};
 
 const App: React.FC = () => {
   const [isMigrating, setIsMigrating] = useState(true);
@@ -97,14 +154,7 @@ const App: React.FC = () => {
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
 
-  const [expandedSections, setExpandedSections] = useState({
-    history: true,
-    library: false,
-    projects: false
-  });
-  
-  const [isSidebarMobileOpen, setIsSidebarMobileOpen] = useState(false);
-  const [isFactorsMobileOpen, setIsFactorsMobileOpen] = useState(false);
+  // Layout context is handled in MainContentWrapper
   
   const [inputText, setInputText] = useState('');
   const [result, setResult] = useState('');
@@ -179,10 +229,6 @@ const App: React.FC = () => {
     setTimeout(() => setIsRotatingTheme(false), 300);
   }, []);
 
-  const toggleSection = useCallback((section: keyof typeof expandedSections) => {
-    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
-  }, []);
-
   const handleNewConversation = useCallback(() => {
     const newConv: Conversation = {
       id: generateUUID(),
@@ -200,8 +246,6 @@ const App: React.FC = () => {
     setPendingFiles([]);
     setStatusMessage('PRONTO');
     setHistoryRefreshKey(p => p + 1);
-    setIsSidebarMobileOpen(false);
-    setIsFactorsMobileOpen(false);
     setTimeout(() => textInputRef.current?.focus(), 10);
   }, [currentProjectId]);
 
@@ -367,15 +411,6 @@ const App: React.FC = () => {
       'video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/webm'
     ];
 
-    const maxSizeByType: Record<string, number> = {
-      image: 20 * 1024 * 1024,
-      document: 20 * 1024 * 1024,
-      text: 20 * 1024 * 1024,
-      audio: 20 * 1024 * 1024,
-      video: 100 * 1024 * 1024,
-      default: 20 * 1024 * 1024
-    };
-
     setIsUploadingFiles(true);
     const fileArray: File[] = Array.from(files);
     let processedCount = 0;
@@ -393,22 +428,6 @@ const App: React.FC = () => {
         checkDone();
         return;
       }
-
-      let category = 'default';
-      if (file.type.startsWith('image/')) category = 'image';
-      else if (file.type.startsWith('video/')) category = 'video';
-      else if (file.type.startsWith('audio/')) category = 'audio';
-      else if (file.type.startsWith('text/') || file.type.includes('json') || file.type.includes('javascript')) category = 'text';
-      else if (file.type.includes('pdf')) category = 'document';
-
-      const maxSize = maxSizeByType[category] || maxSizeByType.default;
-
-      if (file.size > maxSize) {
-        showToast(`Arquivo muito grande: ${file.name}. Limite: ${maxSize / (1024 * 1024)}MB`, 'error');
-        checkDone();
-        return;
-      }
-
       const reader = new FileReader();
       reader.onload = () => {
         const base64Data = (reader.result as string).split(',')[1];
@@ -423,15 +442,12 @@ const App: React.FC = () => {
         }]);
         checkDone();
       };
-
       reader.onerror = () => {
         showToast(`Erro ao ler arquivo: ${file.name}`, 'error');
         checkDone();
       };
-
       reader.readAsDataURL(file);
     });
-
     if (fileInputRef.current) fileInputRef.current.value = '';
   }, [currentProjectId, showToast]);
 
@@ -463,7 +479,6 @@ const App: React.FC = () => {
     }));
     setInputText('');
     setStatusMessage('PRONTO');
-    setIsSidebarMobileOpen(false);
   }, []);
 
   const handleLoadConversationFromHistory = useCallback((conversation: Conversation) => {
@@ -472,7 +487,6 @@ const App: React.FC = () => {
     setInputText('');
     setAttachedFiles([]);
     setStatusMessage('PRONTO');
-    setIsSidebarMobileOpen(false);
     db.settings.put({ key: 'tessy_last_conv_id', value: conversation.id });
   }, []);
 
@@ -501,233 +515,143 @@ const App: React.FC = () => {
   }, [currentConversation, result, factors, currentProjectId, showToast]);
 
   const handleEditProjectInDashboard = useCallback((id: string) => handleOpenProjectModal(id), [handleOpenProjectModal]);
-  const handleOpenLibraryInDashboard = useCallback(() => setExpandedSections(p => ({...p, library: true})), []);
+  const handleOpenLibraryInDashboard = useCallback(() => { /* handled via context */ }, []);
   const handleRefreshHistoryInDashboard = useCallback(() => setHistoryRefreshKey(p => p + 1), []);
-
-  const renderAccordionContent = useCallback((section: keyof typeof expandedSections) => {
-    switch (section) {
-      case 'history':
-        return <HistorySidebar currentProjectId={currentProjectId} activeId={currentConversation?.id || ''} onLoad={handleLoadConversationFromHistory} onDelete={handleDeleteConversationFromHistory} refreshKey={historyRefreshKey} onClose={() => setIsSidebarMobileOpen(false)} />;
-      case 'library':
-        return <RepositoryBrowser currentProjectId={currentProjectId} onSelectItem={handleSelectItem} refreshKey={refreshKey} onClose={() => setIsSidebarMobileOpen(false)} />;
-      case 'projects':
-        return <ProjectDashboard projectId={currentProjectId} onNewConversation={handleNewConversation} onOpenLibrary={handleOpenLibraryInDashboard} onRefreshHistory={handleRefreshHistoryInDashboard} onEditProject={handleEditProjectInDashboard} />;
-      default:
-        return null;
-    }
-  }, [currentProjectId, currentConversation?.id, handleLoadConversationFromHistory, handleDeleteConversationFromHistory, historyRefreshKey, handleSelectItem, refreshKey, handleNewConversation, handleOpenLibraryInDashboard, handleRefreshHistoryInDashboard, handleEditProjectInDashboard]);
 
   const groundingStatus = useMemo(() => factors.find(f => f.id === 'grounding')?.enabled || false, [factors]);
 
   if (isMigrating) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-slate-900 text-emerald-500">
+      <div className="h-screen w-full flex flex-col items-center justify-center bg-antigravity-bg text-emerald-500">
         <LoadingSpinner />
-        <p className="mt-4 font-black uppercase tracking-widest text-xs animate-pulse">Migrando dados para IndexedDB...</p>
+        <p className="mt-4 font-black uppercase tracking-widest text-[10px] animate-pulse">Iniciando Núcleo Antigravity...</p>
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-emerald-600/30">
-      <header className="h-14 sm:h-16 flex items-center justify-between px-3 sm:px-6 lg:px-8 border-b-2 lg:border-b border-emerald-600/25 bg-white/85 dark:bg-slate-900/60 backdrop-blur-2xl z-40 shrink-0">
-        <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
-          <button 
-            onClick={() => setIsSidebarMobileOpen(true)}
-            className="md:hidden brutalist-button w-9 h-9 sm:w-10 sm:h-10 bg-emerald-600/10 text-emerald-600 border-2 border-emerald-600/20 active:scale-95 transition-all flex items-center justify-center shrink-0"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-          </button>
-          <TessyLogo />
-          <div className="flex flex-col min-w-0">
-            <h1 className="text-base sm:text-xl lg:text-2xl font-black tracking-tight leading-none text-slate-800 dark:text-white uppercase glow-text-green truncate">
-              tessy <span className="hidden xs:inline text-emerald-600 dark:text-emerald-400 font-light italic text-[10px] sm:text-sm lg:text-lg lowercase">by rabelus lab</span>
-            </h1>
-            <span className="text-[7px] sm:text-[9px] lg:text-[10px] font-black text-slate-600 dark:text-slate-400 tracking-[0.2em] uppercase mt-0.5 line-clamp-1 max-w-[100px] sm:max-w-[200px] lg:max-w-none">
-              {currentConversation?.title || 'Carregando...'}
-            </span>
+    <LayoutProvider>
+      <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-emerald-600/30 bg-antigravity-bg text-gray-100">
+        <header className="h-14 sm:h-16 flex items-center justify-between px-3 sm:px-6 border-b border-gray-800 bg-[#0a0a0a]/80 backdrop-blur-xl z-[60] shrink-0">
+          <div className="flex items-center space-x-4 min-w-0">
+            <TessyLogo />
+            <div className="flex flex-col min-w-0">
+              <h1 className="text-base sm:text-lg font-black tracking-tight leading-none text-white uppercase glow-text-green truncate">
+                tessy <span className="hidden xs:inline text-emerald-500 font-light italic text-[10px] sm:text-xs lowercase">by rabelus lab</span>
+              </h1>
+              <span className="text-[7px] sm:text-[9px] font-black text-gray-500 tracking-[0.2em] uppercase mt-0.5 line-clamp-1">
+                {currentConversation?.title || 'Protocolo...'}
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div className="hidden md:flex items-center gap-2 sm:gap-4 lg:gap-6">
-          <ProjectSwitcher currentProjectId={currentProjectId} onSwitch={handleSwitchProject} onOpenModal={() => handleOpenProjectModal()} onEditProject={(id) => handleOpenProjectModal(id)} />
-          <div className="hidden lg:block">
+          <div className="hidden md:flex items-center gap-6">
+            <ProjectSwitcher currentProjectId={currentProjectId} onSwitch={handleSwitchProject} onOpenModal={() => handleOpenProjectModal()} onEditProject={(id) => handleOpenProjectModal(id)} />
             <DateAnchor groundingEnabled={groundingStatus} />
           </div>
           
-          <button 
-            onClick={() => setIsGitHubTokenModalOpen(true)}
-            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center brutalist-button bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-emerald-600 transition-all border-2 lg:border border-emerald-600/20 shrink-0"
-            title="Configurações GitHub"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-          </button>
-        </div>
-        
-        <div className="flex items-center space-x-1 sm:space-x-3 lg:space-x-6">
-          <div className="md:hidden">
-             <ProjectSwitcher currentProjectId={currentProjectId} onSwitch={handleSwitchProject} onOpenModal={() => handleOpenProjectModal()} onEditProject={(id) => handleOpenProjectModal(id)} />
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={() => setIsGitHubTokenModalOpen(true)}
+              className="w-8 h-8 flex items-center justify-center bg-gray-900 text-gray-500 hover:text-emerald-500 border border-gray-800 transition-all active:scale-95"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            </button>
+            <button onClick={toggleTheme} className={`w-8 h-8 flex items-center justify-center bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 active:scale-90 transition-all ${isRotatingTheme ? 'animate-rotate-theme' : ''}`}>
+              {theme === 'dark' ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" /></svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" /></svg>
+              )}
+            </button>
           </div>
-          <button 
-            onClick={() => setIsFactorsMobileOpen(true)}
-            className="md:hidden brutalist-button w-9 h-9 sm:w-10 sm:h-10 bg-teal-600/10 text-teal-600 border-2 border-teal-600/20 active:scale-95 transition-all flex items-center justify-center shrink-0"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
-          </button>
-          <button onClick={toggleTheme} className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center brutalist-button bg-emerald-600/15 text-emerald-600 dark:text-emerald-400 border-2 lg:border border-emerald-600/25 active:scale-90 transition-all shrink-0 ${isRotatingTheme ? 'animate-rotate-theme' : ''}`}>
-            {theme === 'dark' ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" /></svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" /></svg>
-            )}
-          </button>
-          <div className="w-8 h-8 sm:w-11 sm:h-11 border-2 lg:border border-emerald-600/25 p-0.5 shadow-[4px_4px_0_rgba(16,185,129,0.15)] bg-white/85 dark:bg-slate-950/40 shrink-0 overflow-hidden hidden xs:block">
-            <img src={`https://api.dicebear.com/7.x/identicon/svg?seed=tessy-green&backgroundColor=10b981`} alt="Avatar" className="w-full h-full object-cover" />
-          </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="flex-1 flex overflow-hidden relative">
-        <div className={`fixed inset-0 z-50 transition-opacity duration-300 md:hidden ${isSidebarMobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setIsSidebarMobileOpen(false)}></div>
-          <div className={`absolute top-0 left-0 h-full w-[85%] max-w-[320px] bg-white dark:bg-slate-900 shadow-2xl transition-transform duration-300 ${isSidebarMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-            <div className="h-full flex flex-col overflow-hidden">
-              <div className="p-5 border-b-2 border-emerald-600/15 flex justify-between items-center bg-white/95 dark:bg-slate-900/95 shrink-0">
-                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Protocolos</span>
-                <button onClick={() => setIsSidebarMobileOpen(false)} className="p-2 text-slate-500 hover:text-red-500 transition-colors cursor-pointer active:scale-90"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
-              </div>
-              <div className="flex-1 overflow-y-auto custom-scrollbar">
-                <AccordionHeader title="Histórico" isOpen={expandedSections.history} onClick={() => toggleSection('history')} />
-                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedSections.history ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                  {renderAccordionContent('history')}
-                </div>
-                <AccordionHeader title="Biblioteca" isOpen={expandedSections.library} onClick={() => toggleSection('library')} />
-                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedSections.library ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                  {renderAccordionContent('library')}
-                </div>
-                <AccordionHeader title="Projetos" isOpen={expandedSections.projects} onClick={() => toggleSection('projects')} />
-                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedSections.projects ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                  <Suspense fallback={<LoadingSpinner />}>
-                    {renderAccordionContent('projects')}
-                  </Suspense>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="flex-1 overflow-hidden">
+          <MainContentWrapper 
+            currentProjectId={currentProjectId}
+            currentConversation={currentConversation}
+            historyRefreshKey={historyRefreshKey}
+            refreshKey={refreshKey}
+            handleLoadConversationFromHistory={handleLoadConversationFromHistory}
+            handleDeleteConversationFromHistory={handleDeleteConversationFromHistory}
+            handleSelectItem={handleSelectItem}
+            handleNewConversation={handleNewConversation}
+            handleOpenLibraryInDashboard={handleOpenLibraryInDashboard}
+            handleRefreshHistoryInDashboard={handleRefreshHistoryInDashboard}
+            handleEditProjectInDashboard={handleEditProjectInDashboard}
+            factors={factors}
+            handleToggleFactor={handleToggleFactor}
+            result={result}
+            isLoading={isLoading}
+            isOptimizing={isOptimizing}
+            isUploadingFiles={isUploadingFiles}
+            handleSaveToRepository={handleSaveToRepository}
+            handleOptimize={handleOptimize}
+            attachedFiles={attachedFiles}
+            handleRemoveFile={handleRemoveFile}
+            inputText={inputText}
+            setInputText={setInputText}
+            fileInputRef={fileInputRef}
+            textInputRef={textInputRef}
+            handleFileUpload={handleFileUpload}
+            handleInterpret={handleInterpret}
+            handleKeyDown={(e: any) => {
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                handleInterpret();
+              }
+            }}
+            pendingUserMessage={pendingUserMessage}
+            pendingFiles={pendingFiles}
+            handleImportSuccess={handleLoadConversationFromHistory}
+          />
         </div>
 
-        <aside className="hidden md:flex flex-col w-[25%] lg:w-[18%] border-r-2 lg:border-r border-emerald-600/15 glass-panel !border-t-0 !border-b-0 overflow-y-auto custom-scrollbar">
-          <AccordionHeader title="Histórico" isOpen={expandedSections.history} onClick={() => toggleSection('history')} />
-          <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedSections.history ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-            {renderAccordionContent('history')}
+        <footer className="h-8 border-t border-gray-800 bg-[#0a0a0a] px-6 flex items-center justify-between text-[8px] text-gray-500 font-black tracking-[0.2em] shrink-0 z-[60]">
+          <div className="flex items-center space-x-6">
+            <span className="uppercase">© 2024 RABELUS LAB</span>
+            <span className="flex items-center space-x-2">
+              <span className={`w-1.5 h-1.5 rounded-full ${isLoading || isUploadingFiles ? 'bg-amber-500 animate-pulse' : 'bg-emerald-600'}`}></span>
+              <span className="uppercase text-white truncate">MOTOR: {isUploadingFiles ? 'CARREGANDO' : statusMessage}</span>
+            </span>
           </div>
-          <AccordionHeader title="Biblioteca" isOpen={expandedSections.library} onClick={() => toggleSection('library')} />
-          <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedSections.library ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-            {renderAccordionContent('library')}
+          <div className="flex items-center space-x-8">
+            <span className="uppercase">branch: refactor/antigravity-layout | v3.3.0</span>
+            <span className="text-emerald-500 font-black">NÚCLEO ATIVO</span>
           </div>
-          <AccordionHeader title="Projetos" isOpen={expandedSections.projects} onClick={() => toggleSection('projects')} />
-          <div className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedSections.projects ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-            <Suspense fallback={<LoadingSpinner />}>
-              {renderAccordionContent('projects')}
-            </Suspense>
-          </div>
-        </aside>
+        </footer>
 
-        <section className="flex-1 flex flex-col min-w-0">
-          {currentConversation && (
-            <Canvas 
-              result={result} isLoading={isLoading} isOptimizing={isOptimizing} isUploadingFiles={isUploadingFiles}
-              onSavePrompt={handleSaveToRepository} onOptimize={handleOptimize}
-              attachedFiles={attachedFiles} onRemoveFile={handleRemoveFile}
-              conversationHistory={currentConversation.turns}
-              onNewConversation={handleNewConversation}
-              inputText={inputText} setInputText={setInputText}
-              fileInputRef={fileInputRef} textInputRef={textInputRef}
-              handleFileUpload={handleFileUpload} handleInterpret={handleInterpret}
-              handleKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                  e.preventDefault();
-                  handleInterpret();
-                }
-              }}
-              pendingUserMessage={pendingUserMessage}
-              pendingFiles={pendingFiles}
-              factors={factors}
-              conversationTitle={currentConversation.title}
-              conversationId={currentConversation.id}
-              onImportSuccess={handleLoadConversationFromHistory}
-            />
-          )}
-        </section>
-
-        <div className={`fixed inset-0 z-50 transition-opacity duration-300 md:hidden ${isFactorsMobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setIsFactorsMobileOpen(false)}></div>
-          <div className={`absolute top-0 right-0 h-full w-[85%] max-w-[320px] bg-white dark:bg-slate-900 shadow-2xl transition-transform duration-300 ${isFactorsMobileOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-             <div className="h-full flex flex-col overflow-hidden">
-                <div className="p-5 border-b border-emerald-600/20 flex justify-between items-center bg-white/95 dark:bg-slate-900/95 shrink-0">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Controles</span>
-                  <button onClick={() => setIsFactorsMobileOpen(false)} className="p-2 text-slate-500 hover:text-red-500 transition-colors cursor-pointer active:scale-90"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
-                </div>
-                <div className="flex-1 overflow-y-auto custom-scrollbar">
-                   <FactorPanel factors={factors} onToggle={handleToggleFactor} />
-                </div>
-             </div>
-          </div>
-        </div>
-        <aside className="hidden md:block w-[30%] lg:w-[22%] border-l-2 lg:border-l border-emerald-600/15 glass-panel !border-t-0 !border-b-0 overflow-y-auto custom-scrollbar">
-          <FactorPanel factors={factors} onToggle={handleToggleFactor} />
-        </aside>
-      </main>
-
-      <footer className="h-8 sm:h-10 border-t-2 lg:border-t border-emerald-600/25 bg-white/85 dark:bg-slate-900/80 px-4 sm:px-8 flex items-center justify-between text-[7px] sm:text-[10px] text-slate-600 dark:text-slate-400 font-black tracking-[0.2em] shrink-0 z-40">
-        <div className="flex items-center space-x-2 sm:space-x-6">
-          <span className="hidden xs:inline uppercase">© 2024 RABELUS LAB</span>
-          <span className="flex items-center space-x-2">
-            <span className={`w-2 h-2 sm:w-2.5 sm:h-2.5 transition-all duration-500 ${isLoading || isUploadingFiles ? 'bg-amber-500 animate-pulse' : 'bg-emerald-600'}`}></span>
-            <span className="uppercase text-slate-800 dark:text-white truncate max-w-[70px] xs:max-w-[100px] sm:max-w-none transition-colors duration-300">MOTOR: {isUploadingFiles ? 'CARREGANDO' : statusMessage}</span>
-          </span>
-        </div>
-        <div className="flex items-center space-x-2 sm:space-x-8">
-          <span className="hidden md:inline transition-opacity duration-300 uppercase">
-             branch: refactor/antigravity-layout | v3.2.0
-          </span>
-          <span className="text-emerald-600 dark:text-emerald-400 font-black">SEGURO</span>
-        </div>
-      </footer>
-
-      {/* Toast Notification System */}
-      {toastVisible && (
-        <div className={`fixed bottom-12 left-4 right-4 sm:left-auto sm:right-4 z-[100] px-4 py-3 font-bold text-[10px] sm:text-xs uppercase tracking-widest shadow-2xl border-2 animate-slide-in-right ${
-          toastType === 'success' ? 'bg-emerald-600 text-white border-emerald-500' :
-          toastType === 'error' ? 'bg-red-600 text-white border-red-500' :
-          'bg-slate-800 text-white border-slate-700'
-        }`}>
-          <div className="flex items-center gap-2">
-            {toastType === 'success' && <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+        {/* Global Overlays */}
+        {toastVisible && (
+          <div className={`fixed bottom-12 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 font-bold text-[10px] uppercase tracking-widest shadow-2xl border border-emerald-500/20 bg-[#111111] animate-fade-in ${
+            toastType === 'success' ? 'text-emerald-400' :
+            toastType === 'error' ? 'text-red-400' :
+            'text-blue-400'
+          }`}>
             {toastMessage}
           </div>
-        </div>
-      )}
-
-      <Suspense fallback={<LoadingSpinner />}>
-        {isOptModalOpen && optimizationResult && (
-          <OptimizationModal isOpen={isOptModalOpen} result={optimizationResult} onClose={() => setIsOptModalOpen(false)} onApply={handleApplyOptimization} />
         )}
-        <GitHubTokenModal 
-          isOpen={isGitHubTokenModalOpen} 
-          onClose={() => setIsGitHubTokenModalOpen(false)} 
-          onSuccess={() => { setRefreshKey(k => k + 1); showToast('Token GitHub atualizado!', 'success'); }} 
-        />
-      </Suspense>
 
-      {/* PROJECT MODAL INJECTED AT ROOT LEVEL FOR CORRECT Z-INDEX AND POSITIONING */}
-      <ProjectModal
-        isOpen={isProjectModalOpen}
-        onClose={() => setIsProjectModalOpen(false)}
-        projectId={editingProjectId}
-        onSuccess={handleProjectSuccess}
-      />
-    </div>
+        <Suspense fallback={<LoadingSpinner />}>
+          {isOptModalOpen && optimizationResult && (
+            <OptimizationModal isOpen={isOptModalOpen} result={optimizationResult} onClose={() => setIsOptModalOpen(false)} onApply={handleApplyOptimization} />
+          )}
+          <GitHubTokenModal 
+            isOpen={isGitHubTokenModalOpen} 
+            onClose={() => setIsGitHubTokenModalOpen(false)} 
+            onSuccess={() => { setRefreshKey(k => k + 1); showToast('Token GitHub atualizado!', 'success'); }} 
+          />
+        </Suspense>
+
+        <ProjectModal
+          isOpen={isProjectModalOpen}
+          onClose={() => setIsProjectModalOpen(false)}
+          projectId={editingProjectId}
+          onSuccess={handleProjectSuccess}
+        />
+      </div>
+    </LayoutProvider>
   );
 };
 

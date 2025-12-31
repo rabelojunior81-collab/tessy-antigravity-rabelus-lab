@@ -35,7 +35,7 @@ As seguintes ferramentas de função (Function Calling) devem permanecer funcion
 
 ## ✅ STATUS DE VALIDAÇÃO POR FASE
 - [x] **Fase 1: Preparação**: Checklist criado, branch de refatoração estabelecida.
-- [ ] **Fase 2: Estrutura Base**: Implementação do novo shell Antigravity (Glassmorphism & Brutalism).
+- [x] **Fase 2: Estrutura Base**: Implementação do novo shell Antigravity (Glassmorphism & Brutalism).
 - [ ] **Fase 3: Migração de Lógica**: Reconexão dos serviços `geminiService`, `dbService` e `githubService`.
 - [ ] **Fase 4: Testes de Regressão**: Validação de cada item desta lista.
 
