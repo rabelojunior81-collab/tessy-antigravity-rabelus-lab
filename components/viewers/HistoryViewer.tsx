@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Search, Trash2, Edit3, MessageSquare, Plus } from 'lucide-react';
 import { db } from '../../services/dbService';
@@ -63,33 +62,33 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#111111] animate-fade-in">
-      <div className="p-4 border-b border-gray-800 space-y-4">
+    <div className="flex flex-col h-full bg-bg-secondary animate-fade-in">
+      <div className="p-4 border-b border-border-subtle space-y-4">
         <button 
           onClick={onNew}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
+          className="w-full flex items-center justify-center gap-2 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 rounded-md shadow-lg shadow-accent-primary/10"
         >
           <Plus size={14} strokeWidth={3} />
           Novo Protocolo
         </button>
         
         <div className="relative group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-emerald-500 transition-colors" size={14} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary group-focus-within:text-accent-primary transition-colors" size={14} />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             placeholder="BUSCAR SESSÕES..."
-            className="w-full bg-[#0a0a0a] border border-gray-800 py-2.5 pl-9 pr-4 text-[10px] font-black text-white placeholder:text-gray-600 focus:outline-none focus:border-emerald-500 transition-all uppercase tracking-widest"
+            className="w-full bg-bg-primary border border-border-subtle py-2.5 pl-9 pr-4 text-[10px] font-bold text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent-primary transition-all uppercase tracking-widest rounded-md"
           />
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
         {isLoading ? (
-          <div className="flex justify-center p-8"><div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent animate-spin"></div></div>
+          <div className="flex justify-center p-8"><div className="w-4 h-4 border-2 border-accent-primary border-t-transparent animate-spin"></div></div>
         ) : displayedConversations.length === 0 ? (
-          <div className="p-8 text-center text-[9px] text-gray-600 font-black uppercase tracking-widest border border-dashed border-gray-800">
+          <div className="p-8 text-center text-[9px] text-text-tertiary font-bold uppercase tracking-widest border border-dashed border-border-subtle rounded-md">
             Nenhum registro encontrado
           </div>
         ) : (
@@ -97,26 +96,26 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
             <div
               key={conv.id}
               onClick={() => onLoad(conv)}
-              className={`p-3 border transition-all cursor-pointer group relative ${
+              className={`p-3 border transition-all cursor-pointer group relative rounded-lg ${
                 conv.id === activeId 
-                  ? 'bg-emerald-500/10 border-emerald-500/50' 
-                  : 'bg-[#0a0a0a]/50 border-gray-800 hover:border-gray-600 hover:bg-[#151515]'
+                  ? 'bg-accent-primary/10 border-accent-primary/50' 
+                  : 'bg-bg-primary/50 border-border-subtle hover:border-accent-primary/30 hover:bg-bg-tertiary/50'
               }`}
             >
               <div className="flex justify-between items-start mb-1 gap-2">
                 <h4 className={`text-[10px] font-black uppercase truncate tracking-tight transition-colors ${
-                  conv.id === activeId ? 'text-emerald-500' : 'text-gray-300 group-hover:text-white'
+                  conv.id === activeId ? 'text-accent-primary' : 'text-text-secondary group-hover:text-text-primary'
                 }`}>
                   {conv.title}
                 </h4>
                 <button 
                   onClick={(e) => handleDelete(e, conv.id)}
-                  className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-500 transition-all shrink-0"
+                  className="opacity-0 group-hover:opacity-100 text-text-tertiary hover:text-red-400 transition-all shrink-0"
                 >
                   <Trash2 size={12} />
                 </button>
               </div>
-              <div className="flex items-center justify-between text-[8px] font-black text-gray-500 uppercase tracking-tighter">
+              <div className="flex items-center justify-between text-[8px] font-bold text-text-tertiary uppercase tracking-tighter">
                 <span>{new Date(conv.updatedAt).toLocaleDateString('pt-BR')}</span>
                 <span className="flex items-center gap-1">
                   <MessageSquare size={8} /> {conv.turns.length}
@@ -129,7 +128,7 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
         {displayedConversations.length < filteredConversations.length && (
           <button 
             onClick={() => setCurrentPage(p => p + 1)}
-            className="w-full py-3 text-[9px] font-black text-emerald-500/60 hover:text-emerald-500 uppercase tracking-widest transition-colors"
+            className="w-full py-3 text-[9px] font-bold text-accent-primary/60 hover:text-accent-primary uppercase tracking-widest transition-colors"
           >
             Carregar Mais...
           </button>

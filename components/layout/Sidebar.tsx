@@ -15,7 +15,7 @@ const Sidebar: React.FC = () => {
   ];
 
   const sidebarClasses = `
-    fixed md:relative top-0 left-0 h-full bg-[#0a0a0a] border-r border-gray-800 
+    fixed md:relative top-0 left-0 h-full bg-bg-secondary border-r border-border-subtle 
     flex flex-col items-center py-6 gap-6 z-[80] shrink-0 transition-all duration-300 ease-in-out
     ${isMobileMenuOpen ? 'translate-x-0 w-[48px]' : '-translate-x-full md:translate-x-0 w-[48px]'}
   `;
@@ -41,14 +41,14 @@ const Sidebar: React.FC = () => {
                 title={item.label}
                 className={`w-10 h-10 flex items-center justify-center transition-all duration-200 group relative border-r-2 ${
                   isActive 
-                    ? 'text-emerald-500 bg-emerald-500/10 border-emerald-500' 
-                    : 'text-gray-600 border-transparent hover:text-gray-300 hover:bg-white/5'
+                    ? 'text-accent-primary bg-accent-primary/10 border-accent-primary' 
+                    : 'text-text-tertiary border-transparent hover:text-text-secondary hover:bg-bg-tertiary'
                 }`}
               >
                 <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                 
                 {/* Tooltip */}
-                <span className="absolute left-full ml-3 px-3 py-1.5 bg-gray-950 text-white text-[8px] font-black uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 z-50 border border-emerald-500/20 shadow-xl">
+                <span className="absolute left-full ml-3 px-3 py-1.5 bg-bg-primary text-text-primary text-[8px] font-bold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 z-50 border border-border-visible shadow-xl rounded-sm">
                   {item.label}
                 </span>
               </button>
@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
 
         <div className="mt-auto flex flex-col items-center gap-6 w-full">
           <button 
-            className="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-emerald-500 transition-colors"
+            className="w-10 h-10 flex items-center justify-center text-text-tertiary hover:text-accent-primary transition-colors"
             title="Shortcuts"
           >
             <Command size={18} />

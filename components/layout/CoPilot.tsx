@@ -72,35 +72,35 @@ const CoPilot: React.FC = () => {
       label: 'Templates', 
       onClick: () => setIsTemplateModalOpen(true),
       disabled: false,
-      color: 'text-gray-500 hover:text-emerald-500'
+      color: 'text-text-tertiary hover:text-accent-primary'
     },
     { 
       icon: Wand2, 
       label: 'Otimizar', 
       onClick: () => setIsOptimizeModalOpen(true),
       disabled: !inputText.trim(),
-      color: 'text-gray-500 hover:text-emerald-500'
+      color: 'text-text-tertiary hover:text-accent-primary'
     },
     { 
       icon: Save, 
       label: 'Salvar', 
       onClick: () => setIsSaveModalOpen(true),
       disabled: !hasMessages,
-      color: 'text-gray-500 hover:text-emerald-500'
+      color: 'text-text-tertiary hover:text-accent-primary'
     },
     { 
       icon: Share2, 
       label: 'Partilhar', 
       onClick: () => setIsShareModalOpen(true),
       disabled: !hasMessages,
-      color: 'text-gray-500 hover:text-emerald-500'
+      color: 'text-text-tertiary hover:text-accent-primary'
     },
     { 
       icon: RotateCcw, 
       label: 'Reiniciar', 
       onClick: () => setIsRestartModalOpen(true),
       disabled: !hasMessages,
-      color: 'text-red-500/50 hover:text-red-500'
+      color: 'text-red-400/50 hover:text-red-400'
     },
   ];
 
@@ -110,21 +110,21 @@ const CoPilot: React.FC = () => {
 
   return (
     <aside 
-      className="fixed lg:relative bottom-0 right-0 w-full h-[60vh] lg:h-full bg-[#111111] border-l border-gray-800 flex flex-col z-[60] shrink-0 transition-all duration-300"
+      className="fixed lg:relative bottom-0 right-0 w-full h-[60vh] lg:h-full bg-bg-secondary border-l border-border-subtle flex flex-col z-[60] shrink-0 transition-all duration-300"
       style={panelStyle}
     >
-      <div className="h-12 sm:h-14 flex items-center justify-between px-4 sm:px-6 border-b border-gray-800 bg-[#0a0a0a]/90 backdrop-blur-xl shrink-0">
+      <div className="h-12 sm:h-14 flex items-center justify-between px-4 sm:px-6 border-b border-border-subtle bg-bg-primary/90 backdrop-blur-xl shrink-0">
         <div className="flex items-center gap-3">
-          <div className={`w-2 h-2 rounded-full ${isLoading ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 shadow-[0_0_10px_#10b981]'}`}></div>
+          <div className={`w-2 h-2 rounded-full ${isLoading ? 'bg-amber-400 animate-pulse' : 'bg-accent-primary shadow-[0_0_10px_#3B82F6]'}`}></div>
           <div className="flex flex-col">
-            <h2 className="text-[11px] font-black text-white uppercase tracking-tighter leading-none">Célula de Inteligência</h2>
-            <span className="text-[7px] font-black text-gray-600 uppercase tracking-widest mt-0.5">Operador Sincronizado</span>
+            <h2 className="text-[11px] font-black text-text-primary uppercase tracking-tighter leading-none">Célula de Inteligência</h2>
+            <span className="text-[7px] font-bold text-text-tertiary uppercase tracking-widest mt-0.5">Operador Sincronizado</span>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <button 
             onClick={() => setIsControllersModalOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-gray-800 text-gray-400 text-[8px] font-black uppercase tracking-widest hover:border-emerald-500/50 hover:text-emerald-500 transition-all active:scale-95"
+            className="flex items-center gap-2 px-3 py-1.5 bg-accent-primary/5 border border-border-subtle text-text-tertiary text-[8px] font-bold uppercase tracking-widest hover:border-accent-primary/50 hover:text-accent-primary transition-all active:scale-95 rounded-sm"
           >
             <Settings2 size={12} />
             Parâmetros
@@ -132,12 +132,12 @@ const CoPilot: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden flex flex-col relative bg-[#0d0d0d]">
+      <div className="flex-1 overflow-hidden flex flex-col relative bg-bg-secondary">
         <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 space-y-8 pb-10">
           {currentConversation?.turns.length === 0 && !isLoading && (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-10 px-12 animate-fade-in">
-              <MessageSquare size={48} className="mb-6" />
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Pronto para Transmissão</p>
+              <MessageSquare size={48} className="mb-6 text-text-primary" />
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-text-primary">Pronto para Transmissão</p>
             </div>
           )}
 
@@ -146,16 +146,16 @@ const CoPilot: React.FC = () => {
               {/* User message */}
               <div className="flex flex-col items-end gap-2">
                 <div className="flex items-center gap-2 opacity-40">
-                   <span className="text-[7px] font-black uppercase tracking-widest">Operador</span>
-                   <User size={10} />
+                   <span className="text-[7px] font-bold uppercase tracking-widest text-text-secondary">Operador</span>
+                   <User size={10} className="text-text-secondary" />
                 </div>
-                <div className="max-w-[90%] bg-emerald-500/5 border border-emerald-500/10 p-3 text-[12px] text-gray-300 leading-relaxed font-medium">
+                <div className="max-w-[90%] bg-accent-primary/5 border border-border-subtle p-3 text-[12px] text-text-primary leading-relaxed font-medium rounded-lg">
                   {turn.userMessage}
                 </div>
                 {turn.attachedFiles && (
                   <div className="flex flex-wrap gap-1 justify-end">
                     {turn.attachedFiles.map(f => (
-                      <span key={f.id} className="text-[7px] font-black uppercase px-2 py-1 bg-white/5 border border-gray-800 text-gray-500">{f.name}</span>
+                      <span key={f.id} className="text-[7px] font-bold uppercase px-2 py-1 bg-bg-tertiary border border-border-subtle text-text-tertiary rounded-sm">{f.name}</span>
                     ))}
                   </div>
                 )}
@@ -164,10 +164,10 @@ const CoPilot: React.FC = () => {
               {/* Model message */}
               <div className="flex flex-col items-start gap-2">
                 <div className="flex items-center gap-2">
-                   <Bot size={10} className="text-emerald-500" />
-                   <span className="text-[7px] font-black text-emerald-500 uppercase tracking-widest">Tessy Core</span>
+                   <Bot size={10} className="text-accent-primary" />
+                   <span className="text-[7px] font-bold text-accent-primary uppercase tracking-widest">Tessy Core</span>
                 </div>
-                <div className="max-w-full w-full bg-[#151515] border border-gray-800 p-4 sm:p-5 text-[13px] text-gray-300 leading-relaxed shadow-lg rounded-sm prose prose-invert max-w-none">
+                <div className="max-w-full w-full bg-bg-tertiary/40 border border-border-subtle p-4 sm:p-5 text-[13px] text-text-primary leading-relaxed shadow-lg rounded-lg prose prose-invert max-w-none">
                   <ReactMarkdown
                     components={{
                       code({ node, inline, className, children, ...props }: any) {
@@ -193,13 +193,13 @@ const CoPilot: React.FC = () => {
                   </ReactMarkdown>
                   
                   {turn.groundingChunks && turn.groundingChunks.length > 0 && (
-                    <div className="mt-6 pt-4 border-t border-emerald-500/10">
-                      <span className="text-[7px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-3">
-                        <Globe size={10} className="text-emerald-500/40" /> Referências de Pesquisa
+                    <div className="mt-6 pt-4 border-t border-accent-primary/10">
+                      <span className="text-[7px] font-bold text-text-tertiary uppercase tracking-widest flex items-center gap-2 mb-3">
+                        <Globe size={10} className="text-accent-primary/40" /> Referências de Pesquisa
                       </span>
                       <div className="flex flex-wrap gap-2">
                         {turn.groundingChunks.map((chunk, idx) => chunk.web ? (
-                          <a key={idx} href={chunk.web.uri} target="_blank" rel="noopener noreferrer" className="text-[8px] font-black uppercase px-3 py-1.5 bg-black border border-emerald-500/5 text-emerald-500/70 hover:text-emerald-500 hover:border-emerald-500/30 transition-all flex items-center gap-2">
+                          <a key={idx} href={chunk.web.uri} target="_blank" rel="noopener noreferrer" className="text-[8px] font-bold uppercase px-3 py-1.5 bg-bg-primary border border-accent-primary/10 text-accent-primary/70 hover:text-accent-primary hover:border-accent-primary/30 transition-all flex items-center gap-2 rounded-sm">
                             {chunk.web.title}
                           </a>
                         ) : null)}
@@ -214,17 +214,17 @@ const CoPilot: React.FC = () => {
           {isLoading && (
             <div className="flex flex-col items-start gap-3 animate-pulse">
               <div className="flex items-center gap-2">
-                 <Bot size={10} className="text-amber-500" />
-                 <span className="text-[7px] font-black text-amber-500 uppercase tracking-widest">Interpretando Protocolo...</span>
+                 <Bot size={10} className="text-accent-secondary" />
+                 <span className="text-[7px] font-bold text-accent-secondary uppercase tracking-widest">Interpretando Protocolo...</span>
               </div>
-              <div className="w-[70%] h-4 bg-white/5 border border-gray-800"></div>
-              <div className="w-[50%] h-4 bg-white/5 border border-gray-800"></div>
+              <div className="w-[70%] h-4 bg-bg-tertiary/20 border border-border-subtle rounded-sm"></div>
+              <div className="w-[50%] h-4 bg-bg-tertiary/20 border border-border-subtle rounded-sm"></div>
             </div>
           )}
         </div>
 
         {/* Toolbar */}
-        <div className="px-4 py-1.5 border-t border-gray-800 bg-[#070707] flex items-center justify-around shrink-0">
+        <div className="px-4 py-1.5 border-t border-border-subtle bg-bg-primary/50 flex items-center justify-around shrink-0">
           {toolbarItems.map((item, idx) => (
             <button 
               key={idx}
@@ -234,7 +234,7 @@ const CoPilot: React.FC = () => {
               className={`p-2 transition-all relative group flex flex-col items-center gap-1 ${item.color} ${item.disabled ? 'opacity-20 cursor-not-allowed' : 'hover:scale-110'}`}
             >
               <item.icon size={18} />
-              <span className="text-[6px] font-black uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[6px] font-bold uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">
                 {item.label}
               </span>
             </button>
@@ -242,16 +242,16 @@ const CoPilot: React.FC = () => {
         </div>
 
         {/* Input Area */}
-        <div className="p-4 bg-[#0a0a0a] border-t border-gray-800 space-y-4 shrink-0">
+        <div className="p-4 bg-bg-primary border-t border-border-subtle space-y-4 shrink-0">
           {attachedFiles.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-1 animate-slide-in-right">
               {attachedFiles.map(file => (
                 <div key={file.id} className="relative group">
-                  <div className="text-[8px] font-black uppercase px-2 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center gap-2">
+                  <div className="text-[8px] font-bold uppercase px-2 py-1.5 bg-accent-primary/10 border border-accent-primary/20 text-accent-primary flex items-center gap-2 rounded-sm">
                     {file.name}
                     <button 
                       onClick={() => removeFile(file.id)} 
-                      className="hover:text-red-500 p-0.5"
+                      className="hover:text-red-400 p-0.5"
                       title="Remover arquivo"
                     >
                       <Trash2 size={10} />
@@ -262,10 +262,10 @@ const CoPilot: React.FC = () => {
             </div>
           )}
           
-          <div className="flex items-end gap-3 bg-[#151515] border border-gray-800 p-3 focus-within:border-emerald-500/40 transition-all group shadow-inner">
+          <div className="flex items-end gap-3 bg-bg-secondary border border-border-subtle p-3 focus-within:border-accent-primary/40 transition-all group shadow-inner rounded-md">
             <button 
               onClick={() => fileInputRef.current?.click()}
-              className="p-1 text-gray-600 hover:text-emerald-500 transition-all shrink-0 active:scale-90"
+              className="p-1 text-text-tertiary hover:text-accent-primary transition-all shrink-0 active:scale-90"
               title="Anexar arquivos"
             >
               <Paperclip size={20} />
@@ -277,17 +277,17 @@ const CoPilot: React.FC = () => {
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Digite sua diretriz..."
-              className="flex-1 bg-transparent border-none outline-none text-gray-200 text-[13px] resize-none max-h-32 min-h-[24px] custom-scrollbar py-1 leading-relaxed"
+              className="flex-1 bg-transparent border-none outline-none text-text-primary text-[13px] resize-none max-h-32 min-h-[24px] custom-scrollbar py-1 leading-relaxed placeholder:text-text-tertiary"
               rows={1}
             />
             
             <button 
               onClick={() => sendMessage()}
               disabled={isLoading || isUploadingFiles || (!inputText.trim() && attachedFiles.length === 0)}
-              className={`p-1.5 transition-all rounded-sm flex items-center justify-center ${
+              className={`p-1.5 transition-all rounded-md flex items-center justify-center ${
                 (!inputText.trim() && attachedFiles.length === 0) 
-                  ? 'text-gray-800' 
-                  : 'text-emerald-500 hover:bg-emerald-500/10 active:scale-95'
+                  ? 'text-text-tertiary opacity-30' 
+                  : 'text-accent-primary hover:bg-accent-primary/10 active:scale-95'
               }`}
               title="Enviar Transmissão"
             >
@@ -295,11 +295,11 @@ const CoPilot: React.FC = () => {
             </button>
           </div>
           
-          <div className="flex items-center justify-between text-[7px] font-black text-gray-700 uppercase tracking-widest">
-             <span>CTRL + ENTER PARA ENVIAR</span>
+          <div className="flex items-center justify-between text-[7px] font-bold text-text-tertiary uppercase tracking-widest">
+             <span>ENTER PARA ENVIAR</span>
              <span className="flex items-center gap-1">
                 {isLoading ? 'EXECUTANDO...' : 'SISTEMA PRONTO'}
-                <div className={`w-1 h-1 rounded-full ${isLoading ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
+                <div className={`w-1 h-1 rounded-full ${isLoading ? 'bg-accent-secondary' : 'bg-accent-primary'}`}></div>
              </span>
           </div>
         </div>

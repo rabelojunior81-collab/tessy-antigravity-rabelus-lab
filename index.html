@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Tessy by Rabelus Lab - Advanced AI Prompt Engineering IDE">
-    <meta name="theme-color" content="#0a0a0a">
+    <meta name="theme-color" content="#0A1929">
     <title>tessy // Rabelus Lab</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -21,17 +21,25 @@
             },
             colors: {
               antigravity: {
-                bg: '#0a0a0a',
-                panel: '#111111',
-                terminal: '#050505',
-                emerald: '#10b981',
-                jade: '#14b8a6',
+                bg: '#0A1929',
+                panel: '#0D2137',
+                terminal: '#050c14',
+                blue: '#3B82F6',
+                accent: '#60A5FA',
                 slate: {
                   800: '#1e293b',
                   900: '#0f172a',
                   950: '#020617',
                 }
-              }
+              },
+              'bg-primary': '#0A1929',
+              'bg-secondary': '#0D2137',
+              'bg-tertiary': '#112A45',
+              'text-primary': '#E3E8EF',
+              'text-secondary': '#8B9AAD',
+              'text-tertiary': '#5A6B7F',
+              'accent-primary': '#3B82F6',
+              'accent-secondary': '#60A5FA',
             },
             animation: {
               'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
@@ -77,9 +85,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #10b981;
-            --bg-body: #0a0a0a;
-            --text-body: #f8fafc;
+            --primary: #3B82F6;
+            --bg-body: #0A1929;
+            --text-body: #E3E8EF;
+            --border-subtle: rgba(59, 130, 246, 0.1);
+            --border-visible: rgba(59, 130, 246, 0.2);
         }
         
         * {
@@ -99,36 +109,36 @@
         }
         
         .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(16, 185, 129, 0.02); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.15); border-radius: 0px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.3); }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(59, 130, 246, 0.02); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.15); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.3); }
 
         .glass-panel {
-            background: rgba(10, 10, 10, 0.7);
+            background: rgba(13, 33, 55, 0.7);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--border-visible);
         }
 
         .brutalist-button {
-            border-radius: 0 !important;
+            border-radius: 4px !important;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
         }
 
-        .glow-text-green { 
-            text-shadow: 0 0 15px rgba(16, 185, 129, 0.3); 
+        .glow-text-blue { 
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.4); 
         }
 
         /* Selection */
         ::selection {
-            background: rgba(16, 185, 129, 0.3);
+            background: rgba(59, 130, 246, 0.3);
             color: white;
         }
 
@@ -139,33 +149,33 @@
             transition: background 0.2s;
         }
         .resize-handle-v:hover {
-            background: rgba(16, 185, 129, 0.5);
+            background: rgba(59, 130, 246, 0.5);
         }
         
         /* Prose customization for Markdown */
         .prose pre {
-            background-color: #050505 !important;
-            border: 1px solid rgba(16, 185, 129, 0.1) !important;
-            border-radius: 0 !important;
+            background-color: #050c14 !important;
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: 4px !important;
             padding: 1rem !important;
         }
         .prose code {
-            color: #10b981 !important;
-            background: rgba(16, 185, 129, 0.1) !important;
+            color: #60A5FA !important;
+            background: rgba(59, 130, 246, 0.1) !important;
             padding: 0.2em 0.4em !important;
-            border-radius: 2px !important;
+            border-radius: 4px !important;
             font-size: 0.9em !important;
         }
         .prose a {
-            color: #10b981 !important;
+            color: #3B82F6 !important;
             text-decoration: underline !important;
             text-underline-offset: 4px !important;
         }
         .prose h1, .prose h2, .prose h3 {
             color: #fff !important;
-            font-weight: 900 !important;
+            font-weight: 800 !important;
             text-transform: uppercase !important;
-            letter-spacing: -0.02em !important;
+            letter-spacing: -0.01em !important;
         }
     </style>
 <script type="importmap">
@@ -186,7 +196,7 @@
 }
 </script>
 </head>
-<body class="overflow-hidden bg-antigravity-bg">
+<body class="overflow-hidden bg-bg-primary">
     <div id="root"></div>
 </body>
 </html>

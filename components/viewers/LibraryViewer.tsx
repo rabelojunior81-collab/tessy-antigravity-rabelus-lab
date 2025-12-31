@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Search, Plus, Trash2, Edit3 } from 'lucide-react';
 import { db, generateUUID } from '../../services/dbService';
@@ -67,16 +66,16 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#111111] animate-fade-in">
-      <div className="p-4 border-b border-gray-800 space-y-4 bg-[#0a0a0a]">
+    <div className="flex flex-col h-full bg-bg-secondary animate-fade-in">
+      <div className="p-4 border-b border-border-subtle space-y-4 bg-bg-primary/50">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={14} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={14} />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="BUSCAR PROTOCOLOS..."
-            className="w-full bg-[#050505] border border-gray-800 py-2 pl-9 pr-4 text-[10px] font-black text-white focus:border-emerald-500 outline-none uppercase"
+            className="w-full bg-bg-primary border border-border-subtle py-2 pl-9 pr-4 text-[10px] font-bold text-text-primary focus:border-accent-primary outline-none uppercase rounded-md"
           />
         </div>
         <div className="flex gap-1.5 overflow-x-auto custom-scrollbar pb-1">
@@ -84,8 +83,8 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
             <button
               key={tag}
               onClick={() => setSelectedTag(tag)}
-              className={`px-2 py-1 text-[7px] font-black uppercase tracking-widest border transition-all ${
-                selectedTag === tag ? 'bg-emerald-500/10 border-emerald-500 text-emerald-500' : 'text-gray-500 border-gray-800'
+              className={`px-2.5 py-1 text-[7px] font-black uppercase tracking-widest border transition-all rounded-full ${
+                selectedTag === tag ? 'bg-accent-primary/10 border-accent-primary text-accent-primary' : 'text-text-tertiary border-border-subtle hover:border-text-tertiary'
               }`}
             >
               {tag}
@@ -96,28 +95,28 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
 
       <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2.5">
         {isLoading ? (
-          <div className="flex justify-center p-8"><div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent animate-spin"></div></div>
+          <div className="flex justify-center p-8"><div className="w-4 h-4 border-2 border-accent-primary border-t-transparent animate-spin"></div></div>
         ) : filteredItems.length === 0 ? (
-          <div className="p-12 text-center text-[9px] text-gray-700 uppercase font-black">Nenhum protocolo localizado</div>
+          <div className="p-12 text-center text-[9px] text-text-tertiary uppercase font-bold">Nenhum protocolo localizado</div>
         ) : (
           filteredItems.map(item => (
             <div
               key={item.id}
               onClick={() => onSelectItem(item)}
-              className="p-3.5 bg-[#0a0a0a] border border-gray-800 hover:border-emerald-500/20 transition-all cursor-pointer group"
+              className="p-3.5 bg-bg-primary border border-border-subtle hover:border-accent-primary/20 transition-all cursor-pointer group rounded-lg"
             >
               <div className="flex justify-between items-start mb-1.5">
-                <h4 className="text-[10px] font-black text-gray-200 uppercase group-hover:text-emerald-500 transition-colors truncate pr-8">
+                <h4 className="text-[10px] font-black text-text-secondary uppercase group-hover:text-accent-primary transition-colors truncate pr-8">
                   {item.title}
                 </h4>
-                <button onClick={(e) => handleDelete(e, item.id)} className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-500">
+                <button onClick={(e) => handleDelete(e, item.id)} className="opacity-0 group-hover:opacity-100 text-text-tertiary hover:text-red-400">
                   <Trash2 size={12} />
                 </button>
               </div>
-              <p className="text-[9px] text-gray-500 line-clamp-2 leading-tight mb-3 italic">{item.description}</p>
+              <p className="text-[9px] text-text-tertiary line-clamp-2 leading-tight mb-3 italic">{item.description}</p>
               <div className="flex flex-wrap gap-1">
                 {item.tags?.map(tag => (
-                  <span key={tag} className="px-1.5 py-0.5 bg-emerald-500/5 text-emerald-500/60 border border-emerald-500/10 text-[7px] font-black uppercase">
+                  <span key={tag} className="px-1.5 py-0.5 bg-accent-primary/5 text-accent-primary/60 border border-accent-primary/10 text-[7px] font-bold uppercase rounded-sm">
                     {tag}
                   </span>
                 ))}
