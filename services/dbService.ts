@@ -2,7 +2,7 @@
 // Use default import for Dexie to ensure proper class inheritance and type resolution in TypeScript
 import Dexie from 'dexie';
 import type { Table } from 'dexie';
-import { Conversation, Project, RepositoryItem, Template, Factor } from '../types';
+import { Conversation, Project, RepositoryItem, Template, Factor, SharedConversation } from '../types';
 
 /**
  * Main database class for the DLL (Dexie) application using Dexie (IndexedDB).
@@ -15,13 +15,13 @@ export class TessyDatabase extends Dexie {
   settings!: Table<{ key: string; value: any }>;
   files!: Table<{ id: string; projectId: string; name: string; type: string; blob: Blob; createdAt: number }>;
   secrets!: Table<{ id: string; key: string; value: string }>;
+  shared_conversations!: Table<SharedConversation>;
 
   constructor() {
     // Call the super constructor with the database name
     super('TessyDB');
     
-    // Define the database schema. version() and stores() are inherited from Dexie.
-    // Fix: Accessing version method from the base class using explicit cast to resolve type checking issues.
+    // Define the database schema.
     (this as any).version(1).stores({
       projects: 'id, name, createdAt, updatedAt',
       conversations: 'id, projectId, title, createdAt, updatedAt',
@@ -30,6 +30,10 @@ export class TessyDatabase extends Dexie {
       settings: 'key',
       files: 'id, projectId, name, type, createdAt',
       secrets: 'id, key'
+    });
+
+    (this as any).version(2).stores({
+      shared_conversations: 'code, createdAt, expiresAt'
     });
   }
 }
@@ -66,7 +70,6 @@ export async function migrateToIndexedDB(): Promise<void> {
     };
 
     // Use transaction to perform atomic migration operations.
-    // Fix: Accessing transaction method on the db instance using explicit cast to resolve type checking issues.
     await (db as any).transaction('rw', [db.projects, db.conversations, db.library, db.settings], async () => {
       // 1. Create Default Project
       await db.projects.put({
@@ -118,7 +121,6 @@ export async function migrateToIndexedDB(): Promise<void> {
     console.log('Migration completed successfully.');
   } catch (error) {
     console.error('Migration failed:', error);
-    // Rollback is automatically handled by Dexie transaction if an error occurs
     throw error;
   }
 }
@@ -141,4 +143,13 @@ export const generateUUID = (): string => {
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+};
+
+export const generateShareCode = (length: number = 6): string => {
+  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let retVal = "";
+  for (let i = 0; i < length; ++i) {
+    retVal += charset.charAt(Math.floor(Math.random() * charset.length));
+  }
+  return retVal;
 };

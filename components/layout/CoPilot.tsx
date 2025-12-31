@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Send, Paperclip, MessageSquare, Bot, User, RotateCcw, Globe, FileText, Wand2, Save, Share2 } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
@@ -6,6 +7,9 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as prismTheme } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import TemplateModal from '../modals/TemplateModal';
 import OptimizeModal from '../modals/OptimizeModal';
+import SaveModal from '../modals/SaveModal';
+import ShareModal from '../modals/ShareModal';
+import RestartModal from '../modals/RestartModal';
 
 const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { 
@@ -15,6 +19,7 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     setInputText, 
     sendMessage, 
     newConversation,
+    loadConversation,
     attachedFiles,
     addFile,
     removeFile,
@@ -24,6 +29,9 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [isOptimizeModalOpen, setIsOptimizeModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isRestartModalOpen, setIsRestartModalOpen] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -51,12 +59,44 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const hasMessages = (currentConversation?.turns.length || 0) > 0;
+
   const toolbarItems = [
-    { icon: FileText, label: 'Templates', onClick: () => setIsTemplateModalOpen(true) },
-    { icon: Wand2, label: 'Otimizar Prompt', onClick: () => setIsOptimizeModalOpen(true) },
-    { icon: Save, label: 'Salvar Conversa', onClick: () => console.log('Salvar') },
-    { icon: Share2, label: 'Compartilhar', onClick: () => console.log('Compartilhar') },
-    { icon: RotateCcw, label: 'Reiniciar Conversa', onClick: () => newConversation() },
+    { 
+      icon: FileText, 
+      label: 'Templates', 
+      onClick: () => setIsTemplateModalOpen(true),
+      disabled: false,
+      color: 'text-gray-500 hover:text-emerald-500'
+    },
+    { 
+      icon: Wand2, 
+      label: 'Otimizar Prompt', 
+      onClick: () => setIsOptimizeModalOpen(true),
+      disabled: !inputText.trim(),
+      color: 'text-gray-500 hover:text-emerald-500'
+    },
+    { 
+      icon: Save, 
+      label: 'Salvar Conversa', 
+      onClick: () => setIsSaveModalOpen(true),
+      disabled: !hasMessages,
+      color: 'text-gray-500 hover:text-emerald-500'
+    },
+    { 
+      icon: Share2, 
+      label: 'Compartilhar', 
+      onClick: () => setIsShareModalOpen(true),
+      disabled: !hasMessages,
+      color: 'text-gray-500 hover:text-emerald-500'
+    },
+    { 
+      icon: RotateCcw, 
+      label: 'Reiniciar Conversa', 
+      onClick: () => setIsRestartModalOpen(true),
+      disabled: !hasMessages,
+      color: 'text-red-400/70 hover:text-red-500 hover:bg-red-500/5'
+    },
   ];
 
   return (
@@ -163,8 +203,9 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <button 
               key={idx}
               onClick={item.onClick}
+              disabled={item.disabled}
               title={item.label}
-              className="p-2 text-gray-500 hover:text-emerald-500 transition-all hover:bg-emerald-500/5 relative group"
+              className={`p-2 transition-all relative group ${item.color} ${item.disabled ? 'opacity-30 cursor-not-allowed' : 'hover:bg-emerald-500/5'}`}
             >
               <item.icon size={20} />
               <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-black border border-gray-700 text-[7px] font-black uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
@@ -234,6 +275,25 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         onApply={(optimized) => {
           setInputText(optimized);
         }}
+      />
+
+      <SaveModal 
+        isOpen={isSaveModalOpen}
+        conversation={currentConversation}
+        onClose={() => setIsSaveModalOpen(false)}
+        onSuccess={(updated) => loadConversation(updated)}
+      />
+
+      <ShareModal 
+        isOpen={isShareModalOpen}
+        conversation={currentConversation}
+        onClose={() => setIsShareModalOpen(false)}
+      />
+
+      <RestartModal 
+        isOpen={isRestartModalOpen}
+        onClose={() => setIsRestartModalOpen(false)}
+        onConfirm={() => newConversation()}
       />
     </aside>
   );

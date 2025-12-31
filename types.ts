@@ -33,9 +33,19 @@ export interface Conversation {
   id: string;
   projectId: string;
   title: string;
+  description?: string;
   turns: ConversationTurn[];
   createdAt: number;
   updatedAt: number;
+  isSaved?: boolean;
+}
+
+export interface SharedConversation {
+  code: string;
+  title: string;
+  turns: ConversationTurn[];
+  createdAt: number;
+  expiresAt: number;
 }
 
 export interface Project {
