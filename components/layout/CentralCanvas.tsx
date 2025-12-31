@@ -19,54 +19,54 @@ const CentralCanvas: React.FC = () => {
   const isImage = (lang: string) => ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(lang.toLowerCase());
 
   return (
-    <div className="flex-1 bg-bg-primary overflow-hidden flex flex-col relative">
+    <div className="flex-1 bg-bg-primary overflow-hidden flex flex-col relative rounded-none">
       {!arquivoSelecionado ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 text-center opacity-40 animate-fade-in">
-          <div className="w-16 h-16 border-2 border-accent-primary/20 mb-6 flex items-center justify-center rounded-lg">
-            <span className="text-3xl font-black text-accent-primary/20">?</span>
+        <div className="flex-1 flex flex-col items-center justify-center p-12 text-center opacity-40 animate-fade-in">
+          <div className="w-20 h-20 border border-accent-primary/20 mb-9 flex items-center justify-center rounded-none">
+            <span className="text-4xl font-black text-accent-primary/20">?</span>
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-text-secondary">
+          <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-text-secondary">
             Selecione um arquivo no GitHub Sync para visualizar
           </p>
-          <div className="mt-8 flex gap-4">
-             <div className="flex flex-col items-center gap-2">
-                <div className="w-8 h-8 rounded-full border border-border-subtle flex items-center justify-center"><FileCode size={14} /></div>
-                <span className="text-[7px] font-bold uppercase text-text-tertiary">Código</span>
+          <div className="mt-12 flex gap-9">
+             <div className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 rounded-none border border-border-subtle flex items-center justify-center"><FileCode size={18} /></div>
+                <span className="text-[10px] font-semibold uppercase text-text-tertiary tracking-widest">Código</span>
              </div>
-             <div className="flex flex-col items-center gap-2">
-                <div className="w-8 h-8 rounded-full border border-border-subtle flex items-center justify-center"><ImageIcon size={14} /></div>
-                <span className="text-[7px] font-bold uppercase text-text-tertiary">Imagens</span>
+             <div className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 rounded-none border border-border-subtle flex items-center justify-center"><ImageIcon size={18} /></div>
+                <span className="text-[10px] font-semibold uppercase text-text-tertiary tracking-widest">Imagens</span>
              </div>
-             <div className="flex flex-col items-center gap-2">
-                <div className="w-8 h-8 rounded-full border border-border-subtle flex items-center justify-center"><Eye size={14} /></div>
-                <span className="text-[7px] font-bold uppercase text-text-tertiary">Preview</span>
+             <div className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 rounded-none border border-border-subtle flex items-center justify-center"><Eye size={18} /></div>
+                <span className="text-[10px] font-semibold uppercase text-text-tertiary tracking-widest">Preview</span>
              </div>
           </div>
         </div>
       ) : (
         <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in">
-          <div className="px-6 py-3 border-b border-border-subtle bg-bg-secondary flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-mono text-accent-primary tracking-tighter truncate max-w-[300px]">{arquivoSelecionado.path}</span>
-              <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 bg-accent-primary/10 text-accent-primary border border-accent-primary/20 rounded-sm">
+          <div className="px-9 py-4 border-b border-border-subtle bg-bg-secondary flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-5">
+              <span className="text-[12px] font-mono text-accent-primary tracking-tighter truncate max-w-[400px]">{arquivoSelecionado.path}</span>
+              <span className="text-[10px] font-semibold uppercase px-3 py-1 bg-accent-primary/10 text-accent-primary border border-accent-primary/20 rounded-none">
                 {arquivoSelecionado.language}
               </span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
                {!isImage(arquivoSelecionado.language) && (
                  <button 
                    onClick={handleCopy}
-                   className="text-text-tertiary hover:text-text-primary transition-colors flex items-center gap-1.5"
+                   className="text-text-tertiary hover:text-text-primary transition-colors flex items-center gap-2.5"
                  >
-                   {copied ? <Check size={14} className="text-accent-primary" /> : <Copy size={14} />}
-                   <span className="text-[8px] font-bold uppercase">{copied ? 'Copiado' : 'Copiar'}</span>
+                   {copied ? <Check size={16} className="text-accent-primary" /> : <Copy size={16} />}
+                   <span className="text-[10px] font-semibold uppercase tracking-widest">{copied ? 'Copiado' : 'Copiar'}</span>
                  </button>
                )}
                <button 
                  onClick={() => selecionarArquivo(null)}
-                 className="p-1 text-text-tertiary hover:text-red-400 transition-colors"
+                 className="p-2 text-text-tertiary hover:text-red-400 transition-colors rounded-none"
                >
-                 <X size={16} />
+                 <X size={20} />
                </button>
             </div>
           </div>
@@ -77,7 +77,7 @@ const CentralCanvas: React.FC = () => {
                  <img 
                    src={`data:image/${arquivoSelecionado.language};base64,${arquivoSelecionado.content}`} 
                    alt={arquivoSelecionado.path}
-                   className="max-w-full max-h-full object-contain shadow-2xl border border-border-subtle bg-bg-tertiary rounded-md" 
+                   className="max-w-full max-h-full object-contain shadow-2xl border border-border-subtle bg-bg-tertiary rounded-none" 
                  />
               </div>
             ) : (
@@ -87,12 +87,12 @@ const CentralCanvas: React.FC = () => {
                 showLineNumbers={true}
                 customStyle={{ 
                   margin: 0, 
-                  padding: '24px', 
+                  padding: '36px', /* 50% increase from 24px */
                   backgroundColor: 'transparent',
-                  fontSize: '12px',
+                  fontSize: '13px',
                   fontFamily: '"JetBrains Mono", monospace'
                 }}
-                lineNumberStyle={{ color: '#2b3b4b', minWidth: '3em', paddingRight: '1em' }}
+                lineNumberStyle={{ color: '#2b3b4b', minWidth: '3.5em', paddingRight: '1.5em' }}
               >
                 {arquivoSelecionado.content}
               </SyntaxHighlighter>

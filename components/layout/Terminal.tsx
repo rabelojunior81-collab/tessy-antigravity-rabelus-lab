@@ -158,7 +158,7 @@ const Terminal: React.FC = () => {
     <div 
       ref={terminalRef}
       style={{ height: `${alturaTerminal}px` }}
-      className="bg-bg-primary border-t border-border-subtle flex flex-col shrink-0 relative transition-[height] duration-75 select-none"
+      className="bg-bg-primary border-t border-border-subtle flex flex-col shrink-0 relative transition-[height] duration-75 select-none rounded-none"
       onClick={handleTerminalClick}
     >
       <div 
@@ -166,39 +166,39 @@ const Terminal: React.FC = () => {
         className="resize-handle-v absolute top-0 left-0 right-0 h-[4px] z-20 hover:bg-accent-primary/40 transition-colors"
       />
       
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle/50 bg-bg-secondary shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <TerminalIcon size={14} className="text-accent-primary/60" />
-            <span className="text-[9px] font-black uppercase tracking-[0.3em] text-accent-primary/80">Tessy Shell v3.1</span>
+      <div className="flex items-center justify-between px-6 py-3 border-b border-border-subtle/50 bg-bg-secondary shrink-0">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
+            <TerminalIcon size={16} className="text-accent-primary/60" />
+            <span className="text-[14px] font-bold uppercase tracking-[0.05em] text-text-primary">Tessy Shell v3.1</span>
           </div>
-          <div className="flex gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-sm bg-accent-primary/10"></div>
-            <div className="w-1.5 h-1.5 rounded-sm bg-accent-primary/20"></div>
-            <div className="w-1.5 h-1.5 rounded-sm bg-accent-primary/40"></div>
+          <div className="flex gap-2">
+            <div className="w-2 h-2 rounded-none bg-accent-primary/10"></div>
+            <div className="w-2 h-2 rounded-none bg-accent-primary/20"></div>
+            <div className="w-2 h-2 rounded-none bg-accent-primary/40"></div>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <button 
             onClick={(e) => { e.stopPropagation(); setHistory([]); }}
-            className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-2 group"
+            className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-3 group"
           >
-            <Trash2 size={12} className="opacity-50 group-hover:opacity-100" />
-            <span className="text-[8px] font-bold uppercase tracking-widest">Limpar</span>
+            <Trash2 size={14} className="opacity-50 group-hover:opacity-100" />
+            <span className="text-[10px] font-semibold uppercase tracking-widest">Limpar</span>
           </button>
-          <div className="h-4 w-px bg-border-subtle"></div>
-          <div className="flex items-center gap-2 text-[8px] font-mono text-accent-primary/40 uppercase">
-             <ShieldCheck size={10} />
+          <div className="h-5 w-px bg-border-subtle"></div>
+          <div className="flex items-center gap-3 text-[10px] font-semibold text-text-tertiary uppercase tracking-widest">
+             <ShieldCheck size={12} className="text-accent-primary/40" />
              Secure_Layer: Active
           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-5 font-mono text-[11px] leading-relaxed cursor-text selection:bg-accent-primary/20 bg-bg-primary/30">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-7 font-mono text-[12px] leading-relaxed cursor-text selection:bg-accent-primary/20 bg-bg-primary/30">
         {history.map((line, idx) => (
-          <div key={idx} className="mb-1.5 animate-fade-in">
+          <div key={idx} className="mb-2 animate-fade-in">
             {line.type === 'input' ? (
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <span className="text-accent-primary font-black">λ</span>
                 <span className="text-text-primary">{line.content}</span>
               </div>
@@ -214,7 +214,7 @@ const Terminal: React.FC = () => {
           </div>
         ))}
         
-        <div className="flex items-center gap-3 mt-3">
+        <div className="flex items-center gap-4 mt-4">
           <span className="text-accent-primary font-black">λ</span>
           <input
             ref={inputRef}
@@ -223,22 +223,22 @@ const Terminal: React.FC = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
-            className="flex-1 bg-transparent border-none outline-none text-text-primary font-mono text-[11px] caret-accent-primary"
+            className="flex-1 bg-transparent border-none outline-none text-text-primary font-mono text-[12px] caret-accent-primary"
             spellCheck={false}
             autoComplete="off"
           />
         </div>
-        <div ref={outputEndRef} className="h-4" />
+        <div ref={outputEndRef} className="h-6" />
       </div>
 
-      <div className="px-4 py-1.5 border-t border-border-subtle bg-bg-secondary flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Command size={10} className="text-text-tertiary" />
-            <span className="text-[7px] font-bold text-text-tertiary uppercase tracking-widest">Comando: help</span>
+      <div className="px-6 py-2 border-t border-border-subtle bg-bg-secondary flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
+            <Command size={12} className="text-text-tertiary" />
+            <span className="text-[10px] font-semibold text-text-tertiary uppercase tracking-widest">Comando: help</span>
           </div>
         </div>
-        <span className="text-[7px] font-mono text-text-tertiary uppercase">TTY: /dev/nucleus_01</span>
+        <span className="text-[10px] font-mono text-text-tertiary uppercase">TTY: /dev/nucleus_01</span>
       </div>
     </div>
   );

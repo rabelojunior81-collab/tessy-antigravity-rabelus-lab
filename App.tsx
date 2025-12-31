@@ -144,9 +144,9 @@ const AppContent: React.FC = () => {
   if (isMigrating) {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-bg-primary">
-        <div className="relative mb-8">
+        <div className="relative mb-12">
            <TessyLogo />
-           <div className="absolute inset-0 border-4 border-accent-primary/20 border-t-accent-primary rounded-full animate-spin scale-150"></div>
+           <div className="absolute inset-0 border-4 border-accent-primary/20 border-t-accent-primary rounded-none animate-spin scale-150"></div>
         </div>
         <p className="font-bold uppercase tracking-[0.5em] text-[10px] text-accent-primary animate-pulse-soft">Iniciando Protocolo Tessy...</p>
       </div>
@@ -155,40 +155,40 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-accent-primary/30 bg-bg-primary text-text-primary">
-      <header className="h-14 sm:h-16 flex items-center justify-between px-4 sm:px-6 border-b border-border-subtle bg-bg-primary/90 backdrop-blur-xl z-[70] shrink-0">
-        <div className="flex items-center space-x-3 sm:space-x-5 min-w-0">
+      <header className="h-16 sm:h-20 flex items-center justify-between px-6 sm:px-9 border-b border-border-subtle bg-bg-primary/90 backdrop-blur-xl z-[70] shrink-0">
+        <div className="flex items-center space-x-5 sm:space-x-8 min-w-0">
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-text-tertiary hover:text-accent-primary transition-colors border border-border-subtle rounded-md"
+            className="md:hidden p-3 text-text-tertiary hover:text-accent-primary transition-colors border border-border-subtle rounded-none"
           >
             {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
           <TessyLogo />
           <div className="flex flex-col min-w-0">
-            <h1 className="text-base sm:text-xl font-black tracking-tighter leading-none text-text-primary uppercase glow-text-blue truncate">
-              tessy <span className="text-accent-primary font-light italic text-[9px] sm:text-xs tracking-widest lowercase opacity-60">alpha v3.1</span>
+            <h1 className="text-[18px] font-semibold tracking-tight leading-none text-text-primary uppercase glow-text-blue truncate">
+              tessy <span className="text-accent-primary font-light italic text-[11px] tracking-widest lowercase opacity-60">alpha v3.1</span>
             </h1>
-            <span className="hidden xs:inline text-[7px] font-bold uppercase tracking-[0.3em] text-text-tertiary mt-1">Rabelus Lab Engine</span>
+            <span className="hidden xs:inline text-[11px] font-normal uppercase tracking-[0.1em] text-text-tertiary mt-2">Rabelus Lab Engine</span>
           </div>
         </div>
 
-        <div className="hidden lg:flex items-center gap-8">
-          <div className="flex items-center gap-2 border border-border-subtle px-4 py-1.5 bg-accent-primary/5 rounded-md">
+        <div className="hidden lg:flex items-center gap-12">
+          <div className="flex items-center gap-3 border border-border-subtle px-6 py-2 bg-accent-primary/5 rounded-none">
              <Cpu size={12} className="text-accent-primary/60" />
-             <div className="text-[9px] font-bold uppercase text-text-tertiary tracking-widest">
+             <div className="text-[10px] font-semibold uppercase text-text-tertiary tracking-widest">
                 CORE_NUCLEUS_SYNCED
              </div>
           </div>
           <DateAnchor groundingEnabled={groundingStatus} />
         </div>
         
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-5">
           <button 
             onClick={toggleTheme} 
-            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-bg-secondary border border-border-subtle text-accent-primary hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all rounded-md active:scale-95"
+            className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-bg-secondary border border-border-subtle text-accent-primary hover:border-accent-primary/50 hover:bg-accent-primary/5 transition-all rounded-none active:scale-95"
             title="Alternar Tema"
           >
-            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
       </header>
@@ -204,16 +204,16 @@ const AppContent: React.FC = () => {
         </Suspense>
       </div>
 
-      <footer className="h-7 sm:h-8 border-t border-border-subtle bg-bg-primary px-4 sm:px-6 flex items-center justify-between text-[7px] sm:text-[8px] text-text-tertiary font-bold tracking-[0.2em] shrink-0 z-[70]">
-        <div className="flex items-center space-x-4 sm:space-x-6">
+      <footer className="h-8 sm:h-10 border-t border-border-subtle bg-bg-primary px-6 sm:px-9 flex items-center justify-between text-[8px] sm:text-[10px] text-text-tertiary font-semibold tracking-[0.2em] shrink-0 z-[70]">
+        <div className="flex items-center space-x-6 sm:space-x-9">
           <span className="uppercase hover:text-accent-primary transition-colors cursor-default">© 2024 RABELUS LAB</span>
         </div>
-        <div className="flex items-center space-x-4 sm:space-x-8">
-          <div className="flex items-center gap-2">
-             <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-pulse"></div>
+        <div className="flex items-center space-x-6 sm:space-x-12">
+          <div className="flex items-center gap-3">
+             <div className="w-1.5 h-1.5 rounded-none bg-accent-primary animate-pulse"></div>
              <span className="uppercase text-accent-primary/80 font-bold hidden xs:inline">ANTIGRAVITY_KERNEL_V3.1</span>
           </div>
-          <span className="uppercase border-l border-border-subtle pl-4">STATUS: STABLE</span>
+          <span className="uppercase border-l border-border-subtle pl-6">STATUS: STABLE</span>
         </div>
       </footer>
 

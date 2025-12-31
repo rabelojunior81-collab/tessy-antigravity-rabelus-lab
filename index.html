@@ -95,6 +95,7 @@
         * {
             -webkit-tap-highlight-color: transparent;
             outline-color: var(--primary);
+            border-radius: 0 !important; /* Force square corners everywhere */
         }
 
         body {
@@ -110,7 +111,7 @@
         
         .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(59, 130, 246, 0.02); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.15); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.15); }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.3); }
 
         .glass-panel {
@@ -121,7 +122,6 @@
         }
 
         .brutalist-button {
-            border-radius: 4px !important;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             display: flex;
@@ -152,18 +152,22 @@
             background: rgba(59, 130, 246, 0.5);
         }
         
-        /* Prose customization for Markdown */
+        /* Prose customization for Markdown - Adjusted for R2 specs */
+        .prose {
+            font-size: 13px !important;
+            line-height: 1.6 !important;
+            font-weight: 400 !important;
+            color: #E3E8EF !important;
+        }
         .prose pre {
             background-color: #050c14 !important;
             border: 1px solid var(--border-subtle) !important;
-            border-radius: 4px !important;
-            padding: 1rem !important;
+            padding: 1.5rem !important; /* 50% increase */
         }
         .prose code {
             color: #60A5FA !important;
             background: rgba(59, 130, 246, 0.1) !important;
             padding: 0.2em 0.4em !important;
-            border-radius: 4px !important;
             font-size: 0.9em !important;
         }
         .prose a {
@@ -173,9 +177,10 @@
         }
         .prose h1, .prose h2, .prose h3 {
             color: #fff !important;
-            font-weight: 800 !important;
+            font-size: 14px !important; /* R2 Title Spec */
+            font-weight: 700 !important;
             text-transform: uppercase !important;
-            letter-spacing: -0.01em !important;
+            letter-spacing: 0.05em !important; /* R2 Title Spec */
         }
     </style>
 <script type="importmap">
