@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { X } from 'lucide-react';
 import { useViewer } from '../../hooks/useViewer';
@@ -14,7 +13,7 @@ const ViewerPanel: React.FC<ViewerPanelProps> = ({ title, children }) => {
   if (!viewerAberto) return null;
 
   const panelClasses = `
-    fixed md:absolute top-0 left-0 md:left-[60px] h-full w-full md:w-[380px] 
+    fixed md:absolute top-0 left-0 md:left-[40px] h-full w-full md:w-[380px] 
     bg-[#111111] border-r border-gray-800 z-[65] shadow-2xl 
     transition-all duration-300 ease-in-out transform
     ${viewerAberto ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}
