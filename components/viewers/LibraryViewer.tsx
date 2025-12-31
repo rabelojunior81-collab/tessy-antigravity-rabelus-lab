@@ -61,8 +61,8 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
   };
 
   return (
-    <div className="flex flex-col h-full bg-bg-secondary animate-fade-in">
-      <div className="p-4 border-b border-border-subtle space-y-4 bg-bg-primary/30">
+    <div className="flex flex-col h-full bg-transparent animate-fade-in">
+      <div className="p-4 border-b border-border-subtle space-y-4 bg-bg-primary/30 backdrop-blur-md">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={14} />
           <input
@@ -70,7 +70,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="BUSCAR..."
-            className="w-full bg-bg-primary border border-border-subtle py-2 pl-9 pr-4 text-[10px] font-semibold text-text-primary focus:border-accent-primary outline-none uppercase tracking-widest"
+            className="w-full bg-bg-tertiary/60 backdrop-blur-lg border border-border-subtle py-2 pl-9 pr-4 text-[10px] font-semibold text-text-primary focus:border-accent-primary outline-none uppercase tracking-widest"
           />
         </div>
         <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-1">
@@ -78,8 +78,8 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
             <button
               key={tag}
               onClick={() => setSelectedTag(tag)}
-              className={`px-3 py-1 text-[8px] font-bold uppercase tracking-widest border transition-all ${
-                selectedTag === tag ? 'bg-accent-primary/10 border-accent-primary text-accent-primary' : 'text-text-tertiary border-border-subtle hover:text-text-primary'
+              className={`px-3 py-1 text-[8px] font-bold uppercase tracking-widest border transition-all whitespace-nowrap ${
+                selectedTag === tag ? 'bg-accent-primary/10 border-accent-primary text-accent-primary' : 'bg-bg-primary/20 text-text-tertiary border-border-subtle hover:text-text-primary'
               }`}
             >
               {tag}
@@ -98,7 +98,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
             <div
               key={item.id}
               onClick={() => onSelectItem(item)}
-              className="p-4 bg-bg-primary/30 border border-border-subtle hover:border-accent-primary/20 transition-all cursor-pointer group"
+              className="p-4 bg-bg-tertiary/40 backdrop-blur-lg border border-border-subtle hover:border-accent-primary/20 transition-all cursor-pointer group"
             >
               <div className="flex justify-between items-start gap-2 mb-2">
                 <h4 className="text-[11px] font-bold text-text-secondary uppercase group-hover:text-accent-primary transition-colors truncate tracking-tight">

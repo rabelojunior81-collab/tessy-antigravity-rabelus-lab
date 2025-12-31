@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
-import { Send, Paperclip, MessageSquare, Bot, User, RotateCcw, Globe, FileText, Wand2, Save, Share2, Settings2, Trash2 } from 'lucide-react';
+import { Send, Paperclip, Bot, User, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -62,8 +62,8 @@ const CoPilot: React.FC = () => {
   ];
 
   return (
-    <aside className="w-[400px] h-full bg-bg-secondary border-l border-border-subtle flex flex-col z-[60] shrink-0">
-      <div className="h-16 flex items-center justify-between px-6 border-b border-border-subtle bg-bg-primary shrink-0">
+    <aside className="w-[400px] h-full bg-bg-secondary/60 backdrop-blur-xl border-l border-border-subtle flex flex-col z-[60] shrink-0">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
           <div className={`w-2 h-2 ${isLoading ? 'bg-accent-secondary animate-pulse' : 'bg-accent-primary shadow-[0_0_8px_#3B82F6]'}`}></div>
           <h2 className="text-[12px] font-bold text-text-primary uppercase tracking-[0.05em]">Célula IA</h2>
@@ -76,29 +76,28 @@ const CoPilot: React.FC = () => {
         </button>
       </div>
 
-      <div className="flex-1 overflow-hidden flex flex-col bg-bg-secondary">
-        <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6 pb-10">
+      <div className="flex-1 overflow-hidden flex flex-col bg-transparent">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 pb-10">
           {currentConversation?.turns.length === 0 && !isLoading && (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-20 animate-fade-in">
-              <MessageSquare size={32} className="mb-4" />
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em]">Sistema Pronto</p>
+            <div className="h-full flex flex-col items-center justify-center text-center opacity-40 animate-fade-in">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em]">Ready to assist</p>
             </div>
           )}
 
           {currentConversation?.turns.map((turn) => (
             <div key={turn.id} className="space-y-4 animate-fade-in">
-              <div className="flex flex-col items-end gap-1.5">
-                <div className="bg-accent-primary/10 border border-accent-primary/20 p-3 text-[13px] text-text-primary leading-relaxed max-w-[90%]">
+              <div className="flex flex-col items-start gap-1.5">
+                <div className="w-full bg-bg-tertiary/60 backdrop-blur-lg border border-border-subtle p-4 text-[13px] text-text-primary leading-relaxed">
                   {turn.userMessage}
                 </div>
               </div>
 
               <div className="flex flex-col items-start gap-1.5">
-                <div className="flex items-center gap-2 mb-1">
-                   <Bot size={12} className="text-accent-primary" />
-                   <span className="text-[10px] font-bold text-accent-primary uppercase tracking-widest">Tessy</span>
+                <div className="flex items-center gap-2 mb-1 px-1">
+                   <ChevronDown size={10} className="text-text-tertiary" />
+                   <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Thought for &lt;1s</span>
                 </div>
-                <div className="w-full bg-bg-tertiary/30 border border-border-subtle p-4 prose prose-invert max-w-none">
+                <div className="w-full bg-bg-tertiary/40 backdrop-blur-lg border border-border-subtle p-4 prose prose-invert max-w-none">
                   <ReactMarkdown
                     components={{
                       code({ node, inline, className, children, ...props }: any) {
@@ -115,12 +114,21 @@ const CoPilot: React.FC = () => {
                   >
                     {turn.tessyResponse}
                   </ReactMarkdown>
+                  
+                  <div className="flex items-center gap-3 mt-4 border-t border-border-subtle pt-3">
+                    <button className="text-[10px] font-semibold uppercase px-3 py-1.5 bg-bg-primary/50 border border-border-subtle text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
+                       <ThumbsUp size={12} /> Good
+                    </button>
+                    <button className="text-[10px] font-semibold uppercase px-3 py-1.5 bg-bg-primary/50 border border-border-subtle text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
+                       <ThumbsDown size={12} /> Bad
+                    </button>
+                  </div>
                 </div>
                 
                 {turn.groundingChunks && turn.groundingChunks.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2">
+                  <div className="mt-2 flex flex-wrap gap-2 px-1">
                     {turn.groundingChunks.map((chunk, idx) => chunk.web ? (
-                      <a key={idx} href={chunk.web.uri} target="_blank" rel="noopener noreferrer" className="text-[10px] font-semibold uppercase px-2 py-1 bg-bg-primary border border-border-subtle text-accent-primary hover:border-accent-primary transition-all">
+                      <a key={idx} href={chunk.web.uri} target="_blank" rel="noopener noreferrer" className="text-[10px] font-semibold uppercase px-2 py-1 bg-bg-primary/30 backdrop-blur-md border border-border-subtle text-accent-primary hover:border-accent-primary transition-all">
                         {chunk.web.title}
                       </a>
                     ) : null)}
@@ -138,7 +146,7 @@ const CoPilot: React.FC = () => {
           )}
         </div>
 
-        <div className="px-4 py-1 border-t border-border-subtle bg-bg-primary/50 flex items-center justify-around shrink-0">
+        <div className="px-4 py-2 border-t border-border-subtle bg-bg-primary/30 backdrop-blur-md flex items-center justify-around shrink-0">
           {toolbarItems.map((item, idx) => (
             <button 
               key={idx}
@@ -153,8 +161,8 @@ const CoPilot: React.FC = () => {
         </div>
 
         <div className="p-4 bg-bg-primary border-t border-border-subtle shrink-0">
-          <div className="flex items-end gap-3 bg-bg-tertiary border border-border-subtle p-3 focus-within:border-accent-primary transition-all">
-            <button onClick={() => fileInputRef.current?.click()} className="p-1 text-text-tertiary hover:text-accent-primary shrink-0">
+          <div className="flex items-end gap-3 bg-bg-tertiary/60 backdrop-blur-lg border border-border-subtle p-4 focus-within:border-accent-primary transition-all">
+            <button onClick={() => fileInputRef.current?.click()} className="p-1 text-text-tertiary hover:text-accent-primary shrink-0 transition-colors">
               <Paperclip size={20} />
             </button>
             <input type="file" ref={fileInputRef} onChange={(e) => e.target.files && addFile(e.target.files[0])} className="hidden" />
@@ -163,8 +171,8 @@ const CoPilot: React.FC = () => {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Digite..."
-              className="flex-1 bg-transparent border-none outline-none text-text-primary text-[13px] resize-none max-h-32 min-h-[20px] py-0.5 leading-relaxed placeholder:text-text-tertiary"
+              placeholder="Ask anything (Ctrl+L), @ to mention, / for workflows"
+              className="flex-1 bg-transparent border-none outline-none text-text-primary text-[13px] resize-none max-h-32 min-h-[24px] py-1 leading-relaxed placeholder:text-text-tertiary custom-scrollbar"
               rows={1}
             />
             
@@ -175,11 +183,6 @@ const CoPilot: React.FC = () => {
             >
               <Send size={20} />
             </button>
-          </div>
-          
-          <div className="flex items-center justify-between text-[10px] font-semibold text-text-tertiary uppercase tracking-widest mt-2 px-1">
-             <span>Shift+Enter para linha</span>
-             <div className={`w-1 h-1 ${isLoading ? 'bg-accent-secondary' : 'bg-accent-primary'}`}></div>
           </div>
         </div>
       </div>

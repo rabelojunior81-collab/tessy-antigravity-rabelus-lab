@@ -141,7 +141,7 @@ const AppContent: React.FC = () => {
 
   if (isMigrating) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-bg-primary">
+      <div className="h-screen w-full flex flex-col items-center justify-center bg-bg-primary/80 backdrop-blur-md">
         <TessyLogo />
         <p className="mt-4 font-bold uppercase tracking-[0.3em] text-[10px] text-accent-primary animate-pulse-soft">Sincronizando Nucleo...</p>
       </div>
@@ -150,11 +150,11 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-accent-primary/30 bg-bg-primary text-text-primary">
-      <header className="h-16 flex items-center justify-between px-6 border-b border-border-subtle bg-bg-primary z-[70] shrink-0">
+      <header className="h-16 flex items-center justify-between px-6 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md z-[70] shrink-0">
         <div className="flex items-center space-x-6 min-w-0">
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-text-tertiary hover:text-accent-primary transition-colors border border-border-subtle"
+            className="md:hidden p-2 text-text-tertiary hover:text-accent-primary transition-colors border border-border-subtle bg-bg-tertiary/40 backdrop-blur-lg"
           >
             {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -174,7 +174,7 @@ const AppContent: React.FC = () => {
         <div className="flex items-center space-x-4">
           <button 
             onClick={toggleTheme} 
-            className="w-10 h-10 flex items-center justify-center bg-bg-secondary border border-border-subtle text-accent-primary hover:border-accent-primary transition-all active:scale-95"
+            className="w-10 h-10 flex items-center justify-center bg-bg-secondary/60 backdrop-blur-xl border border-border-subtle text-accent-primary hover:border-accent-primary transition-all active:scale-95"
             title="Alternar Tema"
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -193,7 +193,7 @@ const AppContent: React.FC = () => {
         </Suspense>
       </div>
 
-      <footer className="h-8 border-t border-border-subtle bg-bg-primary px-6 flex items-center justify-between text-[10px] text-text-tertiary font-semibold tracking-[0.2em] shrink-0 z-[70]">
+      <footer className="h-8 border-t border-border-subtle bg-bg-primary/80 backdrop-blur-md px-6 flex items-center justify-between text-[10px] text-text-tertiary font-semibold tracking-[0.2em] shrink-0 z-[70]">
         <span className="uppercase">© 2024 RABELUS LAB</span>
         <div className="flex items-center space-x-6">
           <div className="flex items-center gap-2">

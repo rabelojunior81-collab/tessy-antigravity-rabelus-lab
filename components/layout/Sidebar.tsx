@@ -15,7 +15,7 @@ const Sidebar: React.FC = () => {
   ];
 
   const sidebarClasses = `
-    fixed md:relative top-0 left-0 h-full bg-bg-secondary border-r border-border-subtle 
+    fixed md:relative top-0 left-0 h-full bg-bg-secondary/60 backdrop-blur-xl border-r border-border-subtle 
     flex flex-col items-center py-4 gap-4 z-[80] shrink-0 transition-all duration-300 ease-in-out
     ${isMobileMenuOpen ? 'translate-x-0 w-[48px]' : '-translate-x-full md:translate-x-0 w-[48px]'}
   `;
@@ -41,12 +41,12 @@ const Sidebar: React.FC = () => {
                 className={`w-10 h-10 flex items-center justify-center transition-all duration-200 group relative ${
                   isActive 
                     ? 'text-accent-primary bg-accent-primary/10' 
-                    : 'text-text-tertiary hover:text-accent-primary hover:bg-bg-tertiary'
+                    : 'text-text-tertiary hover:text-accent-primary hover:bg-bg-tertiary/60 hover:backdrop-blur-lg'
                 }`}
               >
                 <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                 
-                <span className="absolute left-full ml-4 px-3 py-1.5 bg-bg-primary text-text-primary text-[10px] font-semibold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 z-50 border border-border-visible shadow-xl">
+                <span className="absolute left-full ml-4 px-3 py-1.5 bg-bg-primary/80 backdrop-blur-md text-text-primary text-[10px] font-semibold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 z-50 border border-border-visible shadow-xl">
                   {item.label}
                 </span>
               </button>

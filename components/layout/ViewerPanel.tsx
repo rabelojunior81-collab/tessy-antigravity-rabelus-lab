@@ -20,13 +20,13 @@ const ViewerPanel: React.FC<ViewerPanelProps> = ({ title, children }) => {
 
   const panelClasses = `
     fixed md:relative top-0 left-0 h-full
-    bg-bg-secondary border-r border-border-subtle z-[65]
+    bg-bg-secondary/60 backdrop-blur-xl border-r border-border-subtle z-[65]
     flex flex-col animate-fade-in
   `;
 
   return (
     <div className={panelClasses} style={panelStyle}>
-      <div className="flex items-center justify-between p-4 border-b border-border-subtle shrink-0">
+      <div className="flex items-center justify-between p-4 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <h3 className="text-[12px] font-bold uppercase tracking-[0.05em] text-text-primary glow-text-blue">{title}</h3>
         <button 
           onClick={fecharViewer}
@@ -35,7 +35,7 @@ const ViewerPanel: React.FC<ViewerPanelProps> = ({ title, children }) => {
           <X size={16} strokeWidth={3} />
         </button>
       </div>
-      <div className="flex-1 overflow-hidden relative bg-bg-secondary">
+      <div className="flex-1 overflow-hidden relative bg-transparent">
         {children}
       </div>
     </div>

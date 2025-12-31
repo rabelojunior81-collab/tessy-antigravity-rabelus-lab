@@ -100,10 +100,10 @@ const Terminal: React.FC = () => {
 
   return (
     <div 
-      className="h-[200px] bg-bg-primary border-t border-border-subtle flex flex-col shrink-0 relative select-none"
+      className="h-[200px] bg-bg-secondary/60 backdrop-blur-xl border-t border-border-subtle flex flex-col shrink-0 relative select-none"
       onClick={() => inputRef.current?.focus()}
     >
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle bg-bg-secondary shrink-0">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
           <TerminalIcon size={14} className="text-accent-primary/60" />
           <span className="text-[12px] font-bold uppercase tracking-[0.05em] text-text-primary">Shell v3.1</span>
@@ -124,7 +124,7 @@ const Terminal: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-4 font-mono text-[12px] leading-relaxed cursor-text bg-bg-primary/20">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-4 font-mono text-[12px] leading-relaxed cursor-text bg-bg-tertiary/40 backdrop-blur-lg">
         {history.map((line, idx) => (
           <div key={idx} className="mb-1">
             {line.type === 'input' ? (

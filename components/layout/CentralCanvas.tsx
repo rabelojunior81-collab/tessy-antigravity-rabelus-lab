@@ -28,8 +28,8 @@ const CentralCanvas: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in border border-border-subtle bg-bg-secondary">
-          <div className="px-4 py-2 border-b border-border-subtle bg-bg-secondary flex items-center justify-between shrink-0">
+        <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in border border-border-subtle bg-bg-secondary/40 backdrop-blur-lg">
+          <div className="px-4 py-2 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <span className="text-[11px] font-mono text-accent-primary tracking-tighter truncate max-w-[300px]">{arquivoSelecionado.path}</span>
               <span className="text-[10px] font-semibold uppercase px-2 py-0.5 bg-accent-primary/10 text-accent-primary border border-accent-primary/20">
@@ -55,13 +55,13 @@ const CentralCanvas: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex-1 overflow-auto custom-scrollbar bg-bg-primary/30 relative">
+          <div className="flex-1 overflow-auto custom-scrollbar relative">
             {isImage(arquivoSelecionado.language) ? (
               <div className="w-full h-full flex items-center justify-center p-8">
                  <img 
                    src={`data:image/${arquivoSelecionado.language};base64,${arquivoSelecionado.content}`} 
                    alt={arquivoSelecionado.path}
-                   className="max-w-full max-h-full object-contain border border-border-subtle" 
+                   className="max-w-full max-h-full object-contain border border-border-subtle shadow-2xl" 
                  />
               </div>
             ) : (

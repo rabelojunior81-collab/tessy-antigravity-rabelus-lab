@@ -123,18 +123,21 @@
         
         .prose {
             font-size: 13px !important;
-            line-height: 1.5 !important;
+            line-height: 1.6 !important;
             color: #E3E8EF !important;
         }
         .prose pre {
-            background-color: #0D2137 !important;
+            background-color: rgba(13, 33, 55, 0.4) !important;
+            backdrop-filter: blur(10px) !important;
             border: 1px solid var(--border-subtle) !important;
             padding: 16px !important;
+            margin: 1rem 0 !important;
         }
         .prose code {
             color: #3B82F6 !important;
             background: rgba(59, 130, 246, 0.05) !important;
             padding: 0.2em 0.4em !important;
+            font-family: 'JetBrains Mono', monospace !important;
         }
         .prose a {
             color: #3B82F6 !important;
@@ -142,12 +145,15 @@
         }
         .prose h1, .prose h2, .prose h3 {
             color: #E3E8EF !important;
-            font-size: 12px !important;
+            font-size: 13px !important;
             font-weight: 700 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.05em !important;
             margin-top: 1.5em !important;
-            margin-bottom: 0.5em !important;
+            margin-bottom: 0.75em !important;
+        }
+        .prose p {
+            margin-bottom: 1em !important;
         }
     </style>
 <script type="importmap">
