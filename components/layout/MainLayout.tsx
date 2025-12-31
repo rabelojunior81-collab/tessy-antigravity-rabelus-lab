@@ -1,17 +1,19 @@
+
 import React from 'react';
 import Sidebar from './Sidebar';
 import ViewerPanel from './ViewerPanel';
 import CentralCanvas from './CentralCanvas';
 import Terminal from './Terminal';
 import CoPilot from './CoPilot';
+import Controllers from './Controllers';
 import { useViewer } from '../../hooks/useViewer';
 
 interface MainLayoutProps {
   viewerContent: React.ReactNode;
-  chatContent: React.ReactNode;
+  chatContent?: React.ReactNode; // No longer strictly needed as CoPilot is self-contained via context
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent, chatContent }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
   const { viewerAberto } = useViewer();
 
   const getViewerTitle = () => {
@@ -41,7 +43,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent, chatContent }) =
       </main>
 
       <CoPilot>
-        {chatContent}
+        <Controllers />
       </CoPilot>
     </div>
   );
