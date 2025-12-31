@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Send, Paperclip, MessageSquare, Bot, User, RotateCcw, Globe, FileText, Wand2, Save, Share2, Settings2 } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
+import { useLayout } from '../../hooks/useLayout';
 import ReactMarkdown from 'https://esm.sh/react-markdown@^9.0.1';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as prismTheme } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -26,6 +27,8 @@ const CoPilot: React.FC = () => {
     removeFile,
     isUploadingFiles
   } = useChat();
+
+  const { larguraCoPilot } = useLayout();
 
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [isOptimizeModalOpen, setIsOptimizeModalOpen] = useState(false);
@@ -100,8 +103,15 @@ const CoPilot: React.FC = () => {
     },
   ];
 
+  const panelStyle = {
+    width: window.innerWidth < 1024 ? '100%' : `${larguraCoPilot}px`
+  };
+
   return (
-    <aside className="fixed lg:relative bottom-0 right-0 w-full lg:w-[450px] lg:h-full h-[60vh] lg:h-full bg-[#111111] border-l border-gray-800 flex flex-col z-[60] shrink-0 transition-all duration-300">
+    <aside 
+      className="fixed lg:relative bottom-0 right-0 w-full h-[60vh] lg:h-full bg-[#111111] border-l border-gray-800 flex flex-col z-[60] shrink-0 transition-all duration-300"
+      style={panelStyle}
+    >
       <div className="h-12 sm:h-14 flex items-center justify-between px-4 sm:px-6 border-b border-gray-800 bg-[#0a0a0a]/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className={`w-2 h-2 rounded-full ${isLoading ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 shadow-[0_0_8px_#10b981]'}`}></div>
