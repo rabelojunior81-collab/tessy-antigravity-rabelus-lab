@@ -1,6 +1,6 @@
+
 import React, { useState, useRef, useEffect, useCallback, Suspense, lazy, useMemo } from 'react';
 import LoadingSpinner from './components/LoadingSpinner';
-import HistorySidebar from './components/HistorySidebar';
 import Canvas from './components/Canvas';
 import FactorPanel from './components/FactorPanel';
 import ProjectSwitcher from './components/ProjectSwitcher';
@@ -15,10 +15,13 @@ import { LayoutProvider } from './contexts/LayoutContext';
 import MainLayout from './components/layout/MainLayout';
 import { useViewer } from './hooks/useViewer';
 
+// Viewers
+import HistoryViewer from './components/viewers/HistoryViewer';
+import LibraryViewer from './components/viewers/LibraryViewer';
+import ProjectsViewer from './components/viewers/ProjectsViewer';
+
 // Lazy Loaded Components
-const RepositoryBrowser = lazy(() => import('./components/RepositoryBrowser'));
 const OptimizationModal = lazy(() => import('./components/OptimizationModal'));
-const ProjectDashboard = lazy(() => import('./components/ProjectDashboard'));
 const GitHubTokenModal = lazy(() => import('./components/GitHubTokenModal'));
 
 const INITIAL_FACTORS: Factor[] = [
@@ -50,15 +53,12 @@ const TessyLogo = React.memo(() => (
 const MainContentWrapper: React.FC<{
   currentProjectId: string;
   currentConversation: Conversation | null;
-  historyRefreshKey: number;
-  refreshKey: number;
   handleLoadConversationFromHistory: (conv: Conversation) => void;
   handleDeleteConversationFromHistory: (id: string) => void;
   handleSelectItem: (item: RepositoryItem) => void;
   handleNewConversation: () => void;
-  handleOpenLibraryInDashboard: () => void;
-  handleRefreshHistoryInDashboard: () => void;
-  handleEditProjectInDashboard: (id: string) => void;
+  handleSwitchProject: (id: string) => void;
+  handleOpenProjectModal: (id?: string | null) => void;
   factors: Factor[];
   handleToggleFactor: (id: string, value?: any) => void;
   // Canvas Props
@@ -79,34 +79,49 @@ const MainContentWrapper: React.FC<{
   handleKeyDown: any;
   pendingUserMessage: any;
   pendingFiles: any;
-  handleImportSuccess: any;
 }> = (props) => {
-  const { viewerAberto, fecharViewer } = useViewer();
+  const { viewerAberto } = useViewer();
 
   const viewerContent = useMemo(() => {
     switch (viewerAberto) {
       case 'history':
-        return <HistorySidebar currentProjectId={props.currentProjectId} activeId={props.currentConversation?.id || ''} onLoad={props.handleLoadConversationFromHistory} onDelete={props.handleDeleteConversationFromHistory} refreshKey={props.historyRefreshKey} onClose={fecharViewer} />;
+        return (
+          <HistoryViewer 
+            currentProjectId={props.currentProjectId} 
+            activeId={props.currentConversation?.id || ''} 
+            onLoad={props.handleLoadConversationFromHistory} 
+            onDelete={props.handleDeleteConversationFromHistory}
+            onNew={props.handleNewConversation}
+          />
+        );
       case 'library':
-        return <RepositoryBrowser currentProjectId={props.currentProjectId} onSelectItem={props.handleSelectItem} refreshKey={props.refreshKey} onClose={fecharViewer} />;
+        return (
+          <LibraryViewer 
+            currentProjectId={props.currentProjectId} 
+            onSelectItem={props.handleSelectItem}
+          />
+        );
       case 'projects':
         return (
-          <Suspense fallback={<LoadingSpinner />}>
-            <ProjectDashboard projectId={props.currentProjectId} onNewConversation={props.handleNewConversation} onOpenLibrary={props.handleOpenLibraryInDashboard} onRefreshHistory={props.handleRefreshHistoryInDashboard} onEditProject={props.handleEditProjectInDashboard} />
-          </Suspense>
+          <ProjectsViewer 
+            currentProjectId={props.currentProjectId} 
+            onSwitch={props.handleSwitchProject}
+            onOpenModal={() => props.handleOpenProjectModal()}
+            onEditProject={(id) => props.handleOpenProjectModal(id)}
+          />
         );
       case 'controllers':
         return <FactorPanel factors={props.factors} onToggle={props.handleToggleFactor} />;
       case 'github':
         return (
-          <div className="p-8 text-center text-gray-500 uppercase font-black text-[10px] tracking-widest italic">
-            GitHub Sync Panel (Integração vindo em breve...)
+          <div className="p-12 text-center text-gray-500 uppercase font-black text-[10px] tracking-[0.3em] italic border border-dashed border-gray-800 m-4">
+            GitHub Sync Panel <br/><br/>(Integração em Desenvolvimento)
           </div>
         );
       default:
         return null;
     }
-  }, [viewerAberto, props, fecharViewer]);
+  }, [viewerAberto, props]);
 
   const chatContent = props.currentConversation ? (
     <Canvas 
@@ -124,7 +139,7 @@ const MainContentWrapper: React.FC<{
       factors={props.factors}
       conversationTitle={props.currentConversation.title}
       conversationId={props.currentConversation.id}
-      onImportSuccess={props.handleImportSuccess}
+      onImportSuccess={props.handleLoadConversationFromHistory}
     />
   ) : <LoadingSpinner />;
 
@@ -154,8 +169,6 @@ const App: React.FC = () => {
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
 
-  // Layout context is handled in MainContentWrapper
-  
   const [inputText, setInputText] = useState('');
   const [result, setResult] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -252,14 +265,11 @@ const App: React.FC = () => {
   const handleSwitchProject = useCallback(async (id: string) => {
     setCurrentProjectId(id);
     db.settings.put({ key: 'tessy-current-project', value: id });
-    
-    // Check GitHub token for the new project
     const proj = await db.projects.get(id);
     if (proj?.githubRepo) {
       const token = await getGitHubToken();
       if (!token) setIsGitHubTokenModalOpen(true);
     }
-    
     handleNewConversation();
     setRefreshKey(p => p + 1);
     setHistoryRefreshKey(p => p + 1);
@@ -293,7 +303,6 @@ const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleGlobalKeyDown, true);
   }, [handleNewConversation]);
 
-  // Debounced persistence for factors to avoid DB bottleneck during slider movement
   useEffect(() => {
     if (!isMigrating) {
       const timer = setTimeout(() => {
@@ -514,10 +523,6 @@ const App: React.FC = () => {
     showToast('Salvo na Biblioteca!', 'success');
   }, [currentConversation, result, factors, currentProjectId, showToast]);
 
-  const handleEditProjectInDashboard = useCallback((id: string) => handleOpenProjectModal(id), [handleOpenProjectModal]);
-  const handleOpenLibraryInDashboard = useCallback(() => { /* handled via context */ }, []);
-  const handleRefreshHistoryInDashboard = useCallback(() => setHistoryRefreshKey(p => p + 1), []);
-
   const groundingStatus = useMemo(() => factors.find(f => f.id === 'grounding')?.enabled || false, [factors]);
 
   if (isMigrating) {
@@ -546,7 +551,6 @@ const App: React.FC = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-6">
-            <ProjectSwitcher currentProjectId={currentProjectId} onSwitch={handleSwitchProject} onOpenModal={() => handleOpenProjectModal()} onEditProject={(id) => handleOpenProjectModal(id)} />
             <DateAnchor groundingEnabled={groundingStatus} />
           </div>
           
@@ -571,15 +575,12 @@ const App: React.FC = () => {
           <MainContentWrapper 
             currentProjectId={currentProjectId}
             currentConversation={currentConversation}
-            historyRefreshKey={historyRefreshKey}
-            refreshKey={refreshKey}
             handleLoadConversationFromHistory={handleLoadConversationFromHistory}
             handleDeleteConversationFromHistory={handleDeleteConversationFromHistory}
             handleSelectItem={handleSelectItem}
             handleNewConversation={handleNewConversation}
-            handleOpenLibraryInDashboard={handleOpenLibraryInDashboard}
-            handleRefreshHistoryInDashboard={handleRefreshHistoryInDashboard}
-            handleEditProjectInDashboard={handleEditProjectInDashboard}
+            handleSwitchProject={handleSwitchProject}
+            handleOpenProjectModal={handleOpenProjectModal}
             factors={factors}
             handleToggleFactor={handleToggleFactor}
             result={result}
@@ -604,7 +605,6 @@ const App: React.FC = () => {
             }}
             pendingUserMessage={pendingUserMessage}
             pendingFiles={pendingFiles}
-            handleImportSuccess={handleLoadConversationFromHistory}
           />
         </div>
 
@@ -617,8 +617,7 @@ const App: React.FC = () => {
             </span>
           </div>
           <div className="flex items-center space-x-8">
-            <span className="uppercase">branch: refactor/antigravity-layout | v3.3.0</span>
-            <span className="text-emerald-500 font-black">NÚCLEO ATIVO</span>
+            <span className="uppercase text-emerald-500 font-black">NÚCLEO ATIVO</span>
           </div>
         </footer>
 
