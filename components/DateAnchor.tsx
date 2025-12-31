@@ -13,7 +13,6 @@ export const DateAnchor: React.FC<DateAnchorProps> = ({ groundingEnabled }) => {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
-      year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
       timeZone: 'America/Sao_Paulo'
@@ -27,13 +26,15 @@ export const DateAnchor: React.FC<DateAnchorProps> = ({ groundingEnabled }) => {
   }, []);
 
   return (
-    <div className="bg-bg-secondary/85 backdrop-blur-xl border border-border-visible px-4 py-2 shadow-lg shadow-accent-primary/5 rounded-lg flex items-center gap-3 transition-all duration-300">
-      <div className={`w-2 h-2 rounded-full ${groundingEnabled ? 'bg-accent-primary animate-pulse-soft' : 'bg-text-tertiary/40 shadow-[0_0_5px_rgba(59,130,246,0.1)]'}`} />
-      <span className="text-[10px] font-bold text-accent-primary uppercase tracking-[0.2em]">
-        {groundingEnabled ? "BUSCA ATIVA" : "BUSCA INATIVA"}
-      </span>
-      <div className="h-4 w-px bg-border-subtle" />
-      <span className="text-[10px] font-bold text-text-primary uppercase tracking-tight">
+    <div className="bg-bg-secondary border border-border-visible px-4 py-1.5 flex items-center gap-4 transition-all duration-300">
+      <div className="flex items-center gap-2">
+        <div className={`w-1.5 h-1.5 ${groundingEnabled ? 'bg-accent-primary animate-pulse' : 'bg-text-tertiary opacity-40'}`} />
+        <span className="text-[10px] font-bold text-accent-primary uppercase tracking-[0.1em]">
+          {groundingEnabled ? "GROUNDING ATIVO" : "GROUNDING OFF"}
+        </span>
+      </div>
+      <div className="h-3 w-px bg-border-subtle" />
+      <span className="text-[10px] font-semibold text-text-primary uppercase tracking-tight opacity-80">
         {currentDate}
       </span>
     </div>

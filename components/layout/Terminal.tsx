@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLayout } from '../../hooks/useLayout';
-import { Terminal as TerminalIcon, Trash2, Command, ShieldCheck } from 'lucide-react';
+import { Terminal as TerminalIcon, Trash2, ShieldCheck } from 'lucide-react';
 
 interface TerminalLine {
   type: 'input' | 'output' | 'error' | 'system';
@@ -8,30 +8,20 @@ interface TerminalLine {
 }
 
 const Terminal: React.FC = () => {
-  const { alturaTerminal, ajustarAlturaTerminal } = useLayout();
-  const [isResizing, setIsResizing] = useState(false);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<TerminalLine[]>([
     { type: 'system', content: 'TESSY OS [Build 3.1.0-STABLE]' },
-    { type: 'system', content: 'Iniciando Kernel Antigravity...' },
-    { type: 'system', content: 'Conexão segura estabelecida via Gemini 3 Nucleus.' },
-    { type: 'output', content: 'Digite "help" para ver os comandos de sistema.' },
+    { type: 'system', content: 'Kernel Antigravity Ativo.' },
   ]);
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   
-  const terminalRef = useRef<HTMLDivElement>(null);
   const outputEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     outputEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [history]);
-
-  const handleTerminalClick = () => {
-    inputRef.current?.focus();
-  };
 
   const executeCommand = useCallback((cmd: string) => {
     const trimmedCmd = cmd.trim();
@@ -50,53 +40,37 @@ const Terminal: React.FC = () => {
 
     switch (baseCmd) {
       case 'help':
-        output = `COMANDOS DISPONÍVEIS:
-  ls        - Listar diretórios virtuais
-  pwd       - Diretório atual de trabalho
-  clear     - Limpar buffer de saída
-  echo [t]  - Repetir texto na saída
-  date      - Data e hora sincronizada
-  whoami    - Identificação do operador
-  tessy     - Status vital do núcleo
-  help      - Mostrar este guia`;
+        output = 'ls, pwd, clear, date, whoami, tessy';
         break;
       case 'ls':
-        output = 'src/  public/  assets/  config/  lib/  manifest.json  readme.md';
+        output = 'src/ public/ readme.md';
         break;
       case 'pwd':
-        output = '/workspace/rabelus-lab/tessy-nucleus-01';
+        output = '/workspace/rabelus-lab/tessy-nucleus';
         break;
       case 'clear':
         setHistory([]);
         setInput('');
         return;
-      case 'echo':
-        output = args.length > 0 ? args.join(' ') : ' ';
-        break;
       case 'date':
         output = new Date().toLocaleString('pt-BR');
         break;
       case 'whoami':
-        output = 'tessy-operator@rabelus-nucleus';
+        output = 'tessy-operator';
         break;
       case 'tessy':
-        output = `RELATÓRIO DE STATUS:
-  Núcleo: Ativo (Gemini 3)
-  Latência: 118ms (Nominal)
-  Grounding: Online
-  Tokens Disponíveis: 128k
-  Sincronização: 100% Estável`;
+        output = 'STATUS: ONLINE\nCORE: GEMINI 3\nSYNC: 100%';
         type = 'system';
         break;
       default:
-        output = `Comando desconhecido: "${baseCmd}". Digite help.`;
+        output = `Erro: "${baseCmd}" desconhecido.`;
         type = 'error';
     }
 
     if (output) {
       setTimeout(() => {
         setHistory(prev => [...prev, { type, content: output! }]);
-      }, 80);
+      }, 50);
     }
   }, []);
 
@@ -124,89 +98,45 @@ const Terminal: React.FC = () => {
     }
   };
 
-  const startResizing = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsResizing(true);
-  };
-
-  const stopResizing = () => setIsResizing(false);
-
-  const resize = useCallback((e: MouseEvent) => {
-    if (isResizing) {
-      const newHeight = window.innerHeight - e.clientY;
-      if (newHeight >= 100 && newHeight <= window.innerHeight * 0.6) {
-        ajustarAlturaTerminal(newHeight);
-      }
-    }
-  }, [isResizing, ajustarAlturaTerminal]);
-
-  useEffect(() => {
-    if (isResizing) {
-      window.addEventListener('mousemove', resize);
-      window.addEventListener('mouseup', stopResizing);
-    } else {
-      window.removeEventListener('mousemove', resize);
-      window.removeEventListener('mouseup', stopResizing);
-    }
-    return () => {
-      window.removeEventListener('mousemove', resize);
-      window.removeEventListener('mouseup', stopResizing);
-    };
-  }, [isResizing, resize]);
-
   return (
     <div 
-      ref={terminalRef}
-      style={{ height: `${alturaTerminal}px` }}
-      className="bg-bg-primary border-t border-border-subtle flex flex-col shrink-0 relative transition-[height] duration-75 select-none rounded-none"
-      onClick={handleTerminalClick}
+      className="h-[200px] bg-bg-primary border-t border-border-subtle flex flex-col shrink-0 relative select-none"
+      onClick={() => inputRef.current?.focus()}
     >
-      <div 
-        onMouseDown={startResizing}
-        className="resize-handle-v absolute top-0 left-0 right-0 h-[4px] z-20 hover:bg-accent-primary/40 transition-colors"
-      />
-      
-      <div className="flex items-center justify-between px-6 py-3 border-b border-border-subtle/50 bg-bg-secondary shrink-0">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <TerminalIcon size={16} className="text-accent-primary/60" />
-            <span className="text-[14px] font-bold uppercase tracking-[0.05em] text-text-primary">Tessy Shell v3.1</span>
-          </div>
-          <div className="flex gap-2">
-            <div className="w-2 h-2 rounded-none bg-accent-primary/10"></div>
-            <div className="w-2 h-2 rounded-none bg-accent-primary/20"></div>
-            <div className="w-2 h-2 rounded-none bg-accent-primary/40"></div>
-          </div>
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle bg-bg-secondary shrink-0">
+        <div className="flex items-center gap-3">
+          <TerminalIcon size={14} className="text-accent-primary/60" />
+          <span className="text-[12px] font-bold uppercase tracking-[0.05em] text-text-primary">Shell v3.1</span>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
           <button 
             onClick={(e) => { e.stopPropagation(); setHistory([]); }}
-            className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-3 group"
+            className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-2"
           >
-            <Trash2 size={14} className="opacity-50 group-hover:opacity-100" />
-            <span className="text-[10px] font-semibold uppercase tracking-widest">Limpar</span>
+            <Trash2 size={12} />
+            <span className="text-[10px] font-semibold uppercase tracking-widest">Clear</span>
           </button>
-          <div className="h-5 w-px bg-border-subtle"></div>
-          <div className="flex items-center gap-3 text-[10px] font-semibold text-text-tertiary uppercase tracking-widest">
+          <div className="h-4 w-px bg-border-subtle"></div>
+          <div className="flex items-center gap-2 text-[10px] font-semibold text-text-tertiary uppercase tracking-widest">
              <ShieldCheck size={12} className="text-accent-primary/40" />
-             Secure_Layer: Active
+             Secure
           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-7 font-mono text-[12px] leading-relaxed cursor-text selection:bg-accent-primary/20 bg-bg-primary/30">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-4 font-mono text-[12px] leading-relaxed cursor-text bg-bg-primary/20">
         {history.map((line, idx) => (
-          <div key={idx} className="mb-2 animate-fade-in">
+          <div key={idx} className="mb-1">
             {line.type === 'input' ? (
-              <div className="flex gap-4">
+              <div className="flex gap-2">
                 <span className="text-accent-primary font-black">λ</span>
                 <span className="text-text-primary">{line.content}</span>
               </div>
             ) : (
               <div className={`whitespace-pre-wrap ${
-                line.type === 'error' ? 'text-red-400/90' : 
-                line.type === 'system' ? 'text-accent-primary/40 italic' : 
-                'text-accent-primary/70'
+                line.type === 'error' ? 'text-red-400' : 
+                line.type === 'system' ? 'text-accent-primary/50' : 
+                'text-text-secondary'
               }`}>
                 {line.content}
               </div>
@@ -214,7 +144,7 @@ const Terminal: React.FC = () => {
           </div>
         ))}
         
-        <div className="flex items-center gap-4 mt-4">
+        <div className="flex items-center gap-2">
           <span className="text-accent-primary font-black">λ</span>
           <input
             ref={inputRef}
@@ -222,23 +152,12 @@ const Terminal: React.FC = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            autoFocus
             className="flex-1 bg-transparent border-none outline-none text-text-primary font-mono text-[12px] caret-accent-primary"
             spellCheck={false}
             autoComplete="off"
           />
         </div>
-        <div ref={outputEndRef} className="h-6" />
-      </div>
-
-      <div className="px-6 py-2 border-t border-border-subtle bg-bg-secondary flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <Command size={12} className="text-text-tertiary" />
-            <span className="text-[10px] font-semibold text-text-tertiary uppercase tracking-widest">Comando: help</span>
-          </div>
-        </div>
-        <span className="text-[10px] font-mono text-text-tertiary uppercase">TTY: /dev/nucleus_01</span>
+        <div ref={outputEndRef} className="h-4" />
       </div>
     </div>
   );

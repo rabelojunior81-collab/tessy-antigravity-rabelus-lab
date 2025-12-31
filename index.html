@@ -20,18 +20,6 @@
               'xs': '480px',
             },
             colors: {
-              antigravity: {
-                bg: '#0A1929',
-                panel: '#0D2137',
-                terminal: '#050c14',
-                blue: '#3B82F6',
-                accent: '#60A5FA',
-                slate: {
-                  800: '#1e293b',
-                  900: '#0f172a',
-                  950: '#020617',
-                }
-              },
               'bg-primary': '#0A1929',
               'bg-secondary': '#0D2137',
               'bg-tertiary': '#112A45',
@@ -40,15 +28,16 @@
               'text-tertiary': '#5A6B7F',
               'accent-primary': '#3B82F6',
               'accent-secondary': '#60A5FA',
+              'border-subtle': 'rgba(59, 130, 246, 0.1)',
+              'border-visible': 'rgba(59, 130, 246, 0.2)',
             },
             animation: {
               'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
-              'fade-in': 'fadeIn 0.3s ease-out forwards',
-              'fade-out': 'fadeOut 0.2s ease-in forwards',
-              'zoom-in': 'zoomIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-              'zoom-out': 'zoomOut 0.2s ease-in forwards',
-              'slide-in-right': 'slideInRight 0.3s ease-out forwards',
-              'spin-slow': 'spin 8s linear infinite',
+              'fade-in': 'fadeIn 0.2s ease-out forwards',
+              'fade-out': 'fadeOut 0.1s ease-in forwards',
+              'zoom-in': 'zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'zoom-out': 'zoomOut 0.1s ease-in forwards',
+              'slide-in-right': 'slideInRight 0.2s ease-out forwards',
             },
             keyframes: {
               pulseSoft: {
@@ -64,15 +53,15 @@
                 to: { opacity: 0 },
               },
               zoomIn: {
-                from: { opacity: 0, transform: 'scale(0.95) translateY(10px)' },
-                to: { opacity: 1, transform: 'scale(1) translateY(0)' },
+                from: { opacity: 0, transform: 'scale(0.98)' },
+                to: { opacity: 1, transform: 'scale(1)' },
               },
               zoomOut: {
-                from: { opacity: 1, transform: 'scale(1) translateY(0)' },
-                to: { opacity: 0, transform: 'scale(0.95) translateY(10px)' },
+                from: { opacity: 1, transform: 'scale(1)' },
+                to: { opacity: 0, transform: 'scale(0.98)' },
               },
               slideInRight: {
-                from: { opacity: 0, transform: 'translateX(20px)' },
+                from: { opacity: 0, transform: 'translateX(10px)' },
                 to: { opacity: 1, transform: 'translateX(0)' },
               }
             }
@@ -95,7 +84,7 @@
         * {
             -webkit-tap-highlight-color: transparent;
             outline-color: var(--primary);
-            border-radius: 0 !important; /* Force square corners everywhere */
+            border-radius: 0 !important;
         }
 
         body {
@@ -110,39 +99,19 @@
         }
         
         .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(59, 130, 246, 0.02); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.15); }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.3); }
-
-        .glass-panel {
-            background: rgba(13, 33, 55, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-visible);
-        }
-
-        .brutalist-button {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-visible); }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
         .glow-text-blue { 
-            text-shadow: 0 0 15px rgba(59, 130, 246, 0.4); 
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.3); 
         }
 
-        /* Selection */
         ::selection {
             background: rgba(59, 130, 246, 0.3);
             color: white;
         }
 
-        /* Resize Handles */
         .resize-handle-v {
             cursor: ns-resize;
             height: 4px;
@@ -152,35 +121,33 @@
             background: rgba(59, 130, 246, 0.5);
         }
         
-        /* Prose customization for Markdown - Adjusted for R2 specs */
         .prose {
             font-size: 13px !important;
-            line-height: 1.6 !important;
-            font-weight: 400 !important;
+            line-height: 1.5 !important;
             color: #E3E8EF !important;
         }
         .prose pre {
-            background-color: #050c14 !important;
+            background-color: #0D2137 !important;
             border: 1px solid var(--border-subtle) !important;
-            padding: 1.5rem !important; /* 50% increase */
+            padding: 16px !important;
         }
         .prose code {
-            color: #60A5FA !important;
-            background: rgba(59, 130, 246, 0.1) !important;
+            color: #3B82F6 !important;
+            background: rgba(59, 130, 246, 0.05) !important;
             padding: 0.2em 0.4em !important;
-            font-size: 0.9em !important;
         }
         .prose a {
             color: #3B82F6 !important;
             text-decoration: underline !important;
-            text-underline-offset: 4px !important;
         }
         .prose h1, .prose h2, .prose h3 {
-            color: #fff !important;
-            font-size: 14px !important; /* R2 Title Spec */
+            color: #E3E8EF !important;
+            font-size: 12px !important;
             font-weight: 700 !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.05em !important; /* R2 Title Spec */
+            letter-spacing: 0.05em !important;
+            margin-top: 1.5em !important;
+            margin-bottom: 0.5em !important;
         }
     </style>
 <script type="importmap">
