@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Send, Paperclip, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
@@ -43,8 +44,6 @@ const CoPilot: React.FC = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       const scrollHeight = textareaRef.current.scrollHeight;
-      // 13px font-size * 1.5 line-height = ~20px per line
-      // Min height: 40px (2 lines), Max height: 200px (10 lines)
       const newHeight = Math.min(Math.max(scrollHeight, 40), 200);
       textareaRef.current.style.height = `${newHeight}px`;
     }
@@ -92,7 +91,7 @@ const CoPilot: React.FC = () => {
 
       <div className="flex-1 overflow-hidden flex flex-col bg-transparent">
         {/* MENSAGENS */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 pb-10">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 pb-20 relative">
           {currentConversation?.turns.length === 0 && !isLoading && (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-40 animate-fade-in">
               <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-text-tertiary">ready for instruction</p>
@@ -159,24 +158,24 @@ const CoPilot: React.FC = () => {
               <div className="w-[60%] h-4 bg-bg-tertiary/40 border border-border-subtle"></div>
             </div>
           )}
+
+          {/* ÍCONES FLUTUANTES - POSICIONADOS ACIMA DO INPUT */}
+          <div className="absolute bottom-4 left-4 flex items-center gap-3 z-10">
+            {toolbarItems.map((item, idx) => (
+              <button 
+                key={idx}
+                onClick={item.onClick}
+                disabled={item.disabled}
+                title={item.label}
+                className={`p-2 bg-bg-primary/60 backdrop-blur-md border border-border-subtle hover:border-accent-primary transition-all shadow-lg ${item.color || 'text-text-tertiary hover:text-accent-primary'} ${item.disabled ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 active:scale-90'}`}
+              >
+                <item.icon size={18} />
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* TOOLBAR - POSICIONADA ACIMA DO INPUT */}
-        <div className="px-4 py-2 border-t border-b border-border-subtle bg-bg-primary/30 backdrop-blur-md flex items-center justify-around shrink-0">
-          {toolbarItems.map((item, idx) => (
-            <button 
-              key={idx}
-              onClick={item.onClick}
-              disabled={item.disabled}
-              title={item.label}
-              className={`p-2 transition-all ${item.color || 'text-text-tertiary hover:text-accent-primary'} ${item.disabled ? 'opacity-20 cursor-not-allowed' : 'hover:scale-110 active:scale-90'}`}
-            >
-              <item.icon size={18} />
-            </button>
-          ))}
-        </div>
-
-        {/* ÁREA DE INPUT - SEM BORDAS SUPERIORES (TOOLBAR JÁ POSSUI border-b) */}
+        {/* ÁREA DE INPUT */}
         <div className="p-4 bg-bg-primary shrink-0">
           {/* File Preview INTEGRADO */}
           {attachedFiles.length > 0 && (
