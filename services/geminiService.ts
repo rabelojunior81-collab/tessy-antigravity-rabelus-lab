@@ -510,30 +510,24 @@ NOTA: Se esta tarefa envolver informações temporais (notícias, eventos recent
 };
 
 /**
- * Advanced Feature: Optimize Prompt using Gemini Pro
+ * Advanced Feature: Optimize Prompt using Gemini Pro (PRE-SEND)
  */
-export const optimizePrompt = async (userInput: string, interpretation: any, generatedResponse: string): Promise<OptimizationResult> => {
+export const optimizePrompt = async (prompt: string): Promise<OptimizationResult> => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     
-    const prompt = `Você é um especialista em engenharia de prompts. Analise o seguinte prompt e resposta:
-
-PROMPT ORIGINAL: ${userInput}
-INTERPRETAÇÃO: ${JSON.stringify(interpretation)}
-RESPOSTA GERADA (Resumo): ${generatedResponse.slice(0, 500)}
-
-Analise a qualidade do prompt original e forneça:
-1. Score de clareza (1-10)
-2. Score de completude (1-10)
-3. 3-5 sugestões concretas de melhoria (categoria, problema, recomendação)
-4. Versão otimizada do prompt (reescrita melhorada)
-
-Retorne em formato JSON estruturado.`;
+    const systemInstruction = `Você é um especialista em engenharia de prompts. Analise o prompt fornecido pelo usuário e:
+1. Avalie clareza (0-10)
+2. Avalie completude (0-10)
+3. Liste 2-4 sugestões de melhoria (categoria, problema, recomendação)
+4. Gere uma versão otimizada do prompt que seja mais clara, específica e eficaz.
+Retorne rigorosamente no formato JSON especificado.`;
 
     const response = await ai.models.generateContent({
       model: MODEL_PRO,
-      contents: prompt,
+      contents: `Analise este prompt: "${prompt}"`,
       config: {
+        systemInstruction: systemInstruction,
         responseMimeType: "application/json",
         temperature: 0.3,
         responseSchema: {

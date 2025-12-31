@@ -5,6 +5,7 @@ import ReactMarkdown from 'https://esm.sh/react-markdown@^9.0.1';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as prismTheme } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import TemplateModal from '../modals/TemplateModal';
+import OptimizeModal from '../modals/OptimizeModal';
 
 const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { 
@@ -22,6 +23,8 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   } = useChat();
 
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+  const [isOptimizeModalOpen, setIsOptimizeModalOpen] = useState(false);
+  
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -50,7 +53,7 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const toolbarItems = [
     { icon: FileText, label: 'Templates', onClick: () => setIsTemplateModalOpen(true) },
-    { icon: Wand2, label: 'Otimizar Prompt', onClick: () => console.log('Otimizar') },
+    { icon: Wand2, label: 'Otimizar Prompt', onClick: () => setIsOptimizeModalOpen(true) },
     { icon: Save, label: 'Salvar Conversa', onClick: () => console.log('Salvar') },
     { icon: Share2, label: 'Compartilhar', onClick: () => console.log('Compartilhar') },
     { icon: RotateCcw, label: 'Reiniciar Conversa', onClick: () => newConversation() },
@@ -221,6 +224,15 @@ const CoPilot: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         onClose={() => setIsTemplateModalOpen(false)}
         onSelect={(content) => {
           setInputText(content);
+        }}
+      />
+
+      <OptimizeModal 
+        isOpen={isOptimizeModalOpen}
+        inputText={inputText}
+        onClose={() => setIsOptimizeModalOpen(false)}
+        onApply={(optimized) => {
+          setInputText(optimized);
         }}
       />
     </aside>
