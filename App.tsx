@@ -688,7 +688,9 @@ const App: React.FC = () => {
           </span>
         </div>
         <div className="flex items-center space-x-2 sm:space-x-8">
-          <span className="hidden md:inline transition-opacity duration-300">PULSE PROTOCOL v3.2.0</span>
+          <span className="hidden md:inline transition-opacity duration-300 uppercase">
+             branch: refactor/antigravity-layout | v3.2.0
+          </span>
           <span className="text-emerald-600 dark:text-emerald-400 font-black">SEGURO</span>
         </div>
       </footer>
