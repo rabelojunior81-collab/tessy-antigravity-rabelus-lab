@@ -1,6 +1,6 @@
 
 import React, { useRef, useEffect, useState, useMemo } from 'react';
-import { Send, Paperclip, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
+import { ArrowRight, Plus, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -84,6 +84,7 @@ const CoPilot: React.FC = () => {
         <button 
           onClick={() => setIsControllersModalOpen(true)}
           className="p-2 text-text-tertiary hover:text-accent-primary transition-all active:scale-95"
+          title="Configurações"
         >
           <Settings2 size={18} />
         </button>
@@ -160,14 +161,14 @@ const CoPilot: React.FC = () => {
           )}
 
           {/* ÍCONES FLUTUANTES - POSICIONADOS ACIMA DO INPUT */}
-          <div className="absolute bottom-24 left-4 flex items-center gap-3 z-10">
+          <div className="absolute bottom-28 left-4 flex items-center gap-3 z-10">
             {toolbarItems.map((item, idx) => (
               <button 
                 key={idx}
                 onClick={item.onClick}
                 disabled={item.disabled}
                 title={item.label}
-                className={`p-2 bg-bg-primary/60 backdrop-blur-md border border-border-subtle hover:border-accent-primary transition-all shadow-lg ${item.color || 'text-text-tertiary hover:text-accent-primary'} ${item.disabled ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 active:scale-90'}`}
+                className={`p-1 hover:border-accent-primary transition-all ${item.color || 'text-text-tertiary hover:text-accent-primary'} ${item.disabled ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 active:scale-90'}`}
               >
                 <item.icon size={18} />
               </button>
@@ -185,8 +186,12 @@ const CoPilot: React.FC = () => {
           )}
           
           <div className="flex items-end gap-3 bg-bg-tertiary/80 backdrop-blur-xl border border-border-subtle p-4 focus-within:border-accent-primary transition-all shadow-2xl">
-            <button onClick={() => fileInputRef.current?.click()} className="p-1 text-text-tertiary hover:text-accent-primary shrink-0 transition-colors">
-              <Paperclip size={20} />
+            <button 
+              onClick={() => fileInputRef.current?.click()} 
+              className="p-1 text-text-tertiary hover:text-accent-primary shrink-0 transition-colors"
+              title="Anexar arquivo"
+            >
+              <Plus size={20} />
             </button>
             <input type="file" ref={fileInputRef} onChange={(e) => e.target.files && addFile(e.target.files[0])} className="hidden" />
             
@@ -203,8 +208,9 @@ const CoPilot: React.FC = () => {
               onClick={() => sendMessage()}
               disabled={isLoading || isUploadingFiles || (!inputText.trim() && attachedFiles.length === 0)}
               className={`p-1 transition-all ${(!inputText.trim() && attachedFiles.length === 0) ? 'text-text-tertiary opacity-30' : 'text-accent-primary hover:scale-110 active:scale-90'}`}
+              title="Transmitir mensagem"
             >
-              <Send size={20} />
+              <ArrowRight size={20} />
             </button>
           </div>
         </div>
