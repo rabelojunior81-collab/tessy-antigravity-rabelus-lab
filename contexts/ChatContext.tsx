@@ -1,8 +1,8 @@
 
 import React, { createContext, useState, useContext, ReactNode, useCallback, useEffect } from 'react';
-import { Conversation, ConversationTurn, Factor, RepositoryItem, AttachedFile } from '../types';
+import { Conversation, ConversationTurn, Factor, AttachedFile } from '../types';
 import { db, generateUUID, getGitHubToken } from '../services/dbService';
-import { interpretIntent, applyFactorsAndGenerate } from '../services/geminiService';
+import { interpretIntent, applyFactorsAndGenerate } from '../services/gemini/service';
 
 const INITIAL_FACTORS: Factor[] = [
   { 
@@ -19,7 +19,7 @@ const INITIAL_FACTORS: Factor[] = [
     label: 'Modelo de Linguagem', 
     enabled: true, 
     value: 'gemini-3-flash-preview', 
-    options: ['gemini-3-flash-preview', 'gemini-3-pro-preview', 'gemini-2.5-flash-lite-latest'] 
+    options: ['gemini-3-flash-preview', 'gemini-3-pro-preview', 'gemini-flash-lite-latest'] 
   },
   { 
     id: 'format', 
@@ -114,16 +114,10 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
   };
 
   const newConversation = async (deleteOld: boolean = false) => {
-    console.log('[newConversation] Chamado', { deleteOld, currentId: currentConversation?.id });
-    
     if (deleteOld && currentConversation?.id) {
-      console.log('[newConversation] Solicitada purga da conversa:', currentConversation.id);
       const exists = await db.conversations.get(currentConversation.id);
       if (exists) {
         await db.conversations.delete(currentConversation.id);
-        console.log('[newConversation] Deleção do banco realizada com sucesso');
-      } else {
-        console.warn('[newConversation] Conversa não encontrada no banco para purga');
       }
     }
     
@@ -136,10 +130,7 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
       updatedAt: Date.now()
     };
     
-    // HOTFIX R13: Salvamento explícito para garantir existência de ID antes de qualquer operação
     await db.conversations.put(newConv);
-    console.log('[newConversation] Nova conversa persistida no banco:', newConv.id);
-    
     setCurrentConversation(newConv);
     setInputText('');
     setAttachedFiles([]);
@@ -154,16 +145,13 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
   };
 
   const deleteConversation = async (id: string) => {
-    console.log('[deleteConversation] Chamado para ID:', id);
     try {
       await db.conversations.delete(id);
-      console.log('[deleteConversation] Removido do IndexedDB');
       if (currentConversation?.id === id) {
-        console.log('[deleteConversation] Era a conversa atual, reiniciando...');
         await newConversation();
       }
     } catch (err) {
-      console.error('[deleteConversation] Falha crítica na exclusão:', err);
+      console.error('[deleteConversation] Error:', err);
     }
   };
 

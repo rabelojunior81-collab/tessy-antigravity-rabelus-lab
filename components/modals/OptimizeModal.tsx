@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Wand2, Check, AlertCircle, Loader2 } from 'lucide-react';
 import { OptimizationResult } from '../../types';
-import * as geminiService from '../../services/geminiService';
+// Fix: Corrected import path from refactored geminiService.ts to services/gemini/service.ts
+import * as geminiService from '../../services/gemini/service';
 
 interface OptimizeModalProps {
   isOpen: boolean;
