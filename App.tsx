@@ -167,7 +167,7 @@ const AppContent: React.FC = () => {
             <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#4a9eff" strokeWidth="8" />
           </svg>
         </div>
-        <p className="mt-6 font-medium uppercase tracking-wide text-[10px] text-accent-primary animate-pulse-soft">Initializing Nucleus...</p>
+        <p className="mt-6 font-medium uppercase tracking-wide text-[10px] text-accent-primary animate-pulse-soft">Purging Ghost Components...</p>
       </div>
     );
   }
@@ -228,7 +228,7 @@ const AppContent: React.FC = () => {
         <div className="flex items-center space-x-6">
           <div className="flex items-center gap-2">
              <div className="w-1.5 h-1.5 bg-accent-primary animate-pulse shadow-[0_0_8px_#4a9eff]"></div>
-             <span className="uppercase text-accent-primary hidden xs:inline">Nucleus Stable</span>
+             <span className="uppercase text-accent-primary hidden xs:inline">Nucleus v3.2.1 Stable</span>
           </div>
         </div>
       </footer>
