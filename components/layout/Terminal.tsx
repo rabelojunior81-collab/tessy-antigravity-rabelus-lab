@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Terminal as TerminalIcon, Trash2, ShieldCheck } from 'lucide-react';
 
@@ -98,9 +99,8 @@ const Terminal: React.FC = () => {
 
   return (
     <div 
-      className="h-[200px] bg-bg-secondary/60 backdrop-blur-xl border-t border-border-subtle flex flex-col shrink-0 relative select-none"
+      className="h-full bg-bg-secondary/60 backdrop-blur-xl border-t border-border-subtle flex flex-col shrink-0 relative select-none"
       onClick={() => inputRef.current?.focus()}
-      style={{ height: '200px' }}
     >
       <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">

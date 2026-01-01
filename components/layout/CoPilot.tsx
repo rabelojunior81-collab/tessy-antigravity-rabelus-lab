@@ -223,7 +223,7 @@ const CoPilot: React.FC = () => {
       <RestartModal 
         isOpen={isRestartModalOpen} 
         onClose={() => setIsRestartModalOpen(false)} 
-        onConfirm={newConversation} 
+        onConfirm={() => newConversation(true)} 
         onSave={() => { setIsRestartModalOpen(false); setIsSaveModalOpen(true); }} 
       />
       <ControllersModal isOpen={isControllersModalOpen} onClose={() => setIsControllersModalOpen(false)} />

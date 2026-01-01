@@ -49,7 +49,7 @@ interface ChatContextType {
   updateFactor: (id: string, value?: any) => void;
   resetFactors: () => void;
   sendMessage: (forcedText?: string) => Promise<void>;
-  newConversation: () => void;
+  newConversation: (deleteOld?: boolean) => Promise<void>;
   loadConversation: (conv: Conversation) => void;
   deleteConversation: (id: string) => Promise<void>;
   addFile: (file: File) => void;
@@ -121,7 +121,11 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
     setFactors(INITIAL_FACTORS);
   };
 
-  const newConversation = () => {
+  const newConversation = async (deleteOld: boolean = false) => {
+    if (deleteOld && currentConversation?.id) {
+      await db.conversations.delete(currentConversation.id);
+    }
+    
     const newConv: Conversation = {
       id: generateUUID(),
       projectId: currentProjectId,

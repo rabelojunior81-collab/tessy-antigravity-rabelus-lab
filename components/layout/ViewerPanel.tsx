@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { X } from 'lucide-react';
 import { useViewer } from '../../hooks/useViewer';
@@ -12,18 +13,14 @@ const ViewerPanel: React.FC<ViewerPanelProps> = ({ title, children }) => {
 
   if (!viewerAberto) return null;
 
-  const panelStyle = {
-    width: window.innerWidth < 768 ? '100%' : `280px`
-  };
-
   const panelClasses = `
-    fixed md:relative top-0 left-0 h-full
+    h-full w-full
     bg-bg-secondary/60 backdrop-blur-xl border-r border-border-subtle z-[65]
     flex flex-col animate-fade-in
   `;
 
   return (
-    <div className={panelClasses} style={panelStyle}>
+    <div className={panelClasses}>
       <div className="flex items-center justify-between p-4 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <h3 className="text-[12px] font-bold uppercase tracking-[0.05em] text-text-primary glow-text-blue">{title}</h3>
         <button 
