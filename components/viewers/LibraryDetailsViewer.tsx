@@ -1,59 +1,125 @@
 
-import React from 'react';
-import { X, Bookmark, Edit3, Trash2, ChevronRight, Hash, Code } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Bookmark, Edit3, Trash2, ChevronRight, Hash, Code, Save, Undo2 } from 'lucide-react';
 import { Template, RepositoryItem } from '../../types';
+import { db, generateUUID } from '../../services/dbService';
 
 interface LibraryDetailsViewerProps {
-  item: Template | RepositoryItem;
+  item: Template | RepositoryItem | (Template & { isEditing?: boolean }) | null;
+  isCreating?: boolean;
+  currentProjectId?: string;
   onClose: () => void;
   onSelect: (content: string) => void;
-  onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
+  onSaveSuccess?: () => void;
 }
 
 const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({ 
   item, 
+  isCreating = false,
+  currentProjectId,
   onClose, 
-  onSelect, 
-  onEdit, 
-  onDelete 
+  onSelect,
+  onSaveSuccess
 }) => {
-  const isTemplate = 'category' in item;
-  const title = isTemplate ? (item as Template).label : (item as RepositoryItem).title;
-  const category = isTemplate ? (item as Template).category : 'Protocolo';
-  const isCustom = 'isCustom' in item ? (item as Template).isCustom : true;
+  const [isEditing, setIsEditing] = useState(isCreating || (item as any)?.isEditing);
+  const [formData, setFormData] = useState<Partial<Template & { title?: string }>>({
+    label: '',
+    description: '',
+    content: '',
+    category: 'Personalizado'
+  });
+
+  useEffect(() => {
+    if (item && !isCreating) {
+      setFormData({
+        id: item.id,
+        label: 'label' in item ? (item as Template).label : (item as RepositoryItem).title,
+        description: item.description || '',
+        content: item.content || '',
+        category: 'category' in item ? (item as Template).category : 'Personalizado',
+        isCustom: 'isCustom' in item ? (item as Template).isCustom : true,
+      });
+      setIsEditing((item as any).isEditing || false);
+    } else if (isCreating) {
+      setFormData({
+        label: '',
+        description: '',
+        content: '',
+        category: 'Personalizado'
+      });
+      setIsEditing(true);
+    }
+  }, [item, isCreating]);
+
+  if (!item && !isCreating) return null;
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.label || !formData.content) return;
+
+    try {
+      const id = formData.id || generateUUID();
+      
+      // If we have a project ID, save to 'library' table as a RepositoryItem
+      if (currentProjectId) {
+        const repoItem: RepositoryItem = {
+          id,
+          projectId: currentProjectId,
+          title: formData.label || '',
+          description: formData.description || '',
+          content: formData.content || '',
+          timestamp: Date.now(),
+          tags: [formData.category?.toLowerCase() || 'personalizado']
+        };
+        await db.library.put(repoItem);
+      } else {
+        // Otherwise save to global templates
+        const template: Template = {
+          id,
+          label: formData.label || '',
+          description: formData.description || '',
+          content: formData.content || '',
+          category: (formData.category as any) || 'Personalizado',
+          isCustom: true,
+          updatedAt: Date.now(),
+          createdAt: formData.id ? (item as any).createdAt || Date.now() : Date.now()
+        };
+        await db.templates.put(template);
+      }
+      
+      setIsEditing(false);
+      if (onSaveSuccess) onSaveSuccess();
+    } catch (err) {
+      console.error("Save failed:", err);
+    }
+  };
+
+  const category = formData.category || 'Personalizado';
+  const title = formData.label || (isCreating ? 'Novo Protocolo' : 'Detalhes');
 
   return (
-    <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col p-6 animate-fade-in">
+    <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col p-6 animate-fade-in h-full">
       <div className="flex-1 flex flex-col h-full overflow-hidden border border-border-visible bg-bg-tertiary/40 backdrop-blur-lg shadow-2xl">
+        
         {/* Header */}
         <div className="px-6 py-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4 overflow-hidden">
-            <span className="px-2 py-0.5 bg-accent-subtle/40 text-accent-primary text-[9px] font-medium uppercase border border-accent-primary/30 shrink-0">
-              {category}
+            <span className="px-2 py-0.5 bg-accent-subtle/40 text-accent-primary text-[9px] font-bold uppercase border border-accent-primary/30 shrink-0 tracking-widest">
+              {isEditing ? 'EDITOR' : category}
             </span>
-            <h2 className="text-2xl font-light text-text-primary truncate tracking-tight">
+            <h2 className="text-xl font-light text-text-primary truncate tracking-tight uppercase">
               {title}
             </h2>
           </div>
           
           <div className="flex items-center gap-4 shrink-0">
-            {isCustom && onEdit && (
+            {!isEditing && (formData as any).isCustom !== false && (
               <button 
-                onClick={() => onEdit(item.id)}
+                onClick={() => setIsEditing(true)}
                 className="p-2 text-text-tertiary hover:text-accent-primary transition-all active:scale-95"
                 title="Editar"
               >
                 <Edit3 size={16} />
-              </button>
-            )}
-            {isCustom && onDelete && (
-              <button 
-                onClick={() => onDelete(item.id)}
-                className="p-2 text-text-tertiary hover:text-red-400 transition-all active:scale-95"
-                title="Excluir"
-              >
-                <Trash2 size={16} />
               </button>
             )}
             <div className="h-4 w-px bg-border-visible mx-2"></div>
@@ -67,48 +133,120 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
           </div>
         </div>
 
-        {/* Description */}
-        {item.description && (
-          <div className="px-6 py-4 bg-bg-tertiary/30 border-b border-border-visible/50 shrink-0">
-            <p className="text-sm text-text-secondary leading-relaxed italic font-normal">
-              {item.description}
-            </p>
-          </div>
-        )}
+        {isEditing ? (
+          /* FORM VIEW */
+          <form onSubmit={handleSave} className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Nome do Protocolo</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={formData.label} 
+                    onChange={e => setFormData({ ...formData, label: e.target.value })} 
+                    placeholder="TITULO..."
+                    className="w-full bg-bg-primary border border-border-visible p-3 text-xs font-normal text-text-primary focus:border-accent-primary outline-none uppercase" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Categoria</label>
+                  <select 
+                    value={formData.category} 
+                    onChange={e => setFormData({ ...formData, category: e.target.value as any })} 
+                    className="w-full bg-bg-primary border border-border-visible p-3 text-xs font-normal text-text-primary focus:border-accent-primary outline-none uppercase"
+                  >
+                    <option value="Código">Código</option>
+                    <option value="Escrita">Escrita</option>
+                    <option value="Análise">Análise</option>
+                    <option value="Ensino">Ensino</option>
+                    <option value="Criativo">Criativo</option>
+                    <option value="Personalizado">Personalizado</option>
+                  </select>
+                </div>
+              </div>
 
-        {/* Prompt Preview */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
-          <div className="flex items-center gap-2 mb-4">
-             <Code size={12} className="text-accent-primary opacity-50" />
-             <h4 className="text-[10px] font-medium text-text-tertiary uppercase tracking-[0.2em]">Núcleo do Prompt</h4>
-          </div>
-          <div className="bg-bg-primary/40 border border-border-visible p-8 shadow-inner group relative">
-            <pre className="text-sm text-text-secondary font-mono font-normal whitespace-pre-wrap leading-relaxed select-all">
-              {item.content}
-            </pre>
-            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Bookmark size={16} className="text-accent-primary/20" />
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Diretrizes / Descrição</label>
+                <textarea 
+                  value={formData.description} 
+                  onChange={e => setFormData({ ...formData, description: e.target.value })} 
+                  placeholder="OBJETIVO DESTE PROTOCOLO..."
+                  className="w-full h-20 bg-bg-primary border border-border-visible p-3 text-xs font-normal text-text-secondary outline-none focus:border-accent-primary resize-none custom-scrollbar" 
+                />
+              </div>
+
+              <div className="flex-1 flex flex-col space-y-2 min-h-[300px]">
+                <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Núcleo do Prompt (Conteúdo)</label>
+                <textarea 
+                  required 
+                  value={formData.content} 
+                  onChange={e => setFormData({ ...formData, content: e.target.value })} 
+                  placeholder="CONTEÚDO DO PROMPT..."
+                  className="flex-1 w-full bg-bg-primary border border-border-visible p-4 text-sm font-mono font-normal text-text-primary focus:border-accent-primary outline-none resize-none custom-scrollbar" 
+                />
+              </div>
+            </div>
+
+            {/* Footer Form */}
+            <div className="px-8 py-5 bg-bg-primary/60 border-t border-border-visible flex items-center justify-end gap-4 shrink-0">
+              <button 
+                type="button" 
+                onClick={() => isCreating ? onClose() : setIsEditing(false)} 
+                className="px-6 py-2.5 bg-bg-tertiary border border-border-visible text-text-tertiary text-[10px] font-bold uppercase tracking-widest hover:text-text-primary transition-all"
+              >
+                Abortar
+              </button>
+              <button 
+                type="submit" 
+                className="px-10 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-xl"
+              >
+                <Save size={14} /> Sincronizar
+              </button>
+            </div>
+          </form>
+        ) : (
+          /* PREVIEW VIEW */
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {formData.description && (
+              <div className="px-6 py-4 bg-bg-tertiary/30 border-b border-border-visible/50 shrink-0">
+                <p className="text-sm text-text-secondary leading-relaxed italic font-normal">
+                  {formData.description}
+                </p>
+              </div>
+            )}
+
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+              <div className="flex items-center gap-2 mb-4">
+                 <Code size={12} className="text-accent-primary opacity-50" />
+                 <h4 className="text-[10px] font-bold text-text-tertiary uppercase tracking-[0.2em]">Núcleo do Protocolo</h4>
+              </div>
+              <div className="bg-bg-primary/40 border border-border-visible p-8 shadow-inner group relative">
+                <pre className="text-sm text-text-secondary font-mono font-normal whitespace-pre-wrap leading-relaxed select-all">
+                  {formData.content}
+                </pre>
+              </div>
+            </div>
+
+            {/* Footer Actions */}
+            <div className="px-8 py-5 bg-bg-primary/60 border-t border-border-visible flex items-center justify-between shrink-0">
+              <button 
+                onClick={onClose}
+                className="px-6 py-2.5 bg-bg-tertiary border border-border-visible text-text-tertiary text-[10px] font-bold uppercase tracking-widest hover:text-text-primary transition-all"
+              >
+                <Undo2 size={14} className="mr-2 inline" /> Voltar
+              </button>
+              
+              <button 
+                onClick={() => onSelect(formData.content || '')}
+                className="px-10 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-3 shadow-xl active:scale-95 group"
+              >
+                <ChevronRight size={16} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
+                Carregar no Núcleo
+              </button>
             </div>
           </div>
-        </div>
-
-        {/* Footer Actions */}
-        <div className="px-8 py-5 bg-bg-primary/60 border-t border-border-visible flex items-center justify-between shrink-0">
-          <button 
-            onClick={onClose}
-            className="px-6 py-2.5 bg-bg-tertiary border border-border-visible text-text-primary text-xs font-medium hover:bg-bg-elevated transition-all active:scale-95"
-          >
-            Voltar
-          </button>
-          
-          <button 
-            onClick={() => onSelect(item.content || '')}
-            className="px-10 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-xs font-medium transition-all flex items-center gap-3 shadow-xl active:scale-95 group"
-          >
-            <ChevronRight size={16} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
-            CARREGAR NO NÚCLEO
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );

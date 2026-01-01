@@ -25,47 +25,47 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
 
   return (
     <div className={`fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
-      <div className={`w-full max-w-xl bg-bg-secondary/95 backdrop-blur-2xl border border-border-visible flex flex-col shadow-2xl relative ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
+      <div className={`w-full max-w-lg bg-bg-secondary/95 backdrop-blur-2xl border border-border-visible flex flex-col shadow-2xl relative ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
         
-        {/* Header */}
-        <div className="px-6 py-3 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        {/* Header - Minimalist */}
+        <div className="px-6 py-2.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <Settings2 className="text-accent-primary" size={16} />
-            <h2 className="text-xs font-medium tracking-[0.1em] text-text-primary uppercase">Parâmetros IA</h2>
+            <Settings2 className="text-accent-primary" size={14} />
+            <h2 className="text-[10px] font-medium tracking-[0.2em] text-text-primary uppercase">Parâmetros Nucleares</h2>
           </div>
           <button onClick={handleClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90">
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs - Compact */}
         <div className="flex border-b border-border-visible bg-bg-primary/40">
-          <button onClick={() => setActiveTab('settings')} className={`flex-1 py-3 text-sm font-medium tracking-normal transition-all relative ${activeTab === 'settings' ? 'text-accent-primary bg-accent-subtle/10' : 'text-text-tertiary hover:text-text-secondary'}`}>
-            Configurações
+          <button onClick={() => setActiveTab('settings')} className={`flex-1 py-2 text-[10px] font-medium tracking-wide transition-all relative uppercase ${activeTab === 'settings' ? 'text-accent-primary bg-accent-subtle/10' : 'text-text-tertiary hover:text-text-secondary'}`}>
+            Configuração
             {activeTab === 'settings' && <div className="absolute bottom-0 left-0 w-full h-[2px] bg-accent-primary"></div>}
           </button>
-          <button onClick={() => setActiveTab('shortcuts')} className={`flex-1 py-3 text-sm font-medium tracking-normal transition-all relative ${activeTab === 'shortcuts' ? 'text-accent-primary bg-accent-subtle/10' : 'text-text-tertiary hover:text-text-secondary'}`}>
+          <button onClick={() => setActiveTab('shortcuts')} className={`flex-1 py-2 text-[10px] font-medium tracking-wide transition-all relative uppercase ${activeTab === 'shortcuts' ? 'text-accent-primary bg-accent-subtle/10' : 'text-text-tertiary hover:text-text-secondary'}`}>
             Atalhos
             {activeTab === 'shortcuts' && <div className="absolute bottom-0 left-0 w-full h-[2px] bg-accent-primary"></div>}
           </button>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-10 min-h-[450px] space-y-10">
+        {/* Content - Compacted spacing */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 min-h-[380px] space-y-6">
           {activeTab === 'settings' ? (
-            <div className="space-y-10">
+            <div className="space-y-6">
               {factors.map(factor => (
-                <div key={factor.id} className="space-y-4 pb-8 border-b border-border-visible/20 last:border-0 last:pb-0">
+                <div key={factor.id} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-medium text-text-tertiary/60 uppercase tracking-widest block mb-2">{factor.label}</label>
+                    <label className="text-[10px] font-medium text-text-secondary/80 uppercase tracking-widest block">{factor.label}</label>
                     {factor.type === 'toggle' && (
                       <button 
                         onClick={() => updateFactor(factor.id)} 
-                        className={`w-11 h-6 border transition-all flex items-center px-0.5 relative cursor-pointer ${
+                        className={`w-10 h-5 border transition-all flex items-center px-0.5 relative cursor-pointer ${
                           factor.enabled ? 'bg-accent-primary/20 border-accent-primary' : 'bg-bg-primary border-border-visible'
                         }`}
                       >
-                        <div className={`w-4 h-4 bg-white transition-transform shadow-sm ${factor.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                        <div className={`w-3.5 h-3.5 bg-white transition-transform shadow-sm ${factor.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
                       </button>
                     )}
                   </div>
@@ -75,7 +75,7 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
                       <select 
                         value={factor.value} 
                         onChange={(e) => updateFactor(factor.id, e.target.value)} 
-                        className="w-full bg-bg-primary/60 border border-border-visible/40 p-3 text-sm font-normal text-text-primary outline-none focus:border-accent-primary/60 transition-all appearance-none"
+                        className="w-full bg-bg-primary/60 border border-border-visible/40 p-2 text-xs font-normal text-text-primary outline-none focus:border-accent-primary/60 transition-all appearance-none uppercase"
                       >
                         {factor.options?.map(opt => <option key={opt} value={opt} className="bg-bg-secondary">{opt.toUpperCase()}</option>)}
                       </select>
@@ -86,7 +86,7 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
                   )}
                   
                   {factor.type === 'slider' && (
-                    <div className="flex items-center gap-4 pt-1">
+                    <div className="flex items-center gap-3">
                       <input 
                         type="range" 
                         min={factor.min} 
@@ -95,7 +95,7 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
                         onChange={(e) => updateFactor(factor.id, parseInt(e.target.value))} 
                         className="flex-1 h-1 bg-border-subtle appearance-none cursor-pointer accent-accent-primary" 
                       />
-                      <span className="text-sm font-mono font-medium text-accent-primary w-10 text-right">{factor.value}</span>
+                      <span className="text-xs font-mono font-medium text-accent-primary w-6 text-right">{factor.value}</span>
                     </div>
                   )}
 
@@ -103,34 +103,34 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
                     <textarea 
                       value={factor.value} 
                       onChange={(e) => updateFactor(factor.id, e.target.value)} 
-                      placeholder="Inserir diretrizes de contexto para o núcleo..." 
-                      className="w-full h-28 bg-bg-primary/60 border border-border-visible/40 p-4 text-sm font-normal text-text-primary placeholder:text-text-tertiary/40 focus:border-accent-primary/60 transition-all resize-none custom-scrollbar" 
+                      placeholder="Diretrizes de contexto..." 
+                      className="w-full h-24 bg-bg-primary/60 border border-border-visible/40 p-3 text-xs font-normal text-text-primary placeholder:text-text-tertiary/40 focus:border-accent-primary/60 transition-all resize-none custom-scrollbar" 
                     />
                   )}
                 </div>
               ))}
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-10 py-20">
-              <Sparkles size={64} className="text-accent-primary mb-6" />
-              <p className="text-[10px] font-medium uppercase tracking-[0.4em]">Shortcuts Module Inactive</p>
+            <div className="h-full flex flex-col items-center justify-center text-center opacity-10 py-10">
+              <Sparkles size={48} className="text-accent-primary mb-4" />
+              <p className="text-[9px] font-medium uppercase tracking-[0.4em]">Shortcuts Offline</p>
             </div>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="px-10 py-6 border-t border-border-visible/60 bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        {/* Footer - Minimalist */}
+        <div className="px-6 py-4 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
           <button 
-            onClick={() => confirm('Resetar todos os parâmetros do núcleo?') && resetFactors()} 
-            className="flex items-center gap-2 text-text-tertiary/60 hover:text-red-400 text-[10px] font-normal uppercase tracking-wider transition-all"
+            onClick={() => confirm('Resetar parâmetros?') && resetFactors()} 
+            className="flex items-center gap-2 text-text-tertiary/60 hover:text-red-400 text-[9px] font-normal uppercase tracking-wider transition-all"
           >
-            <RotateCcw size={14} /> Resetar Nucleus
+            <RotateCcw size={12} /> Resetar
           </button>
           <button 
             onClick={handleClose} 
-            className="px-12 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-xs font-medium tracking-normal transition-all active:scale-95 shadow-lg"
+            className="px-10 py-2.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg"
           >
-            Confirmar Parâmetros
+            Aplicar
           </button>
         </div>
       </div>

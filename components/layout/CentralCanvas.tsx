@@ -11,13 +11,15 @@ import { useViewer } from '../../hooks/useViewer';
 import { Template, RepositoryItem } from '../../types';
 
 interface CentralCanvasProps {
+  currentProjectId: string;
   selectedProjectId: string | null;
   setSelectedProjectId: (id: string | null) => void;
-  selectedLibraryItem: Template | RepositoryItem | null;
-  setSelectedLibraryItem: (item: Template | RepositoryItem | null) => void;
+  selectedLibraryItem: Template | RepositoryItem | { isCreating: boolean } | null;
+  setSelectedLibraryItem: (item: any) => void;
 }
 
 const CentralCanvas: React.FC<CentralCanvasProps> = ({ 
+  currentProjectId,
   selectedProjectId, 
   setSelectedProjectId,
   selectedLibraryItem,
@@ -106,15 +108,26 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
     );
   }
 
-  if (selectedLibraryItem) {
+  if (selectedLibraryItem || (selectedLibraryItem as any)?.isCreating) {
+    const isCreating = (selectedLibraryItem as any)?.isCreating || false;
     return (
       <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col relative p-6">
         <LibraryDetailsViewer 
-          item={selectedLibraryItem}
+          item={isCreating ? null : selectedLibraryItem as any}
+          isCreating={isCreating}
+          currentProjectId={currentProjectId}
           onClose={() => setSelectedLibraryItem(null)}
+          onSaveSuccess={() => {
+            // Force refresh of library viewers by temporarily closing and clearing selection
+            setSelectedLibraryItem(null);
+            abrirViewer('library');
+          }}
           onSelect={(content) => {
             setInputText(content);
             setSelectedLibraryItem(null);
+            // Optionally focus the copilot input via document focus or internal ref if exposed
+            const textarea = document.querySelector('textarea[placeholder="Digite sua instrução..."]') as HTMLTextAreaElement;
+            if (textarea) textarea.focus();
           }}
         />
       </div>

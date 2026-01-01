@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Sidebar from './Sidebar';
 import ViewerPanel from './ViewerPanel';
@@ -8,12 +9,22 @@ import { useViewer } from '../../hooks/useViewer';
 import { useLayout } from '../../hooks/useLayout';
 
 interface MainLayoutProps {
+  currentProjectId: string;
   viewerContent: React.ReactNode;
   selectedProjectId: string | null;
   setSelectedProjectId: (id: string | null) => void;
+  selectedLibraryItem: any;
+  setSelectedLibraryItem: (item: any) => void;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent, selectedProjectId, setSelectedProjectId }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ 
+  currentProjectId,
+  viewerContent, 
+  selectedProjectId, 
+  setSelectedProjectId,
+  selectedLibraryItem,
+  setSelectedLibraryItem
+}) => {
   const { viewerAberto } = useViewer();
   const { 
     larguraViewer, ajustarLarguraViewer, 
@@ -114,7 +125,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent, selectedProjectI
         
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-bg-secondary">
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <CentralCanvas selectedProjectId={selectedProjectId} setSelectedProjectId={setSelectedProjectId} />
+            <CentralCanvas 
+              currentProjectId={currentProjectId}
+              selectedProjectId={selectedProjectId} 
+              setSelectedProjectId={setSelectedProjectId} 
+              selectedLibraryItem={selectedLibraryItem}
+              setSelectedLibraryItem={setSelectedLibraryItem}
+            />
           </div>
 
           {/* Terminal Resize Handle */}

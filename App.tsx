@@ -95,6 +95,7 @@ const MainContentWrapper: React.FC<{
 
   return (
     <MainLayout 
+      currentProjectId={props.currentProjectId}
       viewerContent={viewerContent} 
       selectedProjectId={props.selectedProjectId} 
       setSelectedProjectId={props.setSelectedProjectId} 
