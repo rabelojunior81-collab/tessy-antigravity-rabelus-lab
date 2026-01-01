@@ -73,13 +73,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
 
   const handleCoPilotResize = (e: React.MouseEvent) => {
     e.preventDefault();
-    const startX = e.clientX;
-    const startWidth = larguraCoPilot;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      // Invertido conforme solicitação: startWidth menos delta para redimensionamento coerente
-      const delta = startX - moveEvent.clientX; 
-      const newWidth = Math.min(Math.max(startWidth - delta, 300), 600);
+      // CoPilot is anchored to the right, so its width is window width minus mouse X
+      const newWidth = Math.min(Math.max(window.innerWidth - moveEvent.clientX, 300), 600);
       ajustarLarguraCoPilot(newWidth);
     };
 
