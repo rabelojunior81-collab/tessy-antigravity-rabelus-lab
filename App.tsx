@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import LoadingSpinner from './components/LoadingSpinner';
 import ProjectModal from './components/ProjectModal';
@@ -22,7 +23,7 @@ import { Menu, Moon, Sun, X } from 'lucide-react';
 import { useLayoutContext } from './contexts/LayoutContext';
 
 const TessyLogo = React.memo(() => (
-  <div className="relative w-6 h-6 flex items-center justify-center shrink-0">
+  <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
     <svg viewBox="0 0 100 100" className="w-full h-full filter drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]">
       <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#3B82F6" strokeWidth="8" />
       <path d="M35 60 H65" fill="none" stroke="#3B82F6" strokeWidth="8" />
@@ -195,7 +196,7 @@ const AppContent: React.FC = () => {
       </div>
 
       <footer className="h-8 border-t border-border-subtle bg-bg-primary/80 backdrop-blur-md px-6 flex items-center justify-between text-[10px] text-text-tertiary font-normal tracking-[0.1em] shrink-0 z-[70]">
-        <span className="opacity-60">© 2024 RABELUS LAB</span>
+        <span className="opacity-60">© 2025 RABELUS LAB</span>
         <div className="flex items-center space-x-6">
           <div className="flex items-center gap-2">
              <div className="w-1 h-1 bg-accent-primary animate-pulse shadow-[0_0_5px_#3B82F6]"></div>

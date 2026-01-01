@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { useLayout } from '../../hooks/useLayout';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as prismTheme } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { X, Copy, Check, FileCode, ImageIcon, Eye } from 'lucide-react';
+import { X, Copy, Check, FileCode } from 'lucide-react';
 
 const CentralCanvas: React.FC = () => {
   const { arquivoSelecionado, selecionarArquivo } = useLayout();
@@ -21,10 +22,18 @@ const CentralCanvas: React.FC = () => {
   return (
     <div className="flex-1 bg-bg-primary overflow-hidden flex flex-col relative rounded-none p-6">
       {!arquivoSelecionado ? (
-        <div className="flex-1 flex flex-col items-center justify-center text-center opacity-30 animate-fade-in">
-          <FileCode size={48} className="mb-4 text-accent-primary" />
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-text-secondary">
-            Selecione um arquivo para visualizar
+        <div className="flex-1 flex flex-col items-center justify-center text-center animate-fade-in">
+          <div className="w-16 h-16 flex items-center justify-center mb-6 opacity-20">
+            <svg viewBox="0 0 100 100" className="w-full h-full">
+              <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#3B82F6" strokeWidth="8" />
+              <path d="M35 60 H65" fill="none" stroke="#3B82F6" strokeWidth="8" />
+            </svg>
+          </div>
+          <p className="text-[12px] font-black uppercase tracking-[0.4em] text-text-tertiary opacity-40">
+            TESSY by Rabelus Lab
+          </p>
+          <p className="mt-2 text-[10px] font-medium text-text-tertiary opacity-20 uppercase tracking-widest">
+            Nucleus Intelligence System
           </p>
         </div>
       ) : (

@@ -25,7 +25,8 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
         .equals(currentProjectId)
         .reverse()
         .sortBy('updatedAt');
-      setConversations(all);
+      // Use spread operator to force a new array reference for React state detection
+      setConversations([...all]);
     } catch (err) {
       console.error("Failed to load history:", err);
     } finally {
@@ -47,9 +48,7 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
     e.stopPropagation();
     if (confirm('Excluir sessão?')) {
       try {
-        // Agora aguardamos a finalização da deleção assíncrona antes de atualizar a UI local
         await onDelete(id);
-        // Recarregamos a lista local para refletir a mudança
         await loadConversations();
       } catch (err) {
         console.error('[HistoryViewer] Falha ao disparar callback de deleção:', err);

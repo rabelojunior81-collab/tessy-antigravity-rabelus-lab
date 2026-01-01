@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { ArrowRight, Plus, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
@@ -78,7 +79,7 @@ const CoPilot: React.FC = () => {
       <div className="h-16 flex items-center justify-between px-4 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
           <div className={`w-1.5 h-1.5 ${isLoading ? 'bg-accent-secondary animate-pulse shadow-[0_0_8px_#60A5FA]' : 'bg-accent-primary shadow-[0_0_8px_#3B82F6]'}`}></div>
-          <h2 className="text-[12px] font-bold text-text-primary uppercase tracking-[0.05em]">CORE ASSISTANT</h2>
+          <h2 className="text-[12px] font-bold text-text-primary uppercase tracking-[0.05em]">TESSY ASSISTANT</h2>
         </div>
         <button 
           onClick={() => setIsControllersModalOpen(true)}

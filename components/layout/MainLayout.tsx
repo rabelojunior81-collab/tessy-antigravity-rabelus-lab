@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React from 'react';
 import Sidebar from './Sidebar';
 import ViewerPanel from './ViewerPanel';
 import CentralCanvas from './CentralCanvas';
@@ -129,7 +130,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
           </div>
         </div>
 
-        {/* CoPilot Resize Handle */}
+        {/* CoPilot Resize Handle (Ancorado à esquerda da janela CoPilot) */}
         <div 
           onMouseDown={handleCoPilotResize}
           className="w-1 bg-border-subtle hover:bg-accent-primary cursor-col-resize transition-colors relative group shrink-0 z-50"
