@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import ViewerPanel from './ViewerPanel';
@@ -138,8 +137,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
           <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-accent-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </div>
 
-        {/* CoPilot with dynamic width */}
-        <div style={{ width: `${larguraCoPilot}px` }} className="h-full shrink-0 flex flex-col">
+        {/* CoPilot with dynamic width anchored to right */}
+        <div style={{ width: `${larguraCoPilot}px` }} className="ml-auto h-full shrink-0 flex flex-col">
           <CoPilot />
         </div>
       </main>

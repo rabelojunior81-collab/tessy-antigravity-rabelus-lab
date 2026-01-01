@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { ArrowRight, Plus, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
@@ -75,7 +74,7 @@ const CoPilot: React.FC = () => {
   ];
 
   return (
-    <aside className="w-[400px] h-full bg-bg-secondary/60 backdrop-blur-xl border-l border-border-subtle flex flex-col z-[60] shrink-0">
+    <aside className="w-full h-full bg-bg-secondary/60 backdrop-blur-xl border-l border-border-subtle flex flex-col z-[60] shrink-0">
       <div className="h-16 flex items-center justify-between px-4 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
           <div className={`w-1.5 h-1.5 ${isLoading ? 'bg-accent-secondary animate-pulse shadow-[0_0_8px_#60A5FA]' : 'bg-accent-primary shadow-[0_0_8px_#3B82F6]'}`}></div>
