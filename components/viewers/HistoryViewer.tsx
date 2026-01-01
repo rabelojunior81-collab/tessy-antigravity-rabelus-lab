@@ -8,7 +8,7 @@ interface HistoryViewerProps {
   currentProjectId: string;
   activeId: string;
   onLoad: (conversation: Conversation) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
   onNew: () => void;
 }
 

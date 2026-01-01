@@ -77,9 +77,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
     const startWidth = larguraCoPilot;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      // Ajustado conforme solicitação: moveEvent.clientX - startX para redimensionamento coerente
+      // Invertido conforme solicitação: startWidth menos delta para redimensionamento coerente
       const delta = startX - moveEvent.clientX; 
-      const newWidth = Math.min(Math.max(startWidth + delta, 300), 600);
+      const newWidth = Math.min(Math.max(startWidth - delta, 300), 600);
       ajustarLarguraCoPilot(newWidth);
     };
 
