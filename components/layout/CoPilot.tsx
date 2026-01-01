@@ -91,8 +91,8 @@ const CoPilot: React.FC = () => {
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col bg-transparent relative">
-        {/* MENSAGENS */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 pb-48 relative">
+        {/* MENSAGENS - Área scrollable */}
+        <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 pb-4 relative">
           {currentConversation?.turns.length === 0 && !isLoading && (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-40 animate-fade-in">
               <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-text-tertiary">ready for instruction</p>
@@ -159,26 +159,26 @@ const CoPilot: React.FC = () => {
               <div className="w-[60%] h-4 bg-bg-tertiary/40 border border-border-subtle"></div>
             </div>
           )}
+        </div>
 
-          {/* ÍCONES FLUTUANTES - POSICIONADOS ACIMA DO INPUT */}
-          <div className="absolute bottom-28 left-4 flex items-center gap-3 z-10">
+        {/* ÁREA FIXA DE COMANDOS E INPUT - FORA DO SCROLL */}
+        <div className="px-4 pb-4 pt-2 bg-transparent shrink-0">
+          {/* ÍCONES DE AÇÃO - Agora fora do scroll e acima do input */}
+          <div className="px-1 pb-2 flex items-center gap-3 z-10 bg-transparent">
             {toolbarItems.map((item, idx) => (
               <button 
                 key={idx}
                 onClick={item.onClick}
                 disabled={item.disabled}
                 title={item.label}
-                className={`p-1 hover:border-accent-primary transition-all ${item.color || 'text-text-tertiary hover:text-accent-primary'} ${item.disabled ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 active:scale-90'}`}
+                className={`p-1 transition-all ${item.color || 'text-text-tertiary hover:text-accent-primary'} ${item.disabled ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 active:scale-90'}`}
               >
                 <item.icon size={18} />
               </button>
             ))}
           </div>
-        </div>
 
-        {/* INPUT FLUTUANTE - POSICIONADO NO FUNDO DA JANELA */}
-        <div className="absolute bottom-4 left-4 right-4 z-20">
-          {/* File Preview INTEGRADO */}
+          {/* File Preview */}
           {attachedFiles.length > 0 && (
             <div className="mb-4">
               <FilePreview files={attachedFiles} onRemove={removeFile} />
@@ -220,7 +220,12 @@ const CoPilot: React.FC = () => {
       <OptimizeModal isOpen={isOptimizeModalOpen} inputText={inputText} onClose={() => setIsOptimizeModalOpen(false)} onApply={setInputText} />
       <SaveModal isOpen={isSaveModalOpen} conversation={currentConversation} onClose={() => setIsSaveModalOpen(false)} onSuccess={loadConversation} />
       <ShareModal isOpen={isShareModalOpen} conversation={currentConversation} onClose={() => setIsShareModalOpen(false)} />
-      <RestartModal isOpen={isRestartModalOpen} onClose={() => setIsRestartModalOpen(false)} onConfirm={newConversation} />
+      <RestartModal 
+        isOpen={isRestartModalOpen} 
+        onClose={() => setIsRestartModalOpen(false)} 
+        onConfirm={newConversation} 
+        onSave={() => { setIsRestartModalOpen(false); setIsSaveModalOpen(true); }} 
+      />
       <ControllersModal isOpen={isControllersModalOpen} onClose={() => setIsControllersModalOpen(false)} />
     </aside>
   );

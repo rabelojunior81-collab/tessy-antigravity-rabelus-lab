@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, AlertTriangle, ShieldAlert } from 'lucide-react';
 
@@ -5,9 +6,10 @@ interface RestartModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  onSave: () => void;
 }
 
-const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm }) => {
+const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm, onSave }) => {
   const [isClosing, setIsClosing] = useState(false);
   const [isRestarting, setIsRestarting] = useState(false);
 
@@ -42,15 +44,16 @@ const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm 
           <div className="space-y-3">
             <h3 className="text-sm font-bold uppercase text-text-primary tracking-tight">Purgar Protocolo?</h3>
             <p className="text-[10px] font-semibold text-text-tertiary uppercase leading-relaxed tracking-widest">
-              Toda a memória desta sessão será perdida.
+              Toda a memória desta sessão será perdida permanentemente.
             </p>
           </div>
         </div>
 
-        <div className="p-6 border-t border-border-subtle bg-bg-primary flex gap-4 shrink-0">
-          <button onClick={handleClose} className="flex-1 py-3 bg-bg-tertiary text-text-tertiary font-bold uppercase tracking-widest text-[10px] transition-all">Cancelar</button>
-          <button onClick={handleConfirm} disabled={isRestarting} className="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white font-bold uppercase tracking-widest text-[10px] transition-all">
-            {isRestarting ? 'PURGANDO...' : 'CONFIRMAR'}
+        <div className="p-6 border-t border-border-subtle bg-bg-primary flex flex-wrap gap-2 shrink-0">
+          <button onClick={handleClose} className="flex-1 min-w-[80px] py-3 bg-bg-tertiary text-text-tertiary font-bold uppercase tracking-widest text-[9px] transition-all">Cancelar</button>
+          <button onClick={onSave} className="flex-1 min-w-[80px] py-3 bg-accent-primary hover:bg-accent-secondary text-white font-bold uppercase tracking-widest text-[9px] transition-all">Salvar</button>
+          <button onClick={handleConfirm} disabled={isRestarting} className="flex-1 min-w-[80px] py-3 bg-red-600 hover:bg-red-500 text-white font-bold uppercase tracking-widest text-[9px] transition-all">
+            {isRestarting ? 'PURGANDO...' : 'PURGAR'}
           </button>
         </div>
       </div>
