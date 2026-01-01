@@ -47,8 +47,8 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
     e.stopPropagation();
     if (confirm('Excluir sessão?')) {
       try {
-        // Delegamos a deleção ao callback que já gerencia o banco e estado global
-        onDelete(id);
+        // Agora aguardamos a finalização da deleção assíncrona antes de atualizar a UI local
+        await onDelete(id);
         // Recarregamos a lista local para refletir a mudança
         await loadConversations();
       } catch (err) {

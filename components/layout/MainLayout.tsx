@@ -77,8 +77,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
     const startWidth = larguraCoPilot;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      // Ajustado para seguir a lógica do Terminal: Delta = Inicial - Atual, Novo = Inicial + Delta
-      const delta = startX - moveEvent.clientX;
+      // Ajustado conforme solicitação: moveEvent.clientX - startX para redimensionamento coerente
+      const delta = startX - moveEvent.clientX; 
       const newWidth = Math.min(Math.max(startWidth + delta, 300), 600);
       ajustarLarguraCoPilot(newWidth);
     };
