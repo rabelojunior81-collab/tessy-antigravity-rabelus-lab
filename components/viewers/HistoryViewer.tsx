@@ -46,16 +46,13 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (confirm('Excluir sessão?')) {
-      console.log('[HistoryViewer] Deleção confirmada pelo usuário para ID:', id);
       try {
-        await db.conversations.delete(id);
-        console.log('[HistoryViewer] Registro removido do IndexedDB');
+        // Delegamos a deleção ao callback que já gerencia o banco e estado global
         onDelete(id);
-        console.log('[HistoryViewer] Callback onDelete disparado');
+        // Recarregamos a lista local para refletir a mudança
         await loadConversations();
-        console.log('[HistoryViewer] Lista recarregada');
       } catch (err) {
-        console.error('[HistoryViewer] Falha ao deletar conversa:', err);
+        console.error('[HistoryViewer] Falha ao disparar callback de deleção:', err);
       }
     }
   };
