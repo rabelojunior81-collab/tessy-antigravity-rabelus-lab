@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Sidebar from './Sidebar';
 import ViewerPanel from './ViewerPanel';
@@ -10,9 +9,11 @@ import { useLayout } from '../../hooks/useLayout';
 
 interface MainLayoutProps {
   viewerContent: React.ReactNode;
+  selectedProjectId: string | null;
+  setSelectedProjectId: (id: string | null) => void;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent, selectedProjectId, setSelectedProjectId }) => {
   const { viewerAberto } = useViewer();
   const { 
     larguraViewer, ajustarLarguraViewer, 
@@ -75,7 +76,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
     e.preventDefault();
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      // CoPilot is anchored to the right, so its width is window width minus mouse X
       const newWidth = Math.min(Math.max(window.innerWidth - moveEvent.clientX, 300), 600);
       ajustarLarguraCoPilot(newWidth);
     };
@@ -93,8 +93,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
     <div className="flex h-full w-full overflow-hidden bg-bg-primary">
       <Sidebar />
       
-      <main className="flex-1 flex flex-row min-w-0 relative overflow-hidden">
-        {/* Viewer Panel with dynamic width */}
+      <main className="flex-1 flex flex-row min-w-0 relative overflow-hidden bg-bg-secondary">
+        {/* Viewer Panel */}
         {viewerAberto && (
           <>
             <div style={{ width: `${larguraViewer}px` }} className="h-full shrink-0 flex flex-col">
@@ -105,22 +105,22 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
             {/* Viewer Resize Handle */}
             <div 
               onMouseDown={handleViewerResize}
-              className="w-1 bg-border-subtle hover:bg-accent-primary cursor-col-resize transition-colors relative group shrink-0 z-50"
+              className="w-0.5 bg-border-visible hover:bg-accent-primary cursor-col-resize transition-colors relative group shrink-0 z-50"
             >
               <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-accent-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>
           </>
         )}
         
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-bg-primary">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-bg-secondary">
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <CentralCanvas />
+            <CentralCanvas selectedProjectId={selectedProjectId} setSelectedProjectId={setSelectedProjectId} />
           </div>
 
           {/* Terminal Resize Handle */}
           <div 
             onMouseDown={handleTerminalResize}
-            className="h-1 bg-border-subtle hover:bg-accent-primary cursor-row-resize transition-colors relative group shrink-0 z-50"
+            className="h-0.5 bg-border-visible hover:bg-accent-primary cursor-row-resize transition-colors relative group shrink-0 z-50"
           >
             <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-accent-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
           </div>
@@ -130,15 +130,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
           </div>
         </div>
 
-        {/* CoPilot Resize Handle (Ancorado à esquerda da janela CoPilot) */}
+        {/* CoPilot Resize Handle */}
         <div 
           onMouseDown={handleCoPilotResize}
-          className="w-1 bg-border-subtle hover:bg-accent-primary cursor-col-resize transition-colors relative group shrink-0 z-50"
+          className="w-0.5 bg-border-visible hover:bg-accent-primary cursor-col-resize transition-colors relative group shrink-0 z-50"
         >
           <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-accent-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
         </div>
 
-        {/* CoPilot with dynamic width anchored to right */}
+        {/* CoPilot with dynamic width */}
         <div style={{ width: `${larguraCoPilot}px` }} className="ml-auto h-full shrink-0 flex flex-col">
           <CoPilot />
         </div>

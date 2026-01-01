@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Tessy by Rabelus Lab - Advanced AI Prompt Engineering IDE">
-    <meta name="theme-color" content="#0A1929">
+    <meta name="theme-color" content="#0a1628">
     <title>tessy // Rabelus Lab</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -20,16 +20,18 @@
               'xs': '480px',
             },
             colors: {
-              'bg-primary': '#0A1929',
-              'bg-secondary': '#0D2137',
-              'bg-tertiary': '#112A45',
-              'text-primary': '#E3E8EF',
-              'text-secondary': '#8B9AAD',
-              'text-tertiary': '#5A6B7F',
-              'accent-primary': '#3B82F6',
-              'accent-secondary': '#60A5FA',
-              'border-subtle': 'rgba(59, 130, 246, 0.1)',
-              'border-visible': 'rgba(59, 130, 246, 0.2)',
+              'bg-primary': '#0a1628',
+              'bg-secondary': '#0d1b2a',
+              'bg-tertiary': '#1b2838',
+              'bg-elevated': '#243447',
+              'text-primary': '#e8f1f5',
+              'text-secondary': '#8b9eb5',
+              'text-tertiary': '#4a5f7a',
+              'accent-primary': '#4a9eff',
+              'accent-secondary': '#2563eb',
+              'accent-subtle': '#1e3a5f',
+              'border-visible': '#2a4a6f',
+              'border-subtle': '#152238',
             },
             animation: {
               'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
@@ -74,11 +76,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #3B82F6;
-            --bg-body: #0A1929;
-            --text-body: #E3E8EF;
-            --border-subtle: rgba(59, 130, 246, 0.1);
-            --border-visible: rgba(59, 130, 246, 0.2);
+            --primary: #4a9eff;
+            --bg-body: #0a1628;
+            --text-body: #e8f1f5;
+            --border-subtle: #152238;
+            --border-visible: #2a4a6f;
         }
         
         * {
@@ -106,37 +108,36 @@
             height: 8px; 
         }
         .custom-scrollbar::-webkit-scrollbar-track { 
-            background: rgba(17, 42, 69, 0.2); 
+            background: rgba(13, 27, 42, 0.2); 
         }
         .custom-scrollbar::-webkit-scrollbar-thumb { 
-            background: rgba(59, 130, 246, 0.3); 
-            border-radius: 0;
+            background: rgba(74, 158, 255, 0.2); 
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
-            background: rgba(59, 130, 246, 0.5); 
+            background: rgba(74, 158, 255, 0.4); 
         }
 
         .glow-text-blue { 
-            text-shadow: 0 0 10px rgba(59, 130, 246, 0.3); 
+            text-shadow: 0 0 10px rgba(74, 158, 255, 0.4); 
         }
 
         ::selection {
-            background: rgba(59, 130, 246, 0.3);
+            background: rgba(74, 158, 255, 0.3);
             color: white;
         }
 
         .prose {
-            font-size: 13px !important;
+            font-size: 14px !important;
             line-height: 1.6 !important;
-            color: #E3E8EF !important;
+            color: #e8f1f5 !important;
         }
         .prose pre {
-            background-color: rgba(13, 33, 55, 0.4) !important;
+            background-color: rgba(27, 40, 56, 0.4) !important;
             backdrop-filter: blur(10px) !important;
-            border: 1px solid var(--border-subtle) !important;
+            border: 1px solid var(--border-visible) !important;
             padding: 16px !important;
             margin: 1rem 0 !important;
-            border-radius: 0 !important;
+            border-radius: 4px !important;
         }
     </style>
 <script type="importmap">

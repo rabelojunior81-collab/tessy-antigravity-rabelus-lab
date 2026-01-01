@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Search, Trash2, MessageSquare, Plus } from 'lucide-react';
 import { db } from '../../services/dbService';
@@ -25,7 +24,6 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
         .equals(currentProjectId)
         .reverse()
         .sortBy('updatedAt');
-      // Use spread operator to force a new array reference for React state detection
       setConversations([...all]);
     } catch (err) {
       console.error("Failed to load history:", err);
@@ -51,17 +49,17 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
         await onDelete(id);
         await loadConversations();
       } catch (err) {
-        console.error('[HistoryViewer] Falha ao disparar callback de deleção:', err);
+        console.error('[HistoryViewer] Fail:', err);
       }
     }
   };
 
   return (
     <div className="flex flex-col h-full bg-bg-secondary animate-fade-in">
-      <div className="p-4 border-b border-border-subtle space-y-3 bg-bg-primary/30">
+      <div className="p-4 border-b border-border-visible space-y-3 bg-bg-primary/30">
         <button 
           onClick={onNew}
-          className="w-full flex items-center justify-center gap-2 py-2.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95"
+          className="w-full flex items-center justify-center gap-2 py-2.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-md"
         >
           <Plus size={14} strokeWidth={3} />
           Novo Protocolo
@@ -74,7 +72,7 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="BUSCAR..."
-            className="w-full bg-bg-primary border border-border-subtle py-2 pl-9 pr-4 text-[10px] font-semibold text-text-primary focus:border-accent-primary outline-none uppercase tracking-widest"
+            className="w-full bg-bg-primary border border-border-visible py-2 pl-9 pr-4 text-[10px] font-bold text-text-primary focus:border-accent-primary outline-none uppercase tracking-widest"
           />
         </div>
       </div>
@@ -83,7 +81,7 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
         {isLoading ? (
           <div className="flex justify-center p-8"><div className="w-4 h-4 border-2 border-accent-primary border-t-transparent animate-spin"></div></div>
         ) : filteredConversations.length === 0 ? (
-          <div className="p-8 text-center text-[10px] text-text-tertiary font-bold uppercase tracking-widest">
+          <div className="p-8 text-center text-[10px] text-text-tertiary font-bold uppercase tracking-widest opacity-30">
             Vazio
           </div>
         ) : (
@@ -92,7 +90,7 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
               key={conv.id}
               onClick={() => onLoad(conv)}
               className={`p-4 border transition-all cursor-pointer group relative ${
-                conv.id === activeId ? 'bg-accent-primary/10 border-accent-primary' : 'bg-bg-primary/30 border-border-subtle hover:border-accent-primary/20'
+                conv.id === activeId ? 'bg-accent-subtle/30 border-accent-primary' : 'bg-bg-primary/30 border-border-visible hover:border-accent-primary/30'
               }`}
             >
               <div className="flex justify-between items-start gap-2 mb-1.5">
@@ -103,7 +101,7 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
                   <Trash2 size={14} />
                 </button>
               </div>
-              <div className="flex items-center justify-between text-[9px] font-semibold text-text-tertiary uppercase tracking-tighter">
+              <div className="flex items-center justify-between text-[9px] font-bold text-text-tertiary uppercase tracking-widest">
                 <span>{new Date(conv.updatedAt).toLocaleDateString()}</span>
                 <span className="flex items-center gap-1.5"><MessageSquare size={10} /> {conv.turns.length}</span>
               </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, AlertTriangle, ShieldAlert } from 'lucide-react';
 
@@ -30,29 +29,29 @@ const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm,
 
   return (
     <div className={`fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
-      <div className={`w-full max-w-sm bg-bg-secondary border border-red-600/30 flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-red-600/10 bg-bg-primary flex items-center justify-between">
+      <div className={`w-full max-w-sm bg-bg-secondary/95 backdrop-blur-xl border border-red-900/40 flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
+        <div className="px-6 py-4 border-b border-red-900/20 bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="text-red-500" size={16} />
-            <h2 className="text-[11px] font-bold uppercase tracking-[0.3em] text-red-500">Atenção</h2>
+            <ShieldAlert className="text-red-500" size={18} />
+            <h2 className="text-xs font-bold uppercase tracking-widest text-red-500">Alerta Crítico</h2>
           </div>
-          <button onClick={handleClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-all"><X size={20} /></button>
+          <button onClick={handleClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={20} /></button>
         </div>
 
-        <div className="p-10 flex flex-col items-center text-center space-y-6">
-          <AlertTriangle className="text-red-500 opacity-50" size={40} />
-          <div className="space-y-3">
-            <h3 className="text-sm font-bold uppercase text-text-primary tracking-tight">Purgar Protocolo?</h3>
-            <p className="text-[10px] font-semibold text-text-tertiary uppercase leading-relaxed tracking-widest">
-              Toda a memória desta sessão será perdida permanentemente.
+        <div className="p-12 flex flex-col items-center text-center space-y-6">
+          <AlertTriangle className="text-red-500/40" size={48} />
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold uppercase text-text-primary tracking-tighter">Purgar Sessão Atual?</h3>
+            <p className="text-xs font-medium text-text-tertiary uppercase leading-relaxed tracking-widest opacity-80">
+              Toda a memória volátil deste protocolo será destruída permanentemente.
             </p>
           </div>
         </div>
 
-        <div className="p-6 border-t border-border-subtle bg-bg-primary flex flex-wrap gap-2 shrink-0">
-          <button onClick={handleClose} className="flex-1 min-w-[80px] py-3 bg-bg-tertiary text-text-tertiary font-bold uppercase tracking-widest text-[9px] transition-all">Cancelar</button>
-          <button onClick={onSave} className="flex-1 min-w-[80px] py-3 bg-accent-primary hover:bg-accent-secondary text-white font-bold uppercase tracking-widest text-[9px] transition-all">Salvar</button>
-          <button onClick={handleConfirm} disabled={isRestarting} className="flex-1 min-w-[80px] py-3 bg-red-600 hover:bg-red-500 text-white font-bold uppercase tracking-widest text-[9px] transition-all">
+        <div className="p-8 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex flex-wrap gap-3 shrink-0">
+          <button onClick={handleClose} className="flex-1 min-w-[100px] py-3.5 bg-bg-tertiary hover:bg-bg-elevated text-text-tertiary font-bold uppercase tracking-widest text-[10px] transition-all">Cancelar</button>
+          <button onClick={onSave} className="flex-1 min-w-[100px] py-3.5 bg-accent-primary/20 hover:bg-accent-primary/30 border border-accent-primary/40 text-accent-primary font-bold uppercase tracking-widest text-[10px] transition-all">Arquivar</button>
+          <button onClick={handleConfirm} disabled={isRestarting} className="flex-1 min-w-[100px] py-3.5 bg-red-600 hover:bg-red-500 text-white font-bold uppercase tracking-widest text-[10px] transition-all shadow-lg">
             {isRestarting ? 'PURGANDO...' : 'PURGAR'}
           </button>
         </div>

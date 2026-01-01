@@ -16,7 +16,7 @@ const TreeNode: React.FC<{ item: any; level: number; onFileSelect: (path: string
     <div className="flex flex-col select-none">
       <div 
         onClick={handleClick}
-        className={`flex items-center gap-2 py-1.5 px-3 hover:bg-accent-primary/5 cursor-pointer transition-colors border-l-2 group ${
+        className={`flex items-center gap-2 py-1.5 px-3 hover:bg-accent-subtle/10 cursor-pointer transition-colors border-l-2 group ${
           isOpen && isFolder ? 'border-accent-primary/40' : 'border-transparent'
         }`}
         style={{ paddingLeft: `${level * 12 + 12}px` }}
@@ -27,7 +27,7 @@ const TreeNode: React.FC<{ item: any; level: number; onFileSelect: (path: string
         <span className={isFolder ? 'text-accent-primary/80' : 'text-text-tertiary group-hover:text-text-primary transition-colors'}>
           {isFolder ? <Folder size={14} /> : <File size={14} />}
         </span>
-        <span className={`text-[11px] font-mono tracking-tighter truncate ${isFolder ? 'font-bold text-text-secondary' : 'text-text-tertiary'}`}>
+        <span className={`text-[11px] font-mono tracking-tight truncate ${isFolder ? 'font-bold text-text-secondary' : 'text-text-tertiary'}`}>
           {item.name}
         </span>
       </div>
@@ -65,17 +65,17 @@ const GitHubViewer: React.FC = () => {
   if (!token) {
     return (
       <div className="p-6 flex flex-col gap-6 animate-fade-in">
-        <div className="p-4 bg-accent-primary/5 border border-border-visible">
-          <h4 className="text-[11px] font-bold uppercase text-text-primary mb-2 flex items-center gap-2">
+        <div className="p-5 bg-accent-subtle/10 border border-border-visible">
+          <h4 className="text-xs font-bold uppercase text-text-primary mb-3 flex items-center gap-2">
             <Key size={14} className="text-accent-primary" /> Token PAT
           </h4>
-          <p className="text-[10px] text-text-tertiary leading-relaxed uppercase font-semibold">
-            Necessário para acesso seguro.
+          <p className="text-[10px] text-text-tertiary leading-relaxed uppercase font-bold tracking-widest opacity-80">
+            Acesso seguro via Personal Access Token.
           </p>
         </div>
         <div className="space-y-4">
-          <input type="password" value={tokenInput} onChange={(e) => setTokenInput(e.target.value)} placeholder="TOKEN..." className="w-full bg-bg-primary border border-border-subtle p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
-          <button onClick={() => updateToken(tokenInput)} className="w-full py-3 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all">Autenticar</button>
+          <input type="password" value={tokenInput} onChange={(e) => setTokenInput(e.target.value)} placeholder="TOKEN..." className="w-full bg-bg-primary border border-border-visible p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
+          <button onClick={() => updateToken(tokenInput)} className="w-full py-3 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg">Autenticar</button>
         </div>
       </div>
     );
@@ -84,12 +84,12 @@ const GitHubViewer: React.FC = () => {
   if (!repoPath) {
     return (
       <div className="p-6 flex flex-col gap-6 animate-fade-in">
-        <div className="flex items-center gap-3 p-4 bg-accent-primary/10 border border-border-visible">
-          <CheckCircle2 size={16} className="text-accent-primary" />
-          <span className="text-[10px] font-bold uppercase text-text-primary tracking-widest">Autenticado</span>
+        <div className="flex items-center gap-3 p-4 bg-accent-subtle/20 border border-border-visible text-accent-primary">
+          <CheckCircle2 size={16} />
+          <span className="text-[10px] font-bold uppercase tracking-widest">Sincronizado</span>
         </div>
         <div className="space-y-4">
-          <input type="text" value={repoInput} onChange={(e) => setRepoInput(e.target.value)} placeholder="USUARIO/REPOS..." className="w-full bg-bg-primary border border-border-subtle p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
+          <input type="text" value={repoInput} onChange={(e) => setRepoInput(e.target.value)} placeholder="USUARIO/REPOS..." className="w-full bg-bg-primary border border-border-visible p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
           <button onClick={() => connectRepo(repoInput)} className="w-full py-3 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all">Conectar</button>
         </div>
       </div>
@@ -98,10 +98,10 @@ const GitHubViewer: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-bg-secondary animate-fade-in">
-      <div className="p-4 border-b border-border-subtle bg-bg-primary/50 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Github size={16} className="text-accent-primary" />
-          <span className="text-[11px] font-bold uppercase text-text-primary truncate max-w-[150px]">{repoPath}</span>
+      <div className="p-4 border-b border-border-visible bg-bg-primary/50 flex items-center justify-between">
+        <div className="flex items-center gap-2 overflow-hidden">
+          <Github size={16} className="text-accent-primary shrink-0" />
+          <span className="text-[11px] font-bold uppercase text-text-primary truncate">{repoPath}</span>
         </div>
         <button onClick={refreshTree} className={`p-1.5 text-text-tertiary hover:text-accent-primary ${isLoading ? 'animate-spin' : ''}`}>
           <RefreshCcw size={14} />
@@ -126,14 +126,14 @@ const GitHubViewer: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center text-[9px] text-text-tertiary font-bold uppercase tracking-widest italic border border-dashed border-border-subtle m-2">
+          <div className="p-8 text-center text-[9px] text-text-tertiary font-bold uppercase tracking-widest italic border border-dashed border-border-visible m-2">
             Vazio
           </div>
         )}
       </div>
 
-      <div className="p-4 border-t border-border-subtle bg-bg-primary/50 flex flex-col gap-2">
-        <button onClick={disconnect} className="w-full py-2 border border-border-subtle text-red-400/70 hover:text-red-400 text-[9px] font-bold uppercase tracking-widest transition-all">Desconectar</button>
+      <div className="p-4 border-t border-border-visible bg-bg-primary/50">
+        <button onClick={disconnect} className="w-full py-2 border border-border-visible text-red-400/70 hover:text-red-400 text-[9px] font-bold uppercase tracking-widest transition-all">Desconectar</button>
       </div>
     </div>
   );

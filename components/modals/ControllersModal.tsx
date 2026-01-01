@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Settings2, Sparkles, RotateCcw } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
@@ -25,75 +24,75 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
 
   return (
     <div className={`fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
-      <div className={`w-full max-w-xl bg-bg-secondary/80 backdrop-blur-2xl border border-border-visible flex flex-col shadow-2xl relative ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md">
+      <div className={`w-full max-w-xl bg-bg-secondary/95 backdrop-blur-xl border border-border-visible flex flex-col shadow-2xl relative ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
+        <div className="px-6 py-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Settings2 className="text-accent-primary" size={20} />
-            <h2 className="text-[14px] font-bold uppercase tracking-[0.05em] text-text-primary">Parâmetros IA</h2>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-text-primary">Parâmetros IA</h2>
           </div>
-          <button onClick={handleClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-all">
+          <button onClick={handleClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-all active:scale-90">
             <X size={20} />
           </button>
         </div>
 
-        <div className="flex border-b border-border-subtle bg-bg-primary/50 backdrop-blur-md">
-          <button onClick={() => setActiveTab('settings')} className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-all relative ${activeTab === 'settings' ? 'text-accent-primary bg-accent-primary/5' : 'text-text-tertiary'}`}>
+        <div className="flex border-b border-border-visible bg-bg-primary/50 backdrop-blur-md">
+          <button onClick={() => setActiveTab('settings')} className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all relative ${activeTab === 'settings' ? 'text-accent-primary bg-accent-subtle/20' : 'text-text-tertiary'}`}>
             Configurações
             {activeTab === 'settings' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-accent-primary"></div>}
           </button>
-          <button onClick={() => setActiveTab('shortcuts')} className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest transition-all relative ${activeTab === 'shortcuts' ? 'text-accent-primary bg-accent-primary/5' : 'text-text-tertiary'}`}>
+          <button onClick={() => setActiveTab('shortcuts')} className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all relative ${activeTab === 'shortcuts' ? 'text-accent-primary bg-accent-subtle/20' : 'text-text-tertiary'}`}>
             Atalhos
             {activeTab === 'shortcuts' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-accent-primary"></div>}
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 min-h-[400px]">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-8 min-h-[400px]">
           {activeTab === 'settings' ? (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {factors.map(factor => (
-                <div key={factor.id} className="space-y-2 bg-bg-tertiary/20 p-3 border border-border-subtle/30">
+                <div key={factor.id} className="space-y-3 bg-bg-tertiary/20 p-5 border border-border-visible/40">
                   <div className="flex items-center justify-between">
-                    <label className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">{factor.label}</label>
+                    <label className="text-xs font-bold text-text-secondary uppercase tracking-widest">{factor.label}</label>
                     {factor.type === 'toggle' && (
-                      <button onClick={() => updateFactor(factor.id)} className={`w-8 h-4 border transition-all flex items-center px-0.5 ${factor.enabled ? 'bg-accent-primary/20 border-accent-primary' : 'bg-bg-tertiary/60 border-border-subtle'}`}>
-                        <div className={`w-2.5 h-2.5 bg-accent-primary transition-transform ${factor.enabled ? 'translate-x-4' : 'translate-x-0'}`} />
+                      <button onClick={() => updateFactor(factor.id)} className={`w-10 h-5 border transition-all flex items-center px-0.5 relative ${factor.enabled ? 'bg-accent-subtle border-accent-primary' : 'bg-bg-tertiary border-border-visible'}`}>
+                        <div className={`w-3.5 h-3.5 bg-accent-primary transition-transform shadow-md ${factor.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
                       </button>
                     )}
                   </div>
                   
                   {factor.type === 'dropdown' && (
-                    <select value={factor.value} onChange={(e) => updateFactor(factor.id, e.target.value)} className="w-full bg-bg-tertiary/40 border border-border-subtle p-2 text-[10px] font-semibold text-text-primary uppercase outline-none focus:border-accent-primary transition-all">
+                    <select value={factor.value} onChange={(e) => updateFactor(factor.id, e.target.value)} className="w-full bg-bg-primary border border-border-visible p-3 text-xs font-bold text-text-primary uppercase outline-none focus:border-accent-primary transition-all">
                       {factor.options?.map(opt => <option key={opt} value={opt} className="bg-bg-secondary">{opt.toUpperCase()}</option>)}
                     </select>
                   )}
                   
                   {factor.type === 'slider' && (
-                    <div className="flex items-center gap-4">
-                      <input type="range" min={factor.min} max={factor.max} value={factor.value} onChange={(e) => updateFactor(factor.id, parseInt(e.target.value))} className="flex-1 h-0.5 bg-bg-tertiary/60 appearance-none cursor-pointer accent-accent-primary" />
-                      <span className="text-[10px] font-mono text-accent-primary w-6 text-right">{factor.value}</span>
+                    <div className="flex items-center gap-6 pt-2">
+                      <input type="range" min={factor.min} max={factor.max} value={factor.value} onChange={(e) => updateFactor(factor.id, parseInt(e.target.value))} className="flex-1 h-0.5 bg-bg-tertiary appearance-none cursor-pointer accent-accent-primary" />
+                      <span className="text-xs font-mono font-bold text-accent-primary w-8 text-right">{factor.value}</span>
                     </div>
                   )}
 
                   {factor.type === 'text' && (
-                    <textarea value={factor.value} onChange={(e) => updateFactor(factor.id, e.target.value)} className="w-full h-20 bg-bg-tertiary/40 border border-border-subtle p-2 text-[11px] font-normal text-text-primary outline-none focus:border-accent-primary transition-all resize-none custom-scrollbar" />
+                    <textarea value={factor.value} onChange={(e) => updateFactor(factor.id, e.target.value)} placeholder="Inserir contexto..." className="w-full h-24 bg-bg-primary border border-border-visible p-3 text-sm font-medium text-text-primary outline-none focus:border-accent-primary transition-all resize-none custom-scrollbar" />
                   )}
                 </div>
               ))}
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-20 py-12">
-              <Sparkles size={48} className="text-accent-primary mb-4" />
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em]">Em Breve</p>
+            <div className="h-full flex flex-col items-center justify-center text-center opacity-20 py-20">
+              <Sparkles size={64} className="text-accent-primary mb-6" />
+              <p className="text-xs font-bold uppercase tracking-[0.4em]">Shortcuts Module Inactive</p>
             </div>
           )}
         </div>
 
-        <div className="p-4 border-t border-border-subtle bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
-          <button onClick={() => confirm('Resetar?') && resetFactors()} className="flex items-center gap-2 text-text-tertiary hover:text-red-400 text-[9px] font-bold uppercase tracking-widest transition-all">
-            <RotateCcw size={14} /> Reset
+        <div className="p-8 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+          <button onClick={() => confirm('Resetar parâmetros?') && resetFactors()} className="flex items-center gap-2 text-text-tertiary hover:text-red-400 text-[10px] font-bold uppercase tracking-widest transition-all">
+            <RotateCcw size={14} /> Resetar Nucleus
           </button>
-          <button onClick={handleClose} className="px-8 py-2.5 bg-accent-primary/90 backdrop-blur-sm hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-[0.1em] transition-all active:scale-95">
-            Confirmar
+          <button onClick={handleClose} className="px-10 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg">
+            Confirmar Parâmetros
           </button>
         </div>
       </div>
