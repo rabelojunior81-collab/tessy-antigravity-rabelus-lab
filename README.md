@@ -1,9 +1,8 @@
-
-# Tessy Alpha v3.1 🧪 by Rabelus Lab
+# Tessy Stable v3.2 🧪 by Rabelus Lab
 
 Tessy is an advanced intent-driven AI assistant powered by **Google Gemini**, designed specifically for complex project workflows, GitHub synchronization, and precision prompt engineering.
 
-![Tessy Interface](https://via.placeholder.com/1200x600/0a0a0a/10b981?text=Tessy+Antigravity+v3.1)
+![Tessy Interface](https://via.placeholder.com/1200x600/0a0a0a/10b981?text=Tessy+Antigravity+v3.2)
 
 ## 🚀 Key Features
 

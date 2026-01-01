@@ -1,5 +1,10 @@
 # Changelog - Tessy Alpha
 
+## [v3.2.0-STABLE] - 2025-02-24
+### Limpeza de Sistema
+- **Expurgo de Componentes Fantasmas**: Remoção definitiva de stubs legados e componentes não referenciados (`Canvas.tsx`, `FactorPanel.tsx`, `Controllers.tsx`, `HistorySidebar.tsx`, `ProjectSwitcher.tsx`, `TemplateLibraryModal.tsx`).
+- **Otimização de Build**: Redução da árvore de dependências interna para melhor performance de carregamento.
+
 ## [v3.1.5-POLISH] - 2024-05-30
 ### Refinement & Production Prep
 - **Visual Overhaul**: Standardized "Brutalist Antigravity" design with sharper borders, flat shadows, and consistent spacing.
@@ -13,7 +18,6 @@
 ## [v3.1.0-STABLE] - 2024-05-25
 ### Final Layout Polish
 - **Responsiveness**: Full support for Mobile and Tablet. Sidebar becomes a drawer, viewers are full-screen overlays on small screens.
-- **Cleanup**: Deleted legacy components (`HistorySidebar.tsx`, `TemplateLibraryModal.tsx`, etc.).
 - **Optimization**: Integrated `React.memo` across core components to reduce re-renders.
 
 ## [v3.0.0-ANTIGRAVITY] - 2024-05-20
