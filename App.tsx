@@ -11,14 +11,11 @@ import { LayoutProvider, useLayoutContext } from './contexts/LayoutContext';
 import { GitHubProvider } from './contexts/GitHubContext';
 import { ChatProvider, useChat } from './contexts/ChatContext';
 import MainLayout from './components/layout/MainLayout';
-import { useViewer } from './hooks/useViewer';
 import { useLayout } from './hooks/useLayout';
+import { useProjects } from './hooks/useProjects';
+import { useViewerRouter } from './hooks/useViewerRouter';
 
-// Viewers
-import HistoryViewer from './components/viewers/HistoryViewer';
-import LibraryViewer from './components/viewers/LibraryViewer';
-import ProjectsViewer from './components/viewers/ProjectsViewer';
-import GitHubViewer from './components/viewers/GitHubViewer';
+// Modals & Icons
 import GitHubTokenModal from './components/GitHubTokenModal';
 import { Menu, Moon, Sun, X } from 'lucide-react';
 
@@ -31,92 +28,25 @@ const TessyLogo = React.memo(() => (
   </div>
 ));
 
-const MainContentWrapper: React.FC<{
-  currentProjectId: string;
-  handleNewConversation: () => void;
-  handleSwitchProject: (id: string) => void;
-  handleOpenProjectModal: (id?: string | null) => void;
-  selectedProjectId: string | null;
-  setSelectedProjectId: (id: string | null) => void;
-  selectedLibraryItem: Template | RepositoryItem | null;
-  setSelectedLibraryItem: (item: Template | RepositoryItem | null) => void;
-}> = React.memo((props) => {
-  const { viewerAberto, fecharViewer } = useViewer();
-  const { currentConversation, loadConversation, deleteConversation } = useChat();
-  const { selecionarArquivo } = useLayout();
-
-  const handleSelectLibraryItem = useCallback((item: RepositoryItem | Template) => {
-    props.setSelectedLibraryItem(item);
-    props.setSelectedProjectId(null);
-    selecionarArquivo(null);
-  }, [selecionarArquivo, props]);
-
-  const onProjectSelected = useCallback((id: string) => {
-    selecionarArquivo(null);
-    props.setSelectedLibraryItem(null);
-    props.setSelectedProjectId(id);
-  }, [selecionarArquivo, props]);
-
-  const viewerContent = useMemo(() => {
-    switch (viewerAberto) {
-      case 'history':
-        return (
-          <HistoryViewer 
-            currentProjectId={props.currentProjectId} 
-            activeId={currentConversation?.id || ''} 
-            onLoad={(conv) => { loadConversation(conv); fecharViewer(); props.setSelectedProjectId(null); props.setSelectedLibraryItem(null); }} 
-            onDelete={deleteConversation}
-            onNew={() => { props.handleNewConversation(); fecharViewer(); props.setSelectedProjectId(null); props.setSelectedLibraryItem(null); }}
-          />
-        );
-      case 'library':
-        return (
-          <LibraryViewer 
-            currentProjectId={props.currentProjectId} 
-            onSelectItem={handleSelectLibraryItem}
-          />
-        );
-      case 'projects':
-        return (
-          <ProjectsViewer 
-            currentProjectId={props.currentProjectId} 
-            onSwitch={(id) => { props.handleSwitchProject(id); fecharViewer(); props.setSelectedProjectId(null); props.setSelectedLibraryItem(null); }}
-            onOpenModal={() => props.handleOpenProjectModal()}
-            onEditProject={(id) => props.handleOpenProjectModal(id)}
-            onSelectProject={onProjectSelected}
-          />
-        );
-      case 'github':
-        return <GitHubViewer />;
-      default:
-        return null;
-    }
-  }, [viewerAberto, props, currentConversation, loadConversation, deleteConversation, handleSelectLibraryItem, fecharViewer, onProjectSelected]);
-
-  return (
-    <MainLayout 
-      currentProjectId={props.currentProjectId}
-      viewerContent={viewerContent} 
-      selectedProjectId={props.selectedProjectId} 
-      setSelectedProjectId={props.setSelectedProjectId} 
-      selectedLibraryItem={props.selectedLibraryItem}
-      setSelectedLibraryItem={props.setSelectedLibraryItem}
-    />
-  );
-});
-
 const AppContent: React.FC = () => {
   const [isMigrating, setIsMigrating] = useState(true);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [currentProjectId, setCurrentProjectId] = useState('default-project');
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedLibraryItem, setSelectedLibraryItem] = useState<Template | RepositoryItem | null>(null);
   const { isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutContext();
-  
+  const { selecionarArquivo } = useLayout();
   const { newConversation, factors } = useChat();
-  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
+
+  // Hook customizado para gerenciar projetos
+  const { 
+    currentProjectId, 
+    switchProject, 
+    isProjectModalOpen, 
+    editingProjectId, 
+    openProjectModal, 
+    closeProjectModal 
+  } = useProjects(newConversation);
 
   useEffect(() => {
     const boot = async () => {
@@ -124,8 +54,6 @@ const AppContent: React.FC = () => {
         await migrateToIndexedDB();
         const themeSetting = await db.settings.get('tessy-theme');
         if (themeSetting) setTheme(themeSetting.value);
-        const lastProjSetting = await db.settings.get('tessy-current-project');
-        if (lastProjSetting) setCurrentProjectId(lastProjSetting.value);
       } catch (err) {
         console.error("Boot error:", err);
       } finally {
@@ -144,18 +72,27 @@ const AppContent: React.FC = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   }, []);
 
-  const handleSwitchProject = useCallback(async (id: string) => {
-    setCurrentProjectId(id);
-    db.settings.put({ key: 'tessy-current-project', value: id });
-    setSelectedProjectId(null);
+  const handleProjectSelected = useCallback((id: string) => {
+    selecionarArquivo(null);
     setSelectedLibraryItem(null);
-    newConversation();
-  }, [newConversation]);
+    setSelectedProjectId(id || null);
+  }, [selecionarArquivo]);
 
-  const handleOpenProjectModal = useCallback((id: string | null = null) => {
-    setEditingProjectId(id);
-    setIsProjectModalOpen(true);
-  }, []);
+  const handleLibraryItemSelected = useCallback((item: RepositoryItem | Template) => {
+    setSelectedLibraryItem(item);
+    setSelectedProjectId(null);
+    selecionarArquivo(null);
+  }, [selecionarArquivo]);
+
+  // Hook customizado para gerenciar o roteamento do painel lateral (viewer)
+  const viewerContent = useViewerRouter({
+    currentProjectId,
+    onProjectSelected: handleProjectSelected,
+    onLibraryItemSelected: handleLibraryItemSelected,
+    onNewConversation: newConversation,
+    onOpenProjectModal: openProjectModal,
+    handleSwitchProject: switchProject
+  });
 
   const groundingStatus = useMemo(() => factors.find(f => f.id === 'grounding')?.enabled || false, [factors]);
 
@@ -210,13 +147,11 @@ const AppContent: React.FC = () => {
 
       <div className="flex-1 overflow-hidden relative">
         <Suspense fallback={<LoadingSpinner />}>
-          <MainContentWrapper 
+          <MainLayout 
             currentProjectId={currentProjectId}
-            handleNewConversation={newConversation}
-            handleSwitchProject={handleSwitchProject}
-            handleOpenProjectModal={handleOpenProjectModal}
-            selectedProjectId={selectedProjectId}
-            setSelectedProjectId={setSelectedProjectId}
+            viewerContent={viewerContent} 
+            selectedProjectId={selectedProjectId} 
+            setSelectedProjectId={setSelectedProjectId} 
             selectedLibraryItem={selectedLibraryItem}
             setSelectedLibraryItem={setSelectedLibraryItem}
           />
@@ -235,9 +170,9 @@ const AppContent: React.FC = () => {
 
       <ProjectModal
         isOpen={isProjectModalOpen}
-        onClose={() => setIsProjectModalOpen(false)}
+        onClose={closeProjectModal}
         projectId={editingProjectId}
-        onSuccess={(id) => { handleSwitchProject(id); setIsProjectModalOpen(false); }}
+        onSuccess={(id) => { switchProject(id); closeProjectModal(); }}
       />
       <GitHubTokenModal 
         isOpen={isGitHubTokenModalOpen} 
@@ -249,12 +184,15 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const [currentProjectId, setCurrentProjectId] = useState('default-project');
+  // O ChatProvider precisa do currentProjectId inicial. Como o boot de configuração é assíncrono,
+  // mantemos um estado básico aqui que é atualizado pelo AppContent se necessário,
+  // mas o useProjects lidará com a persistência real.
+  const [initialProjectId, setInitialProjectId] = useState('default-project');
 
   useEffect(() => {
     const loadProj = async () => {
       const lastProjSetting = await db.settings.get('tessy-current-project');
-      if (lastProjSetting) setCurrentProjectId(lastProjSetting.value);
+      if (lastProjSetting) setInitialProjectId(lastProjSetting.value);
     };
     loadProj();
   }, []);
@@ -262,7 +200,7 @@ const App: React.FC = () => {
   return (
     <LayoutProvider>
       <GitHubProvider>
-        <ChatProvider currentProjectId={currentProjectId}>
+        <ChatProvider currentProjectId={initialProjectId}>
           <AppContent />
         </ChatProvider>
       </GitHubProvider>
