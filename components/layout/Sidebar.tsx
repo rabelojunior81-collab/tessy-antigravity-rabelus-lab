@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Clock, Library, Folder, Github, Command } from 'lucide-react';
 import { useViewer } from '../../hooks/useViewer';
@@ -46,7 +47,7 @@ const Sidebar: React.FC = () => {
               >
                 <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                 
-                <span className="absolute left-full ml-3 px-3 py-1.5 bg-bg-tertiary border border-border-visible text-text-primary text-[10px] font-bold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 z-[100] shadow-xl backdrop-blur-md">
+                <span className="absolute left-full ml-3 px-3 py-1.5 bg-bg-tertiary/90 border border-border-visible text-text-primary text-xs font-bold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 z-[100] shadow-xl backdrop-blur-md">
                   {item.label}
                 </span>
                 

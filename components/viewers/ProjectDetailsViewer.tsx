@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { db } from '../../services/dbService';
 import { Project } from '../../types';
@@ -52,7 +53,7 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
 
       <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
         {/* Active Project Card */}
-        <div className="mb-10 p-8 bg-bg-tertiary/60 border border-border-visible relative overflow-hidden group">
+        <div className="mb-10 p-8 bg-bg-tertiary/80 border border-border-visible relative overflow-hidden group shadow-md">
           <div className="flex justify-between items-start relative z-10">
             <div className="flex-1 min-w-0 pr-4">
               <div className="flex items-center gap-2 mb-4">
@@ -63,11 +64,11 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
                 <span className="text-xs font-bold text-accent-primary uppercase tracking-widest glow-text-blue">Protocolo Ativo</span>
               </div>
 
-              <h1 className="text-3xl font-bold text-text-primary uppercase tracking-tighter mb-4 truncate">
+              <h1 className="text-4xl font-bold text-text-primary uppercase tracking-tighter mb-4 truncate">
                 {project.name}
               </h1>
 
-              <p className="text-sm text-text-secondary leading-relaxed font-medium mb-6">
+              <p className="text-base text-text-secondary leading-relaxed font-medium mb-6">
                 {project.description || 'Nenhuma diretriz definida para este protocolo.'}
               </p>
 
@@ -77,7 +78,7 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
                    <div className="w-1.5 h-3 bg-accent-primary/60"></div>
                    <div className="w-1.5 h-3 bg-accent-primary/30"></div>
                  </div>
-                 <span className="text-[10px] font-mono font-bold text-text-tertiary uppercase tracking-widest">REF: {project.id.substring(0, 8)}</span>
+                 <span className="text-xs font-mono font-bold text-text-tertiary uppercase tracking-widest">REF: {project.id.substring(0, 8)}</span>
               </div>
             </div>
 
@@ -89,19 +90,19 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-4 mb-10">
-          <div className="p-6 bg-bg-tertiary/40 border border-border-visible flex flex-col items-start">
+          <div className="p-6 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Layout size={14} className="text-accent-primary/60" />
               <span className="text-xs font-bold uppercase text-text-tertiary tracking-widest">Sessões</span>
             </div>
-            <span className="text-3xl font-bold text-text-primary">{stats.conversations}</span>
+            <span className="text-4xl font-bold text-text-primary">{stats.conversations}</span>
           </div>
-          <div className="p-6 bg-bg-tertiary/40 border border-border-visible flex flex-col items-start">
+          <div className="p-6 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Database size={14} className="text-accent-primary/60" />
               <span className="text-xs font-bold uppercase text-text-tertiary tracking-widest">Biblioteca</span>
             </div>
-            <span className="text-3xl font-bold text-text-primary">{stats.library}</span>
+            <span className="text-4xl font-bold text-text-primary">{stats.library}</span>
           </div>
         </div>
 
@@ -114,7 +115,7 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
             <a 
               href={project.githubRepo.startsWith('http') ? project.githubRepo : `https://github.com/${project.githubRepo}`}
               target="_blank" rel="noopener noreferrer"
-              className="flex items-center justify-between p-4 bg-bg-tertiary/20 border border-border-visible hover:border-accent-primary/40 transition-all group"
+              className="flex items-center justify-between p-4 bg-bg-tertiary/80 border border-border-visible hover:border-accent-primary/40 transition-all group"
             >
               <div className="flex items-center gap-3">
                 <Github size={18} className="text-text-secondary group-hover:text-accent-primary transition-colors" />
@@ -129,7 +130,7 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
         <div className="space-y-4 pt-4 border-t border-border-visible">
           <button 
             onClick={onNewConversation}
-            className="w-full py-4 bg-accent-primary hover:bg-accent-secondary text-white font-bold uppercase text-xs tracking-[0.2em] transition-all flex items-center justify-center gap-3"
+            className="w-full py-4 bg-accent-primary hover:bg-accent-secondary text-white font-bold uppercase text-xs tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg"
           >
             Iniciar Nova Sessão
           </button>
