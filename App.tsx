@@ -4,7 +4,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import ProjectModal from './components/ProjectModal';
 import { DateAnchor } from './components/DateAnchor';
 import { db, migrateToIndexedDB } from './services/dbService';
-import { RepositoryItem } from './types';
+import { RepositoryItem, Template } from './types';
 
 // Layout & Context Imports
 import { LayoutProvider, useLayoutContext } from './contexts/LayoutContext';
@@ -38,22 +38,24 @@ const MainContentWrapper: React.FC<{
   handleOpenProjectModal: (id?: string | null) => void;
   selectedProjectId: string | null;
   setSelectedProjectId: (id: string | null) => void;
+  selectedLibraryItem: Template | RepositoryItem | null;
+  setSelectedLibraryItem: (item: Template | RepositoryItem | null) => void;
 }> = React.memo((props) => {
   const { viewerAberto, fecharViewer } = useViewer();
-  const { currentConversation, loadConversation, deleteConversation, setInputText } = useChat();
+  const { currentConversation, loadConversation, deleteConversation } = useChat();
   const { selecionarArquivo } = useLayout();
 
-  const handleSelectItem = useCallback((item: RepositoryItem) => {
-    if (item.content) {
-      setInputText(item.content);
-      fecharViewer();
-    }
-  }, [setInputText, fecharViewer]);
+  const handleSelectLibraryItem = useCallback((item: RepositoryItem | Template) => {
+    props.setSelectedLibraryItem(item);
+    props.setSelectedProjectId(null);
+    selecionarArquivo(null);
+  }, [selecionarArquivo, props]);
 
   const onProjectSelected = useCallback((id: string) => {
-    selecionarArquivo(null); // Clear selected file when a project is clicked
+    selecionarArquivo(null);
+    props.setSelectedLibraryItem(null);
     props.setSelectedProjectId(id);
-  }, [selecionarArquivo, props.setSelectedProjectId]);
+  }, [selecionarArquivo, props]);
 
   const viewerContent = useMemo(() => {
     switch (viewerAberto) {
@@ -62,23 +64,23 @@ const MainContentWrapper: React.FC<{
           <HistoryViewer 
             currentProjectId={props.currentProjectId} 
             activeId={currentConversation?.id || ''} 
-            onLoad={(conv) => { loadConversation(conv); fecharViewer(); props.setSelectedProjectId(null); }} 
+            onLoad={(conv) => { loadConversation(conv); fecharViewer(); props.setSelectedProjectId(null); props.setSelectedLibraryItem(null); }} 
             onDelete={deleteConversation}
-            onNew={() => { props.handleNewConversation(); fecharViewer(); props.setSelectedProjectId(null); }}
+            onNew={() => { props.handleNewConversation(); fecharViewer(); props.setSelectedProjectId(null); props.setSelectedLibraryItem(null); }}
           />
         );
       case 'library':
         return (
           <LibraryViewer 
             currentProjectId={props.currentProjectId} 
-            onSelectItem={handleSelectItem}
+            onSelectItem={handleSelectLibraryItem}
           />
         );
       case 'projects':
         return (
           <ProjectsViewer 
             currentProjectId={props.currentProjectId} 
-            onSwitch={(id) => { props.handleSwitchProject(id); fecharViewer(); props.setSelectedProjectId(null); }}
+            onSwitch={(id) => { props.handleSwitchProject(id); fecharViewer(); props.setSelectedProjectId(null); props.setSelectedLibraryItem(null); }}
             onOpenModal={() => props.handleOpenProjectModal()}
             onEditProject={(id) => props.handleOpenProjectModal(id)}
             onSelectProject={onProjectSelected}
@@ -89,9 +91,17 @@ const MainContentWrapper: React.FC<{
       default:
         return null;
     }
-  }, [viewerAberto, props, currentConversation, loadConversation, deleteConversation, handleSelectItem, fecharViewer, onProjectSelected]);
+  }, [viewerAberto, props, currentConversation, loadConversation, deleteConversation, handleSelectLibraryItem, fecharViewer, onProjectSelected]);
 
-  return <MainLayout viewerContent={viewerContent} selectedProjectId={props.selectedProjectId} setSelectedProjectId={props.setSelectedProjectId} />;
+  return (
+    <MainLayout 
+      viewerContent={viewerContent} 
+      selectedProjectId={props.selectedProjectId} 
+      setSelectedProjectId={props.setSelectedProjectId} 
+      selectedLibraryItem={props.selectedLibraryItem}
+      setSelectedLibraryItem={props.setSelectedLibraryItem}
+    />
+  );
 });
 
 const AppContent: React.FC = () => {
@@ -99,6 +109,7 @@ const AppContent: React.FC = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [currentProjectId, setCurrentProjectId] = useState('default-project');
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [selectedLibraryItem, setSelectedLibraryItem] = useState<Template | RepositoryItem | null>(null);
   const { isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutContext();
   
   const { newConversation, factors } = useChat();
@@ -136,6 +147,7 @@ const AppContent: React.FC = () => {
     setCurrentProjectId(id);
     db.settings.put({ key: 'tessy-current-project', value: id });
     setSelectedProjectId(null);
+    setSelectedLibraryItem(null);
     newConversation();
   }, [newConversation]);
 
@@ -204,6 +216,8 @@ const AppContent: React.FC = () => {
             handleOpenProjectModal={handleOpenProjectModal}
             selectedProjectId={selectedProjectId}
             setSelectedProjectId={setSelectedProjectId}
+            selectedLibraryItem={selectedLibraryItem}
+            setSelectedLibraryItem={setSelectedLibraryItem}
           />
         </Suspense>
       </div>

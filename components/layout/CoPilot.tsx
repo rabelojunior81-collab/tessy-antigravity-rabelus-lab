@@ -5,13 +5,13 @@ import { useChat } from '../../contexts/ChatContext';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as prismTheme } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import TemplateModal from '../modals/TemplateModal';
 import OptimizeModal from '../modals/OptimizeModal';
 import SaveModal from '../modals/SaveModal';
 import ShareModal from '../modals/ShareModal';
 import RestartModal from '../modals/RestartModal';
 import ControllersModal from '../modals/ControllersModal';
 import FilePreview from '../FilePreview';
+import { useViewer } from '../../hooks/useViewer';
 
 const CoPilot: React.FC = () => {
   const { 
@@ -28,7 +28,8 @@ const CoPilot: React.FC = () => {
     isUploadingFiles
   } = useChat();
 
-  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+  const { abrirViewer } = useViewer();
+
   const [isOptimizeModalOpen, setIsOptimizeModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -67,7 +68,7 @@ const CoPilot: React.FC = () => {
   const hasMessages = useMemo(() => (currentConversation?.turns.length || 0) > 0, [currentConversation]);
 
   const toolbarItems = [
-    { icon: FileText, label: 'Templates', onClick: () => setIsTemplateModalOpen(true), disabled: false },
+    { icon: FileText, label: 'Biblioteca', onClick: () => abrirViewer('library'), disabled: false },
     { icon: Wand2, label: 'Otimizar', onClick: () => setIsOptimizeModalOpen(true), disabled: !inputText.trim() },
     { icon: Save, label: 'Salvar', onClick: () => setIsSaveModalOpen(true), disabled: !hasMessages },
     { icon: Share2, label: 'Partilhar', onClick: () => setIsShareModalOpen(true), disabled: !hasMessages },
@@ -76,7 +77,7 @@ const CoPilot: React.FC = () => {
 
   return (
     <aside className="w-full h-full bg-bg-secondary/60 backdrop-blur-xl border-l border-border-visible flex flex-col z-[60] shrink-0">
-      {/* Compacted Header - Approx 40px height */}
+      {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-2">
           <div className={`w-1.5 h-1.5 ${isLoading ? 'bg-accent-secondary animate-pulse shadow-[0_0_8px_#4a9eff]' : 'bg-accent-primary'}`}></div>
@@ -94,8 +95,8 @@ const CoPilot: React.FC = () => {
       <div className="flex-1 overflow-hidden flex flex-col bg-transparent relative">
         <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 pb-6 relative">
           {currentConversation?.turns.length === 0 && !isLoading && (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-30 animate-fade-in">
-              <p className="text-[11px] font-normal tracking-normal italic text-text-tertiary">Ready for instruction</p>
+            <div className="h-full flex flex-col items-center justify-center text-center opacity-20 animate-fade-in">
+              <p className="text-[11px] font-normal tracking-wider italic text-text-tertiary">READY FOR INSTRUCTION</p>
             </div>
           )}
 
@@ -110,7 +111,7 @@ const CoPilot: React.FC = () => {
               <div className="flex flex-col items-start gap-2">
                 <div className="flex items-center gap-2 px-1">
                    <ChevronDown size={10} className="text-text-tertiary" />
-                   <span className="text-[9px] font-normal text-text-tertiary uppercase tracking-wide opacity-50">Nucleus interpretation active</span>
+                   <span className="text-[9px] font-normal text-text-tertiary uppercase tracking-wide opacity-50">Nucleus Interpretation Active</span>
                 </div>
                 <div className="w-full bg-bg-tertiary/20 border border-border-visible p-5 prose max-w-none shadow-sm font-normal">
                   <ReactMarkdown
@@ -214,7 +215,6 @@ const CoPilot: React.FC = () => {
         </div>
       </div>
 
-      <TemplateModal isOpen={isTemplateModalOpen} onClose={() => setIsTemplateModalOpen(false)} onSelect={setInputText} />
       <OptimizeModal isOpen={isOptimizeModalOpen} inputText={inputText} onClose={() => setIsOptimizeModalOpen(false)} onApply={setInputText} />
       <SaveModal isOpen={isSaveModalOpen} conversation={currentConversation} onClose={() => setIsSaveModalOpen(false)} onSuccess={loadConversation} />
       <ShareModal isOpen={isShareModalOpen} conversation={currentConversation} onClose={() => setIsShareModalOpen(false)} />

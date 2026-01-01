@@ -3,19 +3,28 @@ import React from 'react';
 import { useLayout } from '../../hooks/useLayout';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow as prismTheme } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { X, Copy, Check, FileCode } from 'lucide-react';
+import { X, Copy, Check } from 'lucide-react';
 import ProjectDetailsViewer from '../viewers/ProjectDetailsViewer';
+import LibraryDetailsViewer from '../viewers/LibraryDetailsViewer';
 import { useChat } from '../../contexts/ChatContext';
 import { useViewer } from '../../hooks/useViewer';
+import { Template, RepositoryItem } from '../../types';
 
 interface CentralCanvasProps {
   selectedProjectId: string | null;
   setSelectedProjectId: (id: string | null) => void;
+  selectedLibraryItem: Template | RepositoryItem | null;
+  setSelectedLibraryItem: (item: Template | RepositoryItem | null) => void;
 }
 
-const CentralCanvas: React.FC<CentralCanvasProps> = ({ selectedProjectId, setSelectedProjectId }) => {
+const CentralCanvas: React.FC<CentralCanvasProps> = ({ 
+  selectedProjectId, 
+  setSelectedProjectId,
+  selectedLibraryItem,
+  setSelectedLibraryItem
+}) => {
   const { arquivoSelecionado, selecionarArquivo } = useLayout();
-  const { newConversation } = useChat();
+  const { newConversation, setInputText } = useChat();
   const { abrirViewer } = useViewer();
   const [copied, setCopied] = React.useState(false);
 
@@ -29,11 +38,16 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({ selectedProjectId, setSel
 
   const isImage = (lang: string) => ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(lang.toLowerCase());
 
-  // Prioritize rendering: Selected File > Selected Project Details > Empty State
+  // Prioritize rendering: 
+  // 1. Selected File (GitHub)
+  // 2. Selected Library Item (Templates/Prompts)
+  // 3. Selected Project Details
+  // 4. Empty State
+
   if (arquivoSelecionado) {
     return (
       <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col relative p-6">
-        <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in border border-border-visible bg-bg-tertiary/40 backdrop-blur-lg">
+        <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in border border-border-visible bg-bg-tertiary/40 backdrop-blur-lg shadow-xl">
           <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <span className="text-xs font-mono text-accent-primary tracking-tighter truncate max-w-[300px]">{arquivoSelecionado.path}</span>
@@ -92,10 +106,25 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({ selectedProjectId, setSel
     );
   }
 
+  if (selectedLibraryItem) {
+    return (
+      <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col relative p-6">
+        <LibraryDetailsViewer 
+          item={selectedLibraryItem}
+          onClose={() => setSelectedLibraryItem(null)}
+          onSelect={(content) => {
+            setInputText(content);
+            setSelectedLibraryItem(null);
+          }}
+        />
+      </div>
+    );
+  }
+
   if (selectedProjectId) {
     return (
       <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col relative p-6">
-        <div className="flex-1 border border-border-visible overflow-hidden">
+        <div className="flex-1 border border-border-visible overflow-hidden shadow-xl">
           <ProjectDetailsViewer 
             projectId={selectedProjectId} 
             onClose={() => setSelectedProjectId(null)}
@@ -110,14 +139,14 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({ selectedProjectId, setSel
   return (
     <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col items-center justify-center p-6">
       <div className="flex flex-col items-center justify-center text-center animate-fade-in">
-        <div className="w-20 h-20 flex items-center justify-center mb-8 opacity-20">
+        <div className="w-20 h-20 flex items-center justify-center mb-8 opacity-10">
           <svg viewBox="0 0 100 100" className="w-full h-full filter drop-shadow-[0_0_15px_rgba(74,158,255,0.3)]">
             <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#4a9eff" strokeWidth="6" />
             <path d="M35 60 H65" fill="none" stroke="#4a9eff" strokeWidth="6" />
           </svg>
         </div>
-        <h3 className="text-2xl font-light tracking-wider text-text-primary opacity-30">TESSY</h3>
-        <p className="mt-2 text-[11px] font-light text-text-tertiary opacity-30 tracking-wide">
+        <h3 className="text-2xl font-light tracking-[0.2em] text-text-primary opacity-20">TESSY</h3>
+        <p className="mt-2 text-[10px] font-medium text-text-tertiary opacity-20 uppercase tracking-[0.4em]">
           Rabelus Lab Nucleus
         </p>
       </div>
