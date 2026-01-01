@@ -31,12 +31,12 @@ const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm,
   return (
     <div className={`fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
       <div className={`w-full max-w-sm bg-bg-secondary/95 backdrop-blur-xl border border-red-900/40 flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-red-900/20 bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
+        <div className="px-4 py-2 border-b border-red-900/20 bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="text-red-500" size={18} />
-            <h2 className="text-sm font-medium tracking-wide text-red-400">Alerta Crítico</h2>
+            <ShieldAlert className="text-red-500" size={16} />
+            <h2 className="text-[10px] font-medium tracking-wide text-red-400">Alerta Crítico</h2>
           </div>
-          <button onClick={handleClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={20} /></button>
+          <button onClick={handleClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={16} /></button>
         </div>
 
         <div className="p-12 flex flex-col items-center text-center space-y-6">

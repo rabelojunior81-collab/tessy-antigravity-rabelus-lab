@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, Wand2, Check, AlertCircle, Loader2 } from 'lucide-react';
 import { OptimizationResult } from '../../types';
@@ -47,12 +48,12 @@ const OptimizeModal: React.FC<OptimizeModalProps> = ({ isOpen, inputText, onClos
   return (
     <div className={`fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
       <div className={`w-full max-w-4xl bg-bg-secondary/95 backdrop-blur-xl border border-border-visible flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <Wand2 className="text-accent-primary" size={20} />
-            <h2 className="text-sm font-bold uppercase tracking-widest text-text-primary">Otimização de Instrução</h2>
+        <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Wand2 className="text-accent-primary" size={16} />
+            <h2 className="text-xs font-medium tracking-normal text-text-primary uppercase">Otimização de Instrução</h2>
           </div>
-          <button onClick={handleClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={20} /></button>
+          <button onClick={handleClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={16} /></button>
         </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar p-10 space-y-10 min-h-[450px]">

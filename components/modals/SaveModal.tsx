@@ -55,12 +55,12 @@ const SaveModal: React.FC<SaveModalProps> = ({ isOpen, onClose, conversation, on
   return (
     <div className={`fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
       <div className={`w-full max-w-lg bg-bg-secondary/95 backdrop-blur-xl border border-border-visible flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Save className="text-accent-primary" size={20} />
-            <h2 className="text-base font-medium tracking-normal text-text-primary">Arquivar Protocolo</h2>
+        <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Save className="text-accent-primary" size={16} />
+            <h2 className="text-xs font-medium tracking-normal text-text-primary">Arquivar Protocolo</h2>
           </div>
-          <button onClick={handleClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={20} /></button>
+          <button onClick={handleClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={16} /></button>
         </div>
 
         <form onSubmit={handleSave} className="p-8 space-y-6">

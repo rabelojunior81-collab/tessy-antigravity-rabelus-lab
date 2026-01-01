@@ -40,14 +40,14 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
 
   return (
     <div className="h-full flex flex-col bg-bg-secondary animate-fade-in overflow-hidden">
-      {/* Header */}
-      <div className="px-6 py-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
-          <Folder size={18} className="text-accent-primary" />
-          <h2 className="text-base font-medium tracking-normal text-text-primary">Detalhes do Protocolo</h2>
+      {/* Header - Compact py-2, icon 16 */}
+      <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2">
+          <Folder size={16} className="text-accent-primary" />
+          <h2 className="text-xs font-medium tracking-normal text-text-primary">Detalhes do Protocolo</h2>
         </div>
-        <button onClick={onClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-all active:scale-90">
-          <X size={20} />
+        <button onClick={onClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90">
+          <X size={16} />
         </button>
       </div>
 

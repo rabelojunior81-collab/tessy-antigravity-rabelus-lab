@@ -76,17 +76,18 @@ const CoPilot: React.FC = () => {
 
   return (
     <aside className="w-full h-full bg-bg-secondary/60 backdrop-blur-xl border-l border-border-visible flex flex-col z-[60] shrink-0">
-      <div className="h-16 flex items-center justify-between px-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
-        <div className="flex items-center gap-3">
+      {/* Compacted Header - Approx 40px height */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
+        <div className="flex items-center gap-2">
           <div className={`w-1.5 h-1.5 ${isLoading ? 'bg-accent-secondary animate-pulse shadow-[0_0_8px_#4a9eff]' : 'bg-accent-primary'}`}></div>
-          <h2 className="text-sm font-medium text-text-primary tracking-wide">Tessy Assistant</h2>
+          <h2 className="text-xs font-medium text-text-primary tracking-wide">Tessy Assistant</h2>
         </div>
         <button 
           onClick={() => setIsControllersModalOpen(true)}
-          className="p-2 text-text-tertiary hover:text-accent-primary transition-all active:scale-95"
+          className="p-1.5 text-text-tertiary hover:text-accent-primary transition-all active:scale-95"
           title="Parâmetros"
         >
-          <Settings2 size={18} />
+          <Settings2 size={16} />
         </button>
       </div>
 
