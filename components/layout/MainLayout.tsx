@@ -77,8 +77,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ viewerContent }) => {
     const startWidth = larguraCoPilot;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      const delta = startX - moveEvent.clientX;
-      const newWidth = Math.min(Math.max(startWidth + delta, 300), 600);
+      // HOTFIX R13: Invertido cálculo de delta conforme solicitado para alinhar com movimento do mouse
+      const delta = moveEvent.clientX - startX;
+      const newWidth = Math.min(Math.max(startWidth - delta, 300), 600);
       ajustarLarguraCoPilot(newWidth);
     };
 

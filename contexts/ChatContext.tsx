@@ -83,15 +83,7 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
       }
       
       // If no last conversation, create one
-      const newConv: Conversation = {
-        id: generateUUID(),
-        projectId: currentProjectId,
-        title: 'Nova Conversa',
-        turns: [],
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      };
-      setCurrentConversation(newConv);
+      await newConversation();
     };
     init();
   }, [currentProjectId]);
@@ -122,8 +114,17 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
   };
 
   const newConversation = async (deleteOld: boolean = false) => {
+    console.log('[newConversation] Chamado', { deleteOld, currentId: currentConversation?.id });
+    
     if (deleteOld && currentConversation?.id) {
-      await db.conversations.delete(currentConversation.id);
+      console.log('[newConversation] Solicitada purga da conversa:', currentConversation.id);
+      const exists = await db.conversations.get(currentConversation.id);
+      if (exists) {
+        await db.conversations.delete(currentConversation.id);
+        console.log('[newConversation] Deleção do banco realizada com sucesso');
+      } else {
+        console.warn('[newConversation] Conversa não encontrada no banco para purga');
+      }
     }
     
     const newConv: Conversation = {
@@ -134,6 +135,11 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
       createdAt: Date.now(),
       updatedAt: Date.now()
     };
+    
+    // HOTFIX R13: Salvamento explícito para garantir existência de ID antes de qualquer operação
+    await db.conversations.put(newConv);
+    console.log('[newConversation] Nova conversa persistida no banco:', newConv.id);
+    
     setCurrentConversation(newConv);
     setInputText('');
     setAttachedFiles([]);
@@ -148,9 +154,16 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
   };
 
   const deleteConversation = async (id: string) => {
-    await db.conversations.delete(id);
-    if (currentConversation?.id === id) {
-      newConversation();
+    console.log('[deleteConversation] Chamado para ID:', id);
+    try {
+      await db.conversations.delete(id);
+      console.log('[deleteConversation] Removido do IndexedDB');
+      if (currentConversation?.id === id) {
+        console.log('[deleteConversation] Era a conversa atual, reiniciando...');
+        await newConversation();
+      }
+    } catch (err) {
+      console.error('[deleteConversation] Falha crítica na exclusão:', err);
     }
   };
 

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Search, Trash2, MessageSquare, Plus } from 'lucide-react';
 import { db } from '../../services/dbService';
@@ -45,9 +46,17 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (confirm('Excluir sessão?')) {
-      await db.conversations.delete(id);
-      onDelete(id);
-      loadConversations();
+      console.log('[HistoryViewer] Deleção confirmada pelo usuário para ID:', id);
+      try {
+        await db.conversations.delete(id);
+        console.log('[HistoryViewer] Registro removido do IndexedDB');
+        onDelete(id);
+        console.log('[HistoryViewer] Callback onDelete disparado');
+        await loadConversations();
+        console.log('[HistoryViewer] Lista recarregada');
+      } catch (err) {
+        console.error('[HistoryViewer] Falha ao deletar conversa:', err);
+      }
     }
   };
 
