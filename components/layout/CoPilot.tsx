@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { ArrowRight, Plus, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
@@ -78,7 +79,7 @@ const CoPilot: React.FC = () => {
       <div className="h-16 flex items-center justify-between px-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
           <div className={`w-1.5 h-1.5 ${isLoading ? 'bg-accent-secondary animate-pulse shadow-[0_0_8px_#4a9eff]' : 'bg-accent-primary'}`}></div>
-          <h2 className="text-xs font-bold text-text-primary uppercase tracking-widest">TESSY ASSISTANT</h2>
+          <h2 className="text-sm font-medium text-text-primary tracking-wide">Tessy Assistant</h2>
         </div>
         <button 
           onClick={() => setIsControllersModalOpen(true)}
@@ -93,14 +94,14 @@ const CoPilot: React.FC = () => {
         <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 pb-6 relative">
           {currentConversation?.turns.length === 0 && !isLoading && (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-30 animate-fade-in">
-              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-text-tertiary italic">Ready for instruction</p>
+              <p className="text-[11px] font-normal tracking-normal italic text-text-tertiary">Ready for instruction</p>
             </div>
           )}
 
           {currentConversation?.turns.map((turn) => (
             <div key={turn.id} className="space-y-6 animate-fade-in">
               <div className="flex flex-col items-start gap-2">
-                <div className="w-full bg-bg-tertiary/60 border border-border-visible p-4 text-sm text-text-primary leading-relaxed">
+                <div className="w-full bg-bg-tertiary/60 border border-border-visible p-4 text-sm text-text-primary leading-relaxed font-normal">
                   {turn.userMessage}
                 </div>
               </div>
@@ -108,9 +109,9 @@ const CoPilot: React.FC = () => {
               <div className="flex flex-col items-start gap-2">
                 <div className="flex items-center gap-2 px-1">
                    <ChevronDown size={10} className="text-text-tertiary" />
-                   <span className="text-[9px] font-bold text-text-tertiary uppercase tracking-widest opacity-50">Nucleus interpretation active</span>
+                   <span className="text-[9px] font-normal text-text-tertiary uppercase tracking-wide opacity-50">Nucleus interpretation active</span>
                 </div>
-                <div className="w-full bg-bg-tertiary/20 border border-border-visible p-5 prose max-w-none shadow-sm">
+                <div className="w-full bg-bg-tertiary/20 border border-border-visible p-5 prose max-w-none shadow-sm font-normal">
                   <ReactMarkdown
                     components={{
                       code({ node, inline, className, children, ...props }: any) {
@@ -120,7 +121,7 @@ const CoPilot: React.FC = () => {
                             {String(children).replace(/\n$/, '')}
                           </SyntaxHighlighter>
                         ) : (
-                          <code className="bg-bg-elevated px-1 text-accent-primary" {...props}>{children}</code>
+                          <code className="bg-bg-elevated px-1 text-accent-primary font-normal" {...props}>{children}</code>
                         );
                       }
                     }}
@@ -129,10 +130,10 @@ const CoPilot: React.FC = () => {
                   </ReactMarkdown>
                   
                   <div className="flex items-center gap-4 mt-6 border-t border-border-subtle pt-4">
-                    <button className="text-[10px] font-bold uppercase px-3 py-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
+                    <button className="text-[11px] font-normal px-3 py-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
                        <ThumbsUp size={12} /> Positive
                     </button>
-                    <button className="text-[10px] font-bold uppercase px-3 py-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
+                    <button className="text-[11px] font-normal px-3 py-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
                        <ThumbsDown size={12} /> Negative
                     </button>
                   </div>
@@ -141,7 +142,7 @@ const CoPilot: React.FC = () => {
                 {turn.groundingChunks && turn.groundingChunks.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-2 px-1">
                     {turn.groundingChunks.map((chunk, idx) => chunk.web ? (
-                      <a key={idx} href={chunk.web.uri} target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold uppercase px-2 py-1 bg-bg-primary/30 backdrop-blur-md border border-border-visible text-accent-primary hover:border-accent-primary transition-all">
+                      <a key={idx} href={chunk.web.uri} target="_blank" rel="noopener noreferrer" className="text-[9px] font-medium uppercase px-2 py-1 bg-bg-primary/30 backdrop-blur-md border border-border-visible text-accent-primary hover:border-accent-primary transition-all tracking-wide">
                         {chunk.web.title}
                       </a>
                     ) : null)}
@@ -197,7 +198,7 @@ const CoPilot: React.FC = () => {
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Digite sua instrução..."
-              className="flex-1 bg-transparent border-none outline-none text-text-primary text-sm font-medium resize-none min-h-[44px] py-2 leading-relaxed placeholder:text-text-tertiary/50 custom-scrollbar transition-[height] duration-200"
+              className="flex-1 bg-transparent border-none outline-none text-text-primary text-sm font-normal resize-none min-h-[44px] py-2 leading-relaxed placeholder:text-text-tertiary/50 custom-scrollbar transition-[height] duration-200"
             />
             
             <button 

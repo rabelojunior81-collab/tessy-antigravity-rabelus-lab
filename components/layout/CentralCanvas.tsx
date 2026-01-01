@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLayout } from '../../hooks/useLayout';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -36,7 +37,7 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({ selectedProjectId, setSel
           <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <span className="text-xs font-mono text-accent-primary tracking-tighter truncate max-w-[300px]">{arquivoSelecionado.path}</span>
-              <span className="text-[10px] font-bold uppercase px-2 py-0.5 bg-accent-subtle text-accent-primary border border-accent-primary/20">
+              <span className="text-[10px] font-medium uppercase px-2 py-0.5 bg-accent-subtle text-accent-primary border border-accent-primary/20 tracking-wide">
                 {arquivoSelecionado.language}
               </span>
             </div>
@@ -47,7 +48,7 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({ selectedProjectId, setSel
                    className="text-text-tertiary hover:text-text-primary transition-colors flex items-center gap-2"
                  >
                    {copied ? <Check size={14} className="text-accent-primary" /> : <Copy size={14} />}
-                   <span className="text-[10px] font-bold uppercase tracking-widest">{copied ? 'OK' : 'Copiar'}</span>
+                   <span className="text-[10px] font-medium uppercase tracking-wide">{copied ? 'OK' : 'Copiar'}</span>
                  </button>
                )}
                <button 
@@ -115,8 +116,8 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({ selectedProjectId, setSel
             <path d="M35 60 H65" fill="none" stroke="#4a9eff" strokeWidth="6" />
           </svg>
         </div>
-        <h3 className="text-xl font-bold uppercase tracking-[0.3em] text-text-primary opacity-30">TESSY</h3>
-        <p className="mt-2 text-[10px] font-bold text-text-tertiary opacity-40 uppercase tracking-[0.5em]">
+        <h3 className="text-2xl font-light tracking-wider text-text-primary opacity-30">TESSY</h3>
+        <p className="mt-2 text-[11px] font-light text-text-tertiary opacity-30 tracking-wide">
           Rabelus Lab Nucleus
         </p>
       </div>

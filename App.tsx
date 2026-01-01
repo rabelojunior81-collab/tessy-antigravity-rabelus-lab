@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import LoadingSpinner from './components/LoadingSpinner';
 import ProjectModal from './components/ProjectModal';
@@ -153,7 +154,7 @@ const AppContent: React.FC = () => {
             <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#4a9eff" strokeWidth="8" />
           </svg>
         </div>
-        <p className="mt-6 font-bold uppercase tracking-[0.4em] text-[10px] text-accent-primary animate-pulse-soft">initializing nucleus...</p>
+        <p className="mt-6 font-medium uppercase tracking-wide text-[10px] text-accent-primary animate-pulse-soft">Initializing Nucleus...</p>
       </div>
     );
   }
@@ -171,10 +172,10 @@ const AppContent: React.FC = () => {
           <div className="flex items-center gap-3">
             <TessyLogo />
             <div className="flex flex-col">
-              <h1 className="text-xl font-bold tracking-tighter leading-none text-text-primary uppercase glow-text-blue">
+              <h1 className="text-2xl font-light tracking-wide leading-none text-text-primary glow-text-blue">
                 tessy
               </h1>
-              <span className="text-[10px] font-bold text-text-tertiary mt-0.5 whitespace-nowrap uppercase tracking-widest opacity-60">by Rabelus Lab</span>
+              <span className="text-[10px] font-normal text-text-tertiary mt-0.5 whitespace-nowrap uppercase tracking-wide opacity-60">by Rabelus Lab</span>
             </div>
           </div>
         </div>
@@ -207,12 +208,12 @@ const AppContent: React.FC = () => {
         </Suspense>
       </div>
 
-      <footer className="h-8 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md px-6 flex items-center justify-between text-[9px] text-text-tertiary font-bold tracking-[0.2em] shrink-0 z-[70]">
-        <span className="opacity-40 uppercase">© 2025 RABELUS LAB SYSTEM</span>
+      <footer className="h-8 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md px-6 flex items-center justify-between text-[9px] text-text-tertiary font-normal tracking-wide shrink-0 z-[70]">
+        <span className="opacity-40 uppercase">© 2025 Rabelus Lab System</span>
         <div className="flex items-center space-x-6">
           <div className="flex items-center gap-2">
              <div className="w-1.5 h-1.5 bg-accent-primary animate-pulse shadow-[0_0_8px_#4a9eff]"></div>
-             <span className="uppercase text-accent-primary hidden xs:inline">NUCLEUS STABLE</span>
+             <span className="uppercase text-accent-primary hidden xs:inline">Nucleus Stable</span>
           </div>
         </div>
       </footer>

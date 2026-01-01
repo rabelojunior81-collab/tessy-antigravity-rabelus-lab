@@ -44,7 +44,7 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
       <div className="px-6 py-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <Folder size={18} className="text-accent-primary" />
-          <h2 className="text-sm font-bold uppercase tracking-widest text-text-primary">Detalhes do Protocolo</h2>
+          <h2 className="text-base font-medium tracking-normal text-text-primary">Detalhes do Protocolo</h2>
         </div>
         <button onClick={onClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-all active:scale-90">
           <X size={20} />
@@ -61,14 +61,14 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-primary opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-primary"></span>
                 </span>
-                <span className="text-xs font-bold text-accent-primary uppercase tracking-widest glow-text-blue">Protocolo Ativo</span>
+                <span className="text-xs font-medium text-accent-primary uppercase tracking-wide glow-text-blue">Protocolo Ativo</span>
               </div>
 
-              <h1 className="text-4xl font-bold text-text-primary uppercase tracking-tighter mb-4 truncate">
+              <h1 className="text-3xl font-medium text-text-primary tracking-normal mb-4 truncate">
                 {project.name}
               </h1>
 
-              <p className="text-base text-text-secondary leading-relaxed font-medium mb-6">
+              <p className="text-base text-text-secondary leading-relaxed font-normal mb-6">
                 {project.description || 'Nenhuma diretriz definida para este protocolo.'}
               </p>
 
@@ -78,7 +78,7 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
                    <div className="w-1.5 h-3 bg-accent-primary/60"></div>
                    <div className="w-1.5 h-3 bg-accent-primary/30"></div>
                  </div>
-                 <span className="text-xs font-mono font-bold text-text-tertiary uppercase tracking-widest">REF: {project.id.substring(0, 8)}</span>
+                 <span className="text-xs font-mono font-normal text-text-tertiary uppercase tracking-wide">REF: {project.id.substring(0, 8)}</span>
               </div>
             </div>
 
@@ -93,23 +93,23 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
           <div className="p-6 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Layout size={14} className="text-accent-primary/60" />
-              <span className="text-xs font-bold uppercase text-text-tertiary tracking-widest">Sessões</span>
+              <span className="text-xs font-medium uppercase text-text-tertiary tracking-wide">Sessões</span>
             </div>
-            <span className="text-4xl font-bold text-text-primary">{stats.conversations}</span>
+            <span className="text-4xl font-normal text-text-primary">{stats.conversations}</span>
           </div>
           <div className="p-6 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Database size={14} className="text-accent-primary/60" />
-              <span className="text-xs font-bold uppercase text-text-tertiary tracking-widest">Biblioteca</span>
+              <span className="text-xs font-medium uppercase text-text-tertiary tracking-wide">Biblioteca</span>
             </div>
-            <span className="text-4xl font-bold text-text-primary">{stats.library}</span>
+            <span className="text-4xl font-normal text-text-primary">{stats.library}</span>
           </div>
         </div>
 
         {/* GitHub Integration */}
         {project.githubRepo && (
           <div className="mb-10">
-            <h4 className="text-xs font-bold text-text-tertiary uppercase tracking-widest mb-4 border-b border-border-visible pb-2 flex items-center gap-2">
+            <h4 className="text-xs font-medium text-text-tertiary uppercase tracking-wide mb-4 border-b border-border-visible pb-2 flex items-center gap-2">
               Integração GitHub
             </h4>
             <a 
@@ -119,7 +119,7 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
             >
               <div className="flex items-center gap-3">
                 <Github size={18} className="text-text-secondary group-hover:text-accent-primary transition-colors" />
-                <span className="text-sm font-mono text-text-secondary group-hover:text-text-primary">{project.githubRepo}</span>
+                <span className="text-sm font-mono text-text-secondary group-hover:text-text-primary font-normal">{project.githubRepo}</span>
               </div>
               <ChevronRight size={16} className="text-text-tertiary" />
             </a>
@@ -130,13 +130,13 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
         <div className="space-y-4 pt-4 border-t border-border-visible">
           <button 
             onClick={onNewConversation}
-            className="w-full py-4 bg-accent-primary hover:bg-accent-secondary text-white font-bold uppercase text-xs tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg"
+            className="w-full py-4 bg-accent-primary hover:bg-accent-secondary text-white font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3 shadow-lg"
           >
             Iniciar Nova Sessão
           </button>
           <button 
             onClick={onOpenLibrary}
-            className="w-full py-4 bg-bg-tertiary border border-border-visible text-text-primary hover:bg-bg-elevated font-bold uppercase text-xs tracking-[0.2em] transition-all flex items-center justify-center gap-3"
+            className="w-full py-4 bg-bg-tertiary border border-border-visible text-text-primary hover:bg-bg-elevated font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3"
           >
             Acessar Biblioteca
           </button>

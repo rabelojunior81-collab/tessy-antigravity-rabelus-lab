@@ -22,7 +22,7 @@ const ViewerPanel: React.FC<ViewerPanelProps> = ({ title, children }) => {
   return (
     <div className={panelClasses}>
       <div className="flex items-center justify-between p-4 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
-        <h3 className="text-[12px] font-bold uppercase tracking-[0.05em] text-text-primary glow-text-blue">{title}</h3>
+        <h3 className="text-[13px] font-medium tracking-normal text-text-primary glow-text-blue">{title}</h3>
         <button 
           onClick={fecharViewer}
           className="p-1.5 text-text-tertiary hover:text-text-primary transition-all active:scale-90"

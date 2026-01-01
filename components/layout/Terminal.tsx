@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Terminal as TerminalIcon, Trash2, ShieldCheck } from 'lucide-react';
 
@@ -105,7 +106,7 @@ const Terminal: React.FC = () => {
       <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
           <TerminalIcon size={14} className="text-accent-primary opacity-60" />
-          <span className="text-[11px] font-bold uppercase tracking-widest text-text-primary">System Shell v3.2</span>
+          <span className="text-xs font-medium tracking-normal text-text-primary">System Shell v3.2</span>
         </div>
         <div className="flex items-center gap-4">
           <button 
@@ -113,10 +114,10 @@ const Terminal: React.FC = () => {
             className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-2"
           >
             <Trash2 size={12} />
-            <span className="text-[9px] font-bold uppercase tracking-widest">Clear</span>
+            <span className="text-[10px] font-normal tracking-normal">Clear</span>
           </button>
           <div className="h-4 w-px bg-border-subtle"></div>
-          <div className="flex items-center gap-2 text-[9px] font-bold text-text-tertiary uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-[9px] font-medium text-text-tertiary uppercase tracking-wide">
              <ShieldCheck size={12} className="text-accent-primary/50" />
              Encrypted
           </div>

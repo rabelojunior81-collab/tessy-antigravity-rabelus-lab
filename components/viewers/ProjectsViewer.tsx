@@ -53,7 +53,7 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
       <div className="p-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md">
         <button 
           onClick={onOpenModal}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-xs font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg"
+          className="w-full flex items-center justify-center gap-2 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-sm font-medium tracking-normal transition-all active:scale-95 shadow-lg"
         >
           <Plus size={14} strokeWidth={3} />
           Novo Protocolo
@@ -64,7 +64,7 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
         {isLoading ? (
           <div className="flex justify-center p-8"><div className="w-4 h-4 border border-accent-primary border-t-transparent animate-spin"></div></div>
         ) : projects.length === 0 ? (
-          <div className="p-8 text-center text-xs text-text-tertiary font-bold uppercase tracking-widest border border-dashed border-border-visible">
+          <div className="p-8 text-center text-xs text-text-tertiary font-medium uppercase tracking-wide border border-dashed border-border-visible">
             Vazio
           </div>
         ) : (
@@ -81,7 +81,7 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-2 overflow-hidden">
                     <div className="w-2 h-2 shrink-0" style={{ backgroundColor: project.color || '#4a9eff' }}></div>
-                    <span className="text-base font-bold uppercase text-text-primary truncate">{project.name}</span>
+                    <span className="text-base font-normal text-text-primary truncate">{project.name}</span>
                   </div>
                   <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-all">
                     <button onClick={(e) => { e.stopPropagation(); onEditProject(project.id); }} className="text-text-tertiary hover:text-accent-primary"><Edit3 size={14} /></button>
@@ -91,11 +91,11 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
                   </div>
                 </div>
                 
-                <p className="text-sm text-text-tertiary line-clamp-1 mb-3 font-medium italic">
+                <p className="text-sm text-text-tertiary line-clamp-1 mb-3 font-normal italic">
                   {project.description || 'Sem diretriz definida.'}
                 </p>
 
-                <div className="flex items-center justify-between pt-2 border-t border-border-visible/50 text-[10px] font-bold text-text-tertiary uppercase tracking-widest">
+                <div className="flex items-center justify-between pt-2 border-t border-border-visible/50 text-[10px] font-medium text-text-tertiary uppercase tracking-wide">
                   <span>{new Date(project.updatedAt).toLocaleDateString()}</span>
                   <div className="flex items-center gap-2">
                     {isActive && <span className="text-accent-primary">ATIVO</span>}

@@ -60,7 +60,7 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
       <div className="p-4 border-b border-border-visible space-y-3 bg-bg-primary/80 backdrop-blur-md">
         <button 
           onClick={onNew}
-          className="w-full flex items-center justify-center gap-2 py-2.5 bg-accent-primary hover:bg-accent-secondary text-white text-xs font-bold uppercase tracking-widest transition-all active:scale-95 shadow-md"
+          className="w-full flex items-center justify-center gap-2 py-2.5 bg-accent-primary hover:bg-accent-secondary text-white text-sm font-medium tracking-normal transition-all active:scale-95 shadow-md"
         >
           <Plus size={14} strokeWidth={3} />
           Novo Protocolo
@@ -73,7 +73,7 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="BUSCAR..."
-            className="w-full bg-bg-primary border border-border-visible py-2 pl-9 pr-4 text-xs font-bold text-text-primary focus:border-accent-primary outline-none uppercase tracking-widest"
+            className="w-full bg-bg-primary border border-border-visible py-2 pl-9 pr-4 text-xs font-normal text-text-primary focus:border-accent-primary outline-none tracking-normal"
           />
         </div>
       </div>
@@ -82,7 +82,7 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
         {isLoading ? (
           <div className="flex justify-center p-8"><div className="w-4 h-4 border border-accent-primary border-t-transparent animate-spin"></div></div>
         ) : filteredConversations.length === 0 ? (
-          <div className="p-8 text-center text-xs text-text-tertiary font-bold uppercase tracking-widest opacity-30">
+          <div className="p-8 text-center text-xs text-text-tertiary font-medium uppercase tracking-wide opacity-30">
             Vazio
           </div>
         ) : (
@@ -95,14 +95,14 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
               }`}
             >
               <div className="flex justify-between items-start gap-2 mb-1.5">
-                <h4 className={`text-sm font-bold uppercase truncate tracking-tight ${conv.id === activeId ? 'text-accent-primary' : 'text-text-secondary group-hover:text-text-primary'}`}>
+                <h4 className={`text-sm font-normal truncate tracking-normal ${conv.id === activeId ? 'text-accent-primary' : 'text-text-secondary group-hover:text-text-primary'}`}>
                   {conv.title}
                 </h4>
                 <button onClick={(e) => handleDelete(e, conv.id)} className="opacity-0 group-hover:opacity-100 text-text-tertiary hover:text-red-400 transition-all">
                   <Trash2 size={14} />
                 </button>
               </div>
-              <div className="flex items-center justify-between text-[10px] font-bold text-text-tertiary uppercase tracking-widest">
+              <div className="flex items-center justify-between text-[10px] font-medium text-text-tertiary uppercase tracking-wide">
                 <span>{new Date(conv.updatedAt).toLocaleDateString()}</span>
                 <span className="flex items-center gap-1.5"><MessageSquare size={10} /> {conv.turns.length}</span>
               </div>

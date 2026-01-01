@@ -90,13 +90,13 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="BUSCAR PROMPT, DESCRIÇÃO OU CÓDIGO..."
-            className="w-full bg-bg-primary border border-border-visible py-2.5 pl-9 pr-4 text-xs font-bold text-text-primary focus:border-accent-primary outline-none uppercase tracking-widest"
+            className="w-full bg-bg-primary border border-border-visible py-2.5 pl-9 pr-4 text-xs font-normal text-text-primary focus:border-accent-primary outline-none tracking-normal"
           />
         </div>
         <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-1">
           <button
             onClick={() => toggleTag('todos')}
-            className={`px-3 py-1 text-xs font-bold uppercase tracking-widest border transition-all whitespace-nowrap ${
+            className={`px-3 py-1 text-xs font-medium tracking-normal border transition-all whitespace-nowrap ${
               selectedTags.length === 0 ? 'bg-accent-subtle/40 border-accent-primary text-accent-primary' : 'bg-bg-tertiary/80 text-text-tertiary border-border-visible hover:text-text-primary'
             }`}
           >
@@ -108,7 +108,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className={`px-3 py-1 text-xs font-bold uppercase tracking-widest border transition-all whitespace-nowrap flex items-center gap-2 ${
+                className={`px-3 py-1 text-xs font-medium tracking-normal border transition-all whitespace-nowrap flex items-center gap-2 ${
                   isActive ? 'bg-accent-subtle/40 border-accent-primary text-accent-primary' : 'bg-bg-tertiary/80 text-text-tertiary border-border-visible hover:text-text-primary'
                 }`}
               >
@@ -124,7 +124,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
         {isLoading ? (
           <div className="flex justify-center p-8"><div className="w-4 h-4 border border-accent-primary border-t-transparent animate-spin"></div></div>
         ) : filteredItems.length === 0 ? (
-          <div className="p-8 text-center text-xs text-text-tertiary font-bold uppercase tracking-widest opacity-30">Vazio</div>
+          <div className="p-8 text-center text-xs text-text-tertiary font-medium uppercase tracking-wide opacity-30">Vazio</div>
         ) : (
           filteredItems.map((item, index) => {
             const animationStyle = index < 20 ? {
@@ -143,7 +143,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
                 <div className="flex justify-between items-start gap-2 mb-2">
                   <div className="flex items-center gap-2 overflow-hidden">
                     <Hash size={12} className="text-accent-primary/60 shrink-0" />
-                    <h4 className="text-base font-bold text-text-secondary uppercase group-hover:text-accent-primary transition-colors truncate">
+                    <h4 className="text-base font-normal text-text-secondary group-hover:text-accent-primary transition-colors truncate">
                       {item.title}
                     </h4>
                   </div>
@@ -151,12 +151,12 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
                     <Trash2 size={14} />
                   </button>
                 </div>
-                <p className="text-sm text-text-tertiary line-clamp-2 leading-relaxed mb-4 italic font-medium">
+                <p className="text-sm text-text-tertiary line-clamp-2 leading-relaxed mb-4 italic font-normal">
                   {item.description || 'Sem descrição definida.'}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {item.tags?.slice(0, 5).map(tag => (
-                    <span key={tag} className="px-1.5 py-0.5 bg-accent-subtle/20 text-accent-primary/80 border border-accent-primary/20 text-[10px] font-bold uppercase tracking-widest">
+                    <span key={tag} className="px-1.5 py-0.5 bg-accent-subtle/20 text-accent-primary/80 border border-accent-primary/20 text-[10px] font-medium uppercase tracking-wide">
                       {tag}
                     </span>
                   ))}
