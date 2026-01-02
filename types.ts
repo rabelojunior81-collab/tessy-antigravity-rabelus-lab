@@ -163,3 +163,20 @@ export interface PendingAction {
   timestamp: number;
   status: 'pending' | 'approved' | 'rejected';
 }
+
+export type GitHubErrorCode = 
+  | 'INVALID_TOKEN'
+  | 'TOKEN_EXPIRED'
+  | 'RATE_LIMIT'
+  | 'NOT_FOUND'
+  | 'VALIDATION_ERROR'
+  | 'NETWORK_ERROR'
+  | 'PERMISSION_DENIED'
+  | 'UNKNOWN';
+
+export interface GitHubErrorDetail {
+  code: GitHubErrorCode;
+  message: string;
+  suggestedAction?: string;
+  status: number;
+}

@@ -1,5 +1,5 @@
 
-import { GitHubRepo, GitHubCommit, GitHubIssue, GitHubFile, PendingAction } from '../types';
+import { GitHubRepo, GitHubCommit, GitHubIssue, GitHubFile, PendingAction, GitHubErrorCode, GitHubErrorDetail } from '../types';
 import { db, generateUUID } from './dbService';
 
 const GITHUB_API_BASE = 'https://api.github.com';
@@ -15,10 +15,15 @@ export const setGitHubQueueListener = (listener: (action: PendingAction) => void
 
 export class GitHubError extends Error {
   status: number;
-  constructor(message: string, status: number) {
-    super(message);
+  code: GitHubErrorCode;
+  suggestedAction?: string;
+
+  constructor(detail: GitHubErrorDetail) {
+    super(detail.message);
     this.name = 'GitHubError';
-    this.status = status;
+    this.status = detail.status;
+    this.code = detail.code;
+    this.suggestedAction = detail.suggestedAction;
   }
 }
 
@@ -27,10 +32,20 @@ export class GitHubError extends Error {
 function validateCommitMessage(message: string): string {
   const trimmed = message.trim();
   if (!trimmed || trimmed.length < 3) {
-    throw new GitHubError('A mensagem do commit deve ter no mínimo 3 caracteres.', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'A mensagem do commit deve ter no mínimo 3 caracteres.',
+      status: 400,
+      suggestedAction: 'Forneça uma descrição mais detalhada da alteração.'
+    });
   }
   if (trimmed.length > 500) {
-    throw new GitHubError('A mensagem do commit é muito longa (máximo 500 caracteres).', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'A mensagem do commit é muito longa (máximo 500 caracteres).',
+      status: 400,
+      suggestedAction: 'Resuma a mensagem para caber no limite de 500 caracteres.'
+    });
   }
   // Remove multiple newlines (3 or more) to prevent abuse or malformed log displays
   return trimmed.replace(/\n{3,}/g, '\n\n');
@@ -39,18 +54,33 @@ function validateCommitMessage(message: string): string {
 function validateBranchName(branch: string): string {
   const trimmed = branch.trim();
   if (!trimmed) {
-    throw new GitHubError('O nome da branch não pode estar vazio.', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'O nome da branch não pode estar vazio.',
+      status: 400,
+      suggestedAction: 'Insira um nome válido para a branch.'
+    });
   }
   
   const protectedBranches = ['HEAD', 'main', 'master'];
   if (protectedBranches.includes(trimmed)) {
-    throw new GitHubError(`A branch '${trimmed}' é protegida e não pode ser usada como destino de escrita direta.`, 403);
+    throw new GitHubError({
+      code: 'PERMISSION_DENIED',
+      message: `A branch '${trimmed}' é protegida e não pode ser usada como destino de escrita direta.`,
+      status: 403,
+      suggestedAction: 'Crie uma nova branch para suas alterações e faça um Pull Request.'
+    });
   }
 
   // Regex rules: alphanumeric, -, _, /; no leading/trailing /; no double //
   const branchRegex = /^(?!.*[\/]{2})[a-zA-Z0-9\-_]+(?:\/[a-zA-Z0-9\-_]+)*$/;
   if (!branchRegex.test(trimmed)) {
-     throw new GitHubError('Nome de branch inválido. Use apenas letras, números, "-", "_" e "/". Não comece ou termine com "/".', 400);
+     throw new GitHubError({
+       code: 'VALIDATION_ERROR',
+       message: 'Nome de branch inválido.',
+       status: 400,
+       suggestedAction: 'Use apenas letras, números, "-", "_" e "/". Não comece ou termine com "/".'
+     });
   }
 
   return trimmed;
@@ -59,33 +89,68 @@ function validateBranchName(branch: string): string {
 function validateFilePath(path: string): string {
   const trimmed = path.trim();
   if (!trimmed) {
-    throw new GitHubError('O caminho do arquivo não pode estar vazio.', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'O caminho do arquivo não pode estar vazio.',
+      status: 400,
+      suggestedAction: 'Especifique o caminho relativo do arquivo.'
+    });
   }
   if (trimmed.startsWith('/')) {
-    throw new GitHubError('O caminho do arquivo deve ser relativo (não comece com "/").', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'O caminho do arquivo deve ser relativo.',
+      status: 400,
+      suggestedAction: 'Remova a "/" inicial do caminho.'
+    });
   }
   if (trimmed.includes('..')) {
-    throw new GitHubError('Caminho de arquivo inválido (navegação de diretório ".." não permitida).', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'Caminho de arquivo inválido.',
+      status: 400,
+      suggestedAction: 'Não utilize ".." para navegação de diretórios por segurança.'
+    });
   }
   if (trimmed.length > 255) {
-    throw new GitHubError('Caminho de arquivo muito longo (máximo 255 caracteres).', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'Caminho de arquivo muito longo.',
+      status: 400,
+      suggestedAction: 'Reduza o nome do arquivo ou diretórios para menos de 255 caracteres.'
+    });
   }
   // Check for dangerous characters in file paths (cross-platform safety)
   const dangerousChars = /[<>:"\\|?*]/;
   if (dangerousChars.test(trimmed)) {
-    throw new GitHubError('Caminho de arquivo contém caracteres inválidos.', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'Caminho de arquivo contém caracteres inválidos.',
+      status: 400,
+      suggestedAction: 'Remova caracteres especiais como < > : " \\ | ? * do nome do arquivo.'
+    });
   }
   return trimmed;
 }
 
 function validateFileContent(content: string): string {
   if (typeof content !== 'string') {
-    throw new GitHubError('O conteúdo do arquivo deve ser uma string válida.', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'O conteúdo do arquivo deve ser uma string válida.',
+      status: 400,
+      suggestedAction: 'Certifique-se de que o conteúdo enviado é texto.'
+    });
   }
   // Check size: Max 1MB (1048576 bytes)
   const size = new TextEncoder().encode(content).length;
   if (size > 1048576) {
-    throw new GitHubError('O conteúdo do arquivo excede o limite de 1MB.', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'O conteúdo do arquivo excede o limite de 1MB.',
+      status: 400,
+      suggestedAction: 'Divida o conteúdo em múltiplos arquivos ou reduza o tamanho.'
+    });
   }
   return content;
 }
@@ -93,10 +158,20 @@ function validateFileContent(content: string): string {
 function validateTitle(title: string, type: 'Issue' | 'Pull Request'): string {
   const trimmed = title.trim();
   if (!trimmed || trimmed.length < 5) {
-    throw new GitHubError(`O título da ${type} deve ter no mínimo 5 caracteres.`, 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: `O título da ${type} deve ter no mínimo 5 caracteres.`,
+      status: 400,
+      suggestedAction: 'Seja mais descritivo no título.'
+    });
   }
   if (trimmed.length > 255) {
-    throw new GitHubError(`O título da ${type} é muito longo (máximo 255 caracteres).`, 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: `O título da ${type} é muito longo.`,
+      status: 400,
+      suggestedAction: 'Resuma o título para menos de 255 caracteres.'
+    });
   }
   return trimmed;
 }
@@ -111,12 +186,52 @@ const getHeaders = (token: string) => ({
 async function handleResponse(response: Response) {
   if (!response.ok) {
     let message = 'Erro na comunicação com o GitHub.';
+    let code: GitHubErrorCode = 'UNKNOWN';
+    let suggestedAction: string | undefined;
+    const status = response.status;
+
     const errorData = await response.json().catch(() => ({}));
-    if (response.status === 401) message = 'Token inválido ou expirado.';
-    if (response.status === 403) message = 'Limite de taxa excedido ou acesso negado.';
-    if (response.status === 404) message = 'Recurso não encontrado no GitHub.';
+
+    switch (status) {
+      case 401:
+        message = 'Token inválido ou expirado.';
+        code = 'INVALID_TOKEN';
+        suggestedAction = 'Verifique se o token está correto ou renove-o no GitHub.';
+        break;
+      case 403:
+        if (response.headers.get('x-ratelimit-remaining') === '0') {
+          message = 'Limite de taxa da API atingido.';
+          code = 'RATE_LIMIT';
+          suggestedAction = 'Aguarde alguns minutos para que o limite seja restaurado.';
+        } else {
+          message = 'Acesso negado ao repositório.';
+          code = 'PERMISSION_DENIED';
+          suggestedAction = 'Verifique se seu token tem o escopo "repo" ativado.';
+        }
+        break;
+      case 404:
+        message = 'Recurso não encontrado.';
+        code = 'NOT_FOUND';
+        suggestedAction = 'Verifique se o repositório ou caminho do arquivo está correto.';
+        break;
+      case 400:
+        message = 'Requisição inválida.';
+        code = 'VALIDATION_ERROR';
+        suggestedAction = 'Verifique os dados enviados e tente novamente.';
+        break;
+      default:
+        code = 'NETWORK_ERROR';
+        suggestedAction = 'Verifique sua conexão ou tente novamente mais tarde.';
+    }
+
     if (errorData.message) message += ` Detalhes: ${errorData.message}`;
-    throw new GitHubError(message, response.status);
+
+    throw new GitHubError({
+      code,
+      message,
+      status,
+      suggestedAction
+    });
   }
   return response.json();
 }
@@ -316,7 +431,12 @@ export const fetchDirectoryContents = async (token: string, repoPath: string, di
   const data = await handleResponse(response);
   
   if (!Array.isArray(data)) {
-    throw new GitHubError('O caminho fornecido não é um diretório.', 400);
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'O caminho fornecido não é um diretório.',
+      status: 400,
+      suggestedAction: 'Verifique se o caminho especificado existe e é uma pasta.'
+    });
   }
 
   return data.map((item: any) => ({
