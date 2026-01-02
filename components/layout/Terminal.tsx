@@ -10,7 +10,7 @@ interface TerminalLine {
 const Terminal: React.FC = () => {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<TerminalLine[]>([
-    { type: 'system', content: 'TESSY OS [Build 3.2.0-ANTIGRAVITY]' },
+    { type: 'system', content: 'TESSY OS [Build 3.2.1-antigravity]' },
     { type: 'system', content: 'Nucleus Core Online.' },
   ]);
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
@@ -59,7 +59,7 @@ const Terminal: React.FC = () => {
         break;
       case 'tessy':
       case 'nucleus':
-        output = 'STATUS: SYNCHRONIZED\nVERSION: 3.2.0\nENGINE: GEMINI 3 FLASH\nLATENCY: 42ms';
+        output = 'STATUS: SYNCHRONIZED\nVERSION: 3.2.1-antigravity\nENGINE: GEMINI 3 FLASH\nLATENCY: 42ms';
         type = 'system';
         break;
       default:

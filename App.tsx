@@ -163,7 +163,7 @@ const AppContent: React.FC = () => {
         <div className="flex items-center space-x-6">
           <div className="flex items-center gap-2">
              <div className="w-1.5 h-1.5 bg-accent-primary animate-pulse shadow-[0_0_8px_#4a9eff]"></div>
-             <span className="uppercase text-accent-primary hidden xs:inline">Nucleus v3.2.1 Stable</span>
+             <span className="uppercase text-accent-primary hidden xs:inline">Nucleus v3.2.1-antigravity Stable</span>
           </div>
         </div>
       </footer>
