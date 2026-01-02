@@ -44,7 +44,7 @@ const CoPilot: React.FC = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       const scrollHeight = textareaRef.current.scrollHeight;
-      const newHeight = Math.min(Math.max(scrollHeight, 44), 200);
+      const newHeight = Math.min(Math.max(scrollHeight, 32), 200);
       textareaRef.current.style.height = `${newHeight}px`;
     }
   }, [inputText]);
@@ -162,8 +162,8 @@ const CoPilot: React.FC = () => {
           )}
         </div>
 
-        <div className="px-6 pb-6 pt-2 bg-transparent shrink-0">
-          <div className="px-1 pb-3 flex items-center gap-4 bg-transparent">
+        <div className="px-4 pb-4 pt-1 bg-transparent shrink-0">
+          <div className="px-1 pb-2 flex items-center gap-4 bg-transparent">
             {toolbarItems.map((item, idx) => (
               <button 
                 key={idx}
@@ -183,7 +183,7 @@ const CoPilot: React.FC = () => {
             </div>
           )}
           
-          <div className="flex items-end gap-3 bg-bg-tertiary/80 backdrop-blur-xl border border-border-visible p-4 focus-within:border-accent-primary transition-all shadow-xl">
+          <div className="flex items-end gap-3 bg-bg-tertiary/80 backdrop-blur-xl border border-border-visible p-2 focus-within:border-accent-primary transition-all shadow-xl">
             <button 
               onClick={() => fileInputRef.current?.click()} 
               className="p-1 text-text-tertiary hover:text-accent-primary shrink-0 transition-colors"
@@ -199,7 +199,7 @@ const CoPilot: React.FC = () => {
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Digite sua instrução..."
-              className="flex-1 bg-transparent border-none outline-none text-text-primary text-sm font-normal resize-none min-h-[44px] py-2 leading-relaxed placeholder:text-text-tertiary/50 custom-scrollbar transition-[height] duration-200"
+              className="flex-1 bg-transparent border-none outline-none text-text-primary text-sm font-normal resize-none min-h-[32px] py-1 leading-relaxed placeholder:text-text-tertiary/50 custom-scrollbar transition-[height] duration-200"
             />
             
             <button 
