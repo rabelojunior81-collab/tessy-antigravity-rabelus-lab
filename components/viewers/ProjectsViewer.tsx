@@ -53,7 +53,7 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
       <div className="p-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md">
         <button 
           onClick={onOpenModal}
-          className="w-full flex items-center justify-center gap-2 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-sm font-medium tracking-normal transition-all active:scale-95 shadow-lg"
+          className="w-full flex items-center justify-center gap-2 py-2 bg-accent-primary hover:bg-accent-secondary text-white text-sm font-medium tracking-normal transition-all active:scale-95 shadow-lg"
         >
           <Plus size={14} strokeWidth={3} />
           Novo Protocolo
@@ -86,6 +86,7 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
                   <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-all">
                     <button onClick={(e) => { e.stopPropagation(); onEditProject(project.id); }} className="text-text-tertiary hover:text-accent-primary"><Edit3 size={14} /></button>
                     {project.id !== 'default-project' && (
+                      // Fix: correctly passing project.id instead of undefined 'id' variable
                       <button onClick={(e) => handleDelete(e, project.id)} className="text-text-tertiary hover:text-red-400"><Trash2 size={14} /></button>
                     )}
                   </div>

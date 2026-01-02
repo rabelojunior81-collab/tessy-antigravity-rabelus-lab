@@ -64,7 +64,7 @@ const GitHubViewer: React.FC = () => {
 
   if (!token) {
     return (
-      <div className="p-6 flex flex-col gap-6 animate-fade-in">
+      <div className="p-4 flex flex-col gap-4 animate-fade-in">
         <div className="p-5 bg-accent-subtle/10 border border-border-visible">
           <h4 className="text-xs font-bold uppercase text-text-primary mb-3 flex items-center gap-2">
             <Key size={14} className="text-accent-primary" /> Token PAT
@@ -75,7 +75,7 @@ const GitHubViewer: React.FC = () => {
         </div>
         <div className="space-y-4">
           <input type="password" value={tokenInput} onChange={(e) => setTokenInput(e.target.value)} placeholder="TOKEN..." className="w-full bg-bg-primary border border-border-visible p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
-          <button onClick={() => updateToken(tokenInput)} className="w-full py-3 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg">Autenticar</button>
+          <button onClick={() => updateToken(tokenInput)} className="w-full py-2 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg">Autenticar</button>
         </div>
       </div>
     );
@@ -83,14 +83,14 @@ const GitHubViewer: React.FC = () => {
 
   if (!repoPath) {
     return (
-      <div className="p-6 flex flex-col gap-6 animate-fade-in">
+      <div className="p-4 flex flex-col gap-4 animate-fade-in">
         <div className="flex items-center gap-3 p-4 bg-accent-subtle/20 border border-border-visible text-accent-primary">
           <CheckCircle2 size={16} />
           <span className="text-[10px] font-bold uppercase tracking-widest">Sincronizado</span>
         </div>
         <div className="space-y-4">
           <input type="text" value={repoInput} onChange={(e) => setRepoInput(e.target.value)} placeholder="USUARIO/REPOS..." className="w-full bg-bg-primary border border-border-visible p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
-          <button onClick={() => connectRepo(repoInput)} className="w-full py-3 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all">Conectar</button>
+          <button onClick={() => connectRepo(repoInput)} className="w-full py-2 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all">Conectar</button>
         </div>
       </div>
     );
@@ -115,7 +115,7 @@ const GitHubViewer: React.FC = () => {
             <span className="text-[9px] font-bold uppercase tracking-widest text-text-tertiary">Mapeando...</span>
           </div>
         ) : error ? (
-          <div className="p-6 text-center space-y-4">
+          <div className="p-4 text-center space-y-4">
             <AlertCircle size={32} className="mx-auto text-red-400 opacity-40" />
             <p className="text-[10px] text-red-400 font-bold uppercase">{error}</p>
           </div>

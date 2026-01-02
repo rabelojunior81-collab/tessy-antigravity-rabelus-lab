@@ -50,9 +50,9 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
         {/* Active Project Card */}
-        <div className="mb-10 p-8 bg-bg-tertiary/80 border border-border-visible relative overflow-hidden group shadow-md">
+        <div className="mb-10 p-4 bg-bg-tertiary/80 border border-border-visible relative overflow-hidden group shadow-md">
           <div className="flex justify-between items-start relative z-10">
             <div className="flex-1 min-w-0 pr-4">
               <div className="flex items-center gap-2 mb-4">
@@ -89,14 +89,14 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-4 mb-10">
-          <div className="p-6 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
+          <div className="p-4 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Layout size={14} className="text-accent-primary/60" />
               <span className="text-xs font-medium uppercase text-text-tertiary tracking-wide">Sessões</span>
             </div>
             <span className="text-4xl font-normal text-text-primary">{stats.conversations}</span>
           </div>
-          <div className="p-6 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
+          <div className="p-4 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Database size={14} className="text-accent-primary/60" />
               <span className="text-xs font-medium uppercase text-text-tertiary tracking-wide">Biblioteca</span>
@@ -129,13 +129,13 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
         <div className="space-y-4 pt-4 border-t border-border-visible">
           <button 
             onClick={onNewConversation}
-            className="w-full py-4 bg-accent-primary hover:bg-accent-secondary text-white font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3 shadow-lg"
+            className="w-full py-2 bg-accent-primary hover:bg-accent-secondary text-white font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3 shadow-lg"
           >
             Iniciar Nova Sessão
           </button>
           <button 
             onClick={onOpenLibrary}
-            className="w-full py-4 bg-bg-tertiary border border-border-visible text-text-primary hover:bg-bg-elevated font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3"
+            className="w-full py-2 bg-bg-tertiary border border-border-visible text-text-primary hover:bg-bg-elevated font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3"
           >
             Acessar Biblioteca
           </button>

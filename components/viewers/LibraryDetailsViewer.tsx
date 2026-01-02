@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, Bookmark, Edit3, Trash2, ChevronRight, Hash, Code, Save, Undo2 } from 'lucide-react';
 import { Template, RepositoryItem } from '../../types';
@@ -98,11 +97,11 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
   const title = formData.label || (isCreating ? 'Novo Protocolo' : 'Detalhes');
 
   return (
-    <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col p-6 animate-fade-in h-full">
+    <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col p-4 animate-fade-in h-full">
       <div className="flex-1 flex flex-col h-full overflow-hidden border border-border-visible bg-bg-tertiary/40 backdrop-blur-lg shadow-2xl">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4 overflow-hidden">
             <span className="px-2 py-0.5 bg-accent-subtle/40 text-accent-primary text-[9px] font-bold uppercase border border-accent-primary/30 shrink-0 tracking-widest">
               {isEditing ? 'EDITOR' : category}
@@ -136,7 +135,7 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
         {isEditing ? (
           /* FORM VIEW */
           <form onSubmit={handleSave} className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-6">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Nome do Protocolo</label>
@@ -199,7 +198,7 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
               </button>
               <button 
                 type="submit" 
-                className="px-10 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-xl"
+                className="px-6 py-2 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-xl"
               >
                 <Save size={14} /> Sincronizar
               </button>
@@ -209,19 +208,19 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
           /* PREVIEW VIEW */
           <div className="flex-1 flex flex-col overflow-hidden">
             {formData.description && (
-              <div className="px-6 py-4 bg-bg-tertiary/30 border-b border-border-visible/50 shrink-0">
+              <div className="px-4 py-2 bg-bg-tertiary/30 border-b border-border-visible/50 shrink-0">
                 <p className="text-sm text-text-secondary leading-relaxed italic font-normal">
                   {formData.description}
                 </p>
               </div>
             )}
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
               <div className="flex items-center gap-2 mb-4">
                  <Code size={12} className="text-accent-primary opacity-50" />
                  <h4 className="text-[10px] font-bold text-text-tertiary uppercase tracking-[0.2em]">Núcleo do Protocolo</h4>
               </div>
-              <div className="bg-bg-primary/40 border border-border-visible p-8 shadow-inner group relative">
+              <div className="bg-bg-primary/40 border border-border-visible p-4 shadow-inner group relative">
                 <pre className="text-sm text-text-secondary font-mono font-normal whitespace-pre-wrap leading-relaxed select-all">
                   {formData.content}
                 </pre>
@@ -239,7 +238,7 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
               
               <button 
                 onClick={() => onSelect(formData.content || '')}
-                className="px-10 py-3 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-3 shadow-xl active:scale-95 group"
+                className="px-6 py-2 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-3 shadow-xl active:scale-95 group"
               >
                 <ChevronRight size={16} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
                 Carregar no Núcleo
