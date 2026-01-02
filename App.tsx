@@ -111,14 +111,14 @@ const AppContent: React.FC = () => {
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-accent-primary/30 bg-bg-primary text-text-primary">
       <header className="h-11 flex items-center justify-between px-6 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md z-[70] shrink-0">
-        <div className="flex items-center space-x-4 min-w-0">
+        <div className="flex items-center space-x-2 min-w-0">
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2 text-text-tertiary hover:text-accent-primary transition-colors border border-border-visible bg-bg-secondary/40"
           >
             {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
             <TessyLogo />
             <div className="flex flex-col">
               <h1 className="text-2xl font-light tracking-wide leading-none text-text-primary glow-text-blue shadow-suave">
