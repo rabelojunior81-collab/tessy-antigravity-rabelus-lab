@@ -27,7 +27,7 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
       <div className={`w-full max-w-lg bg-bg-secondary/95 backdrop-blur-2xl border border-border-visible flex flex-col shadow-2xl relative ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
         
         {/* Header - Minimalist */}
-        <div className="px-6 py-1 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="px-4 py-1 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <Settings2 className="text-accent-primary" size={14} />
             <h2 className="text-[10px] font-medium tracking-[0.2em] text-text-primary uppercase">Parâmetros Nucleares</h2>
@@ -50,7 +50,7 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
         </div>
 
         {/* Content - Compacted spacing */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 min-h-[380px] space-y-6">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 min-h-[380px] space-y-4">
           {activeTab === 'settings' ? (
             <div className="space-y-6">
               {factors.map(factor => (
@@ -103,7 +103,7 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
                       value={factor.value} 
                       onChange={(e) => updateFactor(factor.id, e.target.value)} 
                       placeholder="Diretrizes de contexto..." 
-                      className="w-full h-24 bg-bg-primary/60 border border-border-visible/40 p-3 text-xs font-normal text-text-primary placeholder:text-text-tertiary/40 focus:border-accent-primary/60 transition-all resize-none custom-scrollbar" 
+                      className="w-full h-20 bg-bg-primary/60 border border-border-visible/40 p-2 text-xs font-normal text-text-primary placeholder:text-text-tertiary/40 focus:border-accent-primary/60 transition-all resize-none custom-scrollbar" 
                     />
                   )}
                 </div>
@@ -118,7 +118,7 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
         </div>
 
         {/* Footer - Minimalist */}
-        <div className="px-6 py-4 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="px-4 py-3 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
           <button 
             onClick={() => confirm('Resetar parâmetros?') && resetFactors()} 
             className="flex items-center gap-2 text-text-tertiary/60 hover:text-red-400 text-[9px] font-normal uppercase tracking-wider transition-all"
@@ -127,7 +127,7 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
           </button>
           <button 
             onClick={handleClose} 
-            className="px-10 py-2.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg"
+            className="px-6 py-2 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg"
           >
             Aplicar
           </button>
