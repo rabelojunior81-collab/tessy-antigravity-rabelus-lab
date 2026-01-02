@@ -1,9 +1,7 @@
-
-import { Dexie } from 'dexie';
+import Dexie from 'dexie';
 import type { Table } from 'dexie';
 import { Conversation, Project, RepositoryItem, Template, Factor, SharedConversation } from '../types';
 
-// Use named import for Dexie to ensure correct type inheritance for subclass methods.
 export class TessyDatabase extends Dexie {
   projects!: Table<Project>;
   conversations!: Table<Conversation>;
@@ -17,8 +15,7 @@ export class TessyDatabase extends Dexie {
   constructor() {
     super('TessyDB');
     
-    // Fix: Use version method inherited from Dexie (line 20)
-    this.version(1).stores({
+    (this as any).version(1).stores({
       projects: 'id, name, createdAt, updatedAt',
       conversations: 'id, projectId, title, createdAt, updatedAt',
       library: 'id, projectId, title, createdAt',
@@ -28,8 +25,7 @@ export class TessyDatabase extends Dexie {
       secrets: 'id, key'
     });
 
-    // Fix: Use version method inherited from Dexie for schema updates (line 30)
-    this.version(2).stores({
+    (this as any).version(2).stores({
       shared_conversations: 'code, createdAt, expiresAt'
     });
   }
@@ -44,8 +40,8 @@ export async function migrateToIndexedDB(): Promise<void> {
 
     const defaultProjectId = 'default-project';
     
-    // Fix: ensure transaction is recognized as an inherited method of Dexie (line 46)
-    await db.transaction('rw', ['projects', 'settings'], async () => {
+    // Fix: Explicitly cast to any to resolve property 'transaction' not found error in this environment
+    await (db as any).transaction('rw', ['projects', 'settings'], async () => {
       const exists = await db.projects.get(defaultProjectId);
       if (!exists) {
         await db.projects.put({

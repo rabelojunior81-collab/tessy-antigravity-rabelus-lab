@@ -2,7 +2,7 @@ import React from 'react';
 import Sidebar from './Sidebar';
 import ViewerPanel from './ViewerPanel';
 import CentralCanvas from './CentralCanvas';
-import RealTerminal from './RealTerminal';
+import Terminal from './Terminal';
 import CoPilot from './CoPilot';
 import { useViewer } from '../../hooks/useViewer';
 import { useLayout } from '../../hooks/useLayout';
@@ -142,7 +142,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           </div>
 
           <div style={{ height: `${alturaTerminal}px` }} className="shrink-0 flex flex-col">
-            <RealTerminal />
+            <Terminal />
           </div>
         </div>
 

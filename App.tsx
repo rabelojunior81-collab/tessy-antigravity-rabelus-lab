@@ -29,7 +29,7 @@ const TessyLogo = React.memo(() => (
 ));
 
 const AppContent: React.FC = () => {
-  const [isBooting, setIsBooting] = useState(true);
+  const [isMigrating, setIsMigrating] = useState(true);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedLibraryItem, setSelectedLibraryItem] = useState<Template | RepositoryItem | null>(null);
@@ -57,7 +57,7 @@ const AppContent: React.FC = () => {
       } catch (err) {
         console.error("Boot error context:", err);
       } finally {
-        setIsBooting(false);
+        setTimeout(() => setIsMigrating(false), 800);
       }
     };
     boot();
@@ -95,7 +95,7 @@ const AppContent: React.FC = () => {
 
   const groundingStatus = useMemo(() => factors.find(f => f.id === 'grounding')?.enabled || false, [factors]);
 
-  if (isBooting) {
+  if (isMigrating) {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-bg-primary">
         <div className="w-12 h-12 flex items-center justify-center animate-pulse">
