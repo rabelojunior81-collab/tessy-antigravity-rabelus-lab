@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { db } from '../../services/dbService';
 import { Project } from '../../types';
@@ -40,8 +39,8 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
 
   return (
     <div className="h-full flex flex-col bg-bg-secondary animate-fade-in overflow-hidden">
-      {/* Header - Compact py-2, icon 16 */}
-      <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+      {/* Header - Compact py-1, icon 16 */}
+      <div className="px-4 py-1 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <Folder size={16} className="text-accent-primary" />
           <h2 className="text-xs font-medium tracking-normal text-text-primary">Detalhes do Protocolo</h2>
