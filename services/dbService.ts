@@ -125,15 +125,6 @@ export async function migrateToIndexedDB(): Promise<void> {
   }
 }
 
-export const getGitHubToken = async (): Promise<string | null> => {
-  const secret = await db.secrets.get('github-token');
-  return secret?.value || null;
-};
-
-export const setGitHubToken = async (token: string): Promise<void> => {
-  await db.secrets.put({ id: 'github-token', key: 'token', value: token });
-};
-
 export const generateUUID = (): string => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();

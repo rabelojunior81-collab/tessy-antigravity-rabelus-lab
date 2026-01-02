@@ -1,6 +1,7 @@
+
 import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
-import { fetchRepositoryStructure, fetchFileContent, GitHubError } from '../services/githubService';
-import { getGitHubToken, setGitHubToken as dbSetToken, db } from '../services/dbService';
+import { fetchRepositoryStructure, fetchFileContent, getGitHubToken, setGitHubToken as ghSetToken } from '../services/githubService';
+import { db } from '../services/dbService';
 import { GitHubFile } from '../types';
 
 interface GitHubState {
@@ -61,7 +62,7 @@ export const GitHubProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   };
 
   const updateToken = async (newToken: string) => {
-    await dbSetToken(newToken);
+    await ghSetToken(newToken);
     setState(prev => ({ ...prev, token: newToken }));
     if (state.repoPath) refreshTreeInternal(newToken, state.repoPath);
   };

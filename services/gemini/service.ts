@@ -5,6 +5,7 @@ import { githubTools } from "./tools";
 import { getSystemInstruction, OPTIMIZATION_INSTRUCTION } from "./prompts";
 import { Factor, AttachedFile, OptimizationResult, ConversationTurn, GroundingChunk } from "../../types";
 import * as githubService from "../githubService";
+import { db, generateUUID } from '../dbService';
 
 interface GenerateResponse {
   text: string;
@@ -108,7 +109,7 @@ export const applyFactorsAndGenerate = async (
   history: ConversationTurn[] = [],
   groundingEnabled: boolean = true,
   repoPath?: string,
-  githubToken?: string | null
+  githubTokenParam?: string | null
 ): Promise<GenerateResponse> => {
   if (!interpretation) return { text: "Interpretação inválida." };
 
@@ -139,6 +140,8 @@ export const applyFactorsAndGenerate = async (
     });
 
     let iteration = 0;
+    const githubToken = await githubService.getGitHubToken();
+
     while (response.functionCalls && response.functionCalls.length > 0 && iteration < 5) {
       iteration++;
       contents.push(response.candidates[0].content);

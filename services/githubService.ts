@@ -1,7 +1,10 @@
 
 import { GitHubRepo, GitHubCommit, GitHubIssue, GitHubFile } from '../types';
+import { db } from './dbService';
 
 const GITHUB_API_BASE = 'https://api.github.com';
+const ENCRYPTION_PWD = 'tessy-nucleus-lab-internal-v1';
+const PBKDF2_SALT = new Uint8Array([12, 45, 78, 90, 123, 156, 189, 210, 15, 67, 98, 111, 234, 54, 87, 12]);
 
 export class GitHubError extends Error {
   status: number;
@@ -31,6 +34,128 @@ async function handleResponse(response: Response) {
   }
   return response.json();
 }
+
+// --- Encryption Helpers ---
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
+
+function base64ToArrayBuffer(base64: string): ArrayBuffer {
+  const binaryString = window.atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
+
+async function generateEncryptionKey(): Promise<CryptoKey> {
+  const enc = new TextEncoder();
+  const baseKey = await window.crypto.subtle.importKey(
+    'raw',
+    enc.encode(ENCRYPTION_PWD),
+    'PBKDF2',
+    false,
+    ['deriveKey']
+  );
+  return window.crypto.subtle.deriveKey(
+    {
+      name: 'PBKDF2',
+      salt: PBKDF2_SALT,
+      iterations: 100000,
+      hash: 'SHA-256'
+    },
+    baseKey,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+
+async function encryptToken(token: string): Promise<{ ciphertext: string; iv: string; salt: string }> {
+  const key = await generateEncryptionKey();
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const enc = new TextEncoder();
+  const ciphertext = await window.crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv },
+    key,
+    enc.encode(token)
+  );
+
+  return {
+    ciphertext: arrayBufferToBase64(ciphertext),
+    iv: arrayBufferToBase64(iv.buffer),
+    salt: arrayBufferToBase64(PBKDF2_SALT.buffer)
+  };
+}
+
+async function decryptToken(encryptedData: { ciphertext: string; iv: string; salt: string }): Promise<string> {
+  const key = await generateEncryptionKey();
+  const ciphertext = base64ToArrayBuffer(encryptedData.ciphertext);
+  const iv = new Uint8Array(base64ToArrayBuffer(encryptedData.iv));
+  
+  const decrypted = await window.crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv },
+    key,
+    ciphertext
+  );
+  
+  return new TextDecoder().decode(decrypted);
+}
+
+// --- Public Token Management ---
+
+export const getGitHubToken = async (): Promise<string | null> => {
+  try {
+    const secret = await db.secrets.get('github-token');
+    if (!secret?.value) return null;
+
+    // Detection for legacy plain text tokens
+    if (secret.value.startsWith('ghp_')) {
+      // Automatic migration to encrypted format
+      await setGitHubToken(secret.value);
+      return secret.value;
+    }
+
+    try {
+      const encryptedData = JSON.parse(secret.value);
+      if (encryptedData.ciphertext && encryptedData.iv) {
+        return await decryptToken(encryptedData);
+      }
+    } catch (parseError) {
+      // Fallback if it's not JSON but was saved somehow
+      if (secret.value.startsWith('ghp_')) return secret.value;
+      return null;
+    }
+    
+    return null;
+  } catch (err) {
+    console.error('Falha na recuperação/descriptografia do token:', err);
+    return null;
+  }
+};
+
+export const setGitHubToken = async (token: string): Promise<void> => {
+  try {
+    const encrypted = await encryptToken(token);
+    await db.secrets.put({ 
+      id: 'github-token', 
+      key: 'token', 
+      value: JSON.stringify(encrypted) 
+    });
+  } catch (err) {
+    console.error('Falha na criptografia do token:', err);
+    throw err;
+  }
+};
+
+// --- API Functions ---
 
 export const fetchRepo = async (token: string, repoPath: string): Promise<GitHubRepo> => {
   const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}`, {
@@ -197,18 +322,13 @@ export const fetchRepositoryStructure = async (token: string, repoPath: string, 
   return getStructure();
 };
 
-/**
- * Creates a new branch from a source branch.
- */
 export const createBranch = async (token: string, repoPath: string, branchName: string, fromBranch: string): Promise<any> => {
-  // 1. Get SHA of the from branch
   const refResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs/heads/${fromBranch}`, {
     headers: getHeaders(token)
   });
   const refData = await handleResponse(refResponse);
   const sha = refData.object.sha;
 
-  // 2. Create the new ref
   const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs`, {
     method: 'POST',
     headers: getHeaders(token),
@@ -220,25 +340,19 @@ export const createBranch = async (token: string, repoPath: string, branchName: 
   return handleResponse(response);
 };
 
-/**
- * Creates a commit with multiple file changes using the Git Database API.
- */
 export const commitChanges = async (token: string, repoPath: string, files: Array<{ path: string; content: string }>, message: string, branch: string): Promise<any> => {
-  // 1. Get the last commit SHA of the branch
   const refResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs/heads/${branch}`, {
     headers: getHeaders(token)
   });
   const refData = await handleResponse(refResponse);
   const lastCommitSha = refData.object.sha;
 
-  // 2. Get the tree SHA of that commit
   const commitResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/commits/${lastCommitSha}`, {
     headers: getHeaders(token)
   });
   const commitData = await handleResponse(commitResponse);
   const baseTreeSha = commitData.tree.sha;
 
-  // 3. Create a new tree with the file changes
   const treeItems = files.map(file => ({
     path: file.path,
     mode: '100644',
@@ -257,7 +371,6 @@ export const commitChanges = async (token: string, repoPath: string, files: Arra
   const treeData = await handleResponse(treeResponse);
   const newTreeSha = treeData.sha;
 
-  // 4. Create a new commit
   const newCommitResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/commits`, {
     method: 'POST',
     headers: getHeaders(token),
@@ -270,7 +383,6 @@ export const commitChanges = async (token: string, repoPath: string, files: Arra
   const newCommitData = await handleResponse(newCommitResponse);
   const newCommitSha = newCommitData.sha;
 
-  // 5. Update the branch ref to point to the new commit
   const updateRefResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs/heads/${branch}`, {
     method: 'PATCH',
     headers: getHeaders(token),
@@ -281,9 +393,6 @@ export const commitChanges = async (token: string, repoPath: string, files: Arra
   return handleResponse(updateRefResponse);
 };
 
-/**
- * Creates a Pull Request.
- */
 export const createPullRequest = async (token: string, repoPath: string, title: string, body: string, head: string, base: string): Promise<any> => {
   const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/pulls`, {
     method: 'POST',

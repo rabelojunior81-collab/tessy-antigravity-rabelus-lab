@@ -1,7 +1,9 @@
 
 import React, { createContext, useState, useContext, ReactNode, useCallback, useEffect } from 'react';
 import { Conversation, ConversationTurn, Factor, AttachedFile } from '../types';
-import { db, generateUUID, getGitHubToken } from '../services/dbService';
+// Fix: Split imports between dbService and githubService
+import { db, generateUUID } from '../services/dbService';
+import { getGitHubToken } from '../services/githubService';
 import { interpretIntent, applyFactorsAndGenerate } from '../services/gemini/service';
 
 const INITIAL_FACTORS: Factor[] = [

@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
-import { setGitHubToken } from '../services/dbService';
+// Fix: Import setGitHubToken from githubService instead of dbService
+import { setGitHubToken } from '../services/githubService';
 import { X, Key } from 'lucide-react';
 
 interface GitHubTokenModalProps {
