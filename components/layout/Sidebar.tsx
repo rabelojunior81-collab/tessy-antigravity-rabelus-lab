@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Clock, Library, Folder, Github, Command } from 'lucide-react';
 import { useViewer } from '../../hooks/useViewer';
@@ -18,7 +17,7 @@ const Sidebar: React.FC = () => {
   const sidebarClasses = `
     fixed md:relative top-0 left-0 h-full bg-bg-primary border-r border-border-visible 
     flex flex-col items-center py-4 gap-4 z-[80] shrink-0 transition-all duration-300 ease-in-out
-    ${isMobileMenuOpen ? 'translate-x-0 w-[48px]' : '-translate-x-full md:translate-x-0 w-[48px]'}
+    ${isMobileMenuOpen ? 'translate-x-0 w-[32px]' : '-translate-x-full md:translate-x-0 w-[32px]'}
   `;
 
   return (
@@ -30,7 +29,7 @@ const Sidebar: React.FC = () => {
         />
       )}
 
-      <aside className={sidebarClasses} style={{ width: '48px' }}>
+      <aside className={sidebarClasses} style={{ width: '32px' }}>
         <div className="flex flex-col items-center gap-2 w-full">
           {items.map((item) => {
             const isActive = viewerAberto === item.id;
