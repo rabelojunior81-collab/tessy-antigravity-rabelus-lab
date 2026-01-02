@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLayout } from '../../hooks/useLayout';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -27,7 +26,6 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
 }) => {
   const { arquivoSelecionado, selecionarArquivo } = useLayout();
   const { newConversation, setInputText } = useChat();
-  const { abrirViewer } = useViewer();
   const [copied, setCopied] = React.useState(false);
 
   const handleCopy = () => {
@@ -52,8 +50,8 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
         <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in border border-border-visible bg-bg-tertiary/40 backdrop-blur-lg shadow-xl">
           <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-accent-primary tracking-tighter truncate max-w-[300px]">{arquivoSelecionado.path}</span>
-              <span className="text-[10px] font-medium uppercase px-2 py-0.5 bg-accent-subtle text-accent-primary border border-accent-primary/20 tracking-wide">
+              <span className="text-xs font-mono text-accent-primary tracking-tighter truncate max-w-[300px] shadow-sutil">{arquivoSelecionado.path}</span>
+              <span className="text-[10px] font-medium uppercase px-2 py-0.5 bg-accent-subtle text-accent-primary border border-accent-primary/20 tracking-wide shadow-sutil">
                 {arquivoSelecionado.language}
               </span>
             </div>
@@ -97,7 +95,7 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
                   fontSize: '13px',
                   fontFamily: '"JetBrains Mono", monospace'
                 }}
-                lineNumberStyle={{ color: '#2a4a6f', minWidth: '3em', paddingRight: '1em' }}
+                lineNumberStyle={{ color: '#3a5a7f', minWidth: '3em', paddingRight: '1em' }}
               >
                 {arquivoSelecionado.content}
               </SyntaxHighlighter>
@@ -118,9 +116,8 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
           currentProjectId={currentProjectId}
           onClose={() => setSelectedLibraryItem(null)}
           onSaveSuccess={() => {
-            // Force refresh of library viewers by temporarily closing and clearing selection
+            // Force refresh of library viewers is handled by selection state
             setSelectedLibraryItem(null);
-            abrirViewer('library');
           }}
           onSelect={(content) => {
             setInputText(content);
@@ -142,7 +139,7 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
             projectId={selectedProjectId} 
             onClose={() => setSelectedProjectId(null)}
             onNewConversation={() => { newConversation(); setSelectedProjectId(null); }}
-            onOpenLibrary={() => abrirViewer('library')}
+            onOpenLibrary={() => {}} // Library view handled via selection
           />
         </div>
       </div>
@@ -158,8 +155,8 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
             <path d="M35 60 H65" fill="none" stroke="#4a9eff" strokeWidth="6" />
           </svg>
         </div>
-        <h3 className="text-2xl font-light tracking-[0.2em] text-text-primary opacity-20">TESSY</h3>
-        <p className="mt-2 text-[10px] font-medium text-text-tertiary opacity-20 uppercase tracking-[0.4em]">
+        <h3 className="text-2xl font-light tracking-[0.2em] text-text-primary opacity-20 shadow-suave">TESSY</h3>
+        <p className="mt-2 text-[10px] font-medium text-text-tertiary opacity-20 uppercase tracking-[0.4em] shadow-sutil">
           Rabelus Lab Nucleus
         </p>
       </div>
