@@ -1,30 +1,21 @@
 # Changelog - Tessy Alpha
 
-## [v3.2.0-STABLE] - 2025-02-24
+## [v3.2.1-STABLE] - 2025-02-24
 ### Limpeza de Sistema
-- **Expurgo de Componentes Fantasmas**: Remoção definitiva de stubs legados e componentes não referenciados (`Canvas.tsx`, `FactorPanel.tsx`, `Controllers.tsx`, `HistorySidebar.tsx`, `ProjectSwitcher.tsx`, `TemplateLibraryModal.tsx`).
-- **Otimização de Build**: Redução da árvore de dependências interna para melhor performance de carregamento.
+- **Expurgo Físico Concluído**: Remoção definitiva dos arquivos stub legados (`Canvas.tsx`, `FactorPanel.tsx`, `Controllers.tsx`, `HistorySidebar.tsx`, `ProjectSwitcher.tsx`, `TemplateLibraryModal.tsx`).
+- **Integridade de Referências**: Verificação completa do grafo de dependências para garantir zero referências a componentes obsoletos.
+- **Otimização de Build**: Redução final do tamanho do bundle após remoção de código morto.
 
 ## [v3.1.5-POLISH] - 2024-05-30
 ### Refinement & Production Prep
-- **Visual Overhaul**: Standardized "Brutalist Antigravity" design with sharper borders, flat shadows, and consistent spacing.
-- **Enhanced Typography**: Improved Markdown rendering with specialized prose styles for better code and header readability.
-- **UI Micro-interactions**: Added subtle scale animations to buttons, polished terminal response times, and refined modal transitions.
-- **Responsive Core**: Completely audited mobile views. Sidebars now behave as drawers with professional backdrops.
-- **Loading Sequence**: Added a branded boot sequence with the tessy logo and system status indicators.
-- **Performance**: Optimized rendering cycles using `React.memo` on all static and large layout components.
-- **Bug Fixes**: Corrected z-index conflicts between resize handles and modal overlays.
-
-## [v3.1.0-STABLE] - 2024-05-25
-### Final Layout Polish
-- **Responsiveness**: Full support for Mobile and Tablet. Sidebar becomes a drawer, viewers are full-screen overlays on small screens.
-- **Optimization**: Integrated `React.memo` across core components to reduce re-renders.
+- **Visual Overhaul**: Design "Brutalist Antigravity" padronizado com bordas nítidas e sombras planas.
+- **Micro-interações**: Adição de animações de escala sutil e transições polidas.
+- **Mobile Audit**: Sidebars agora se comportam como drawers com backdrops profissionais.
 
 ## [v3.0.0-ANTIGRAVITY] - 2024-05-20
 ### Architectural Reboot
-- **New Layout**: Three-pane modern terminal-style layout (Sidebar, Canvas, CoPilot).
-- **GitHub Viewer**: Native file tree explorer for synced repositories.
-- **Enhanced Terminal**: Functional terminal component for system status.
+- **Novo Layout**: IDE de três painéis (Sidebar, Canvas, CoPilot).
+- **GitHub Sync**: Integração nativa com repositórios para análise de código.
 
 ---
 *Protocolo Finalizado por Rabelus Lab Core.*
