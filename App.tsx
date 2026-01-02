@@ -110,7 +110,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-accent-primary/30 bg-bg-primary text-text-primary">
-      <header className="h-11 flex items-center justify-between px-6 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md z-[70] shrink-0">
+      <header className="h-11 flex items-center justify-between pl-0 pr-6 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md z-[70] shrink-0">
         <div className="flex items-center space-x-2 min-w-0">
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
