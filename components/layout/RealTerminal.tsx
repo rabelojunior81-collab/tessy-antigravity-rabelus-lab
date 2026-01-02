@@ -1,8 +1,8 @@
-
 import React, { useEffect, useRef } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal as TerminalIcon, Trash2, ShieldCheck } from 'lucide-react';
+import 'xterm/css/xterm.css';
 
 const RealTerminal: React.FC = () => {
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -21,16 +21,6 @@ const RealTerminal: React.FC = () => {
 
   useEffect(() => {
     if (!terminalRef.current) return;
-
-    // Direct injection of xterm CSS to satisfy the requirement of having it in the component
-    const linkId = 'xterm-css';
-    if (!document.getElementById(linkId)) {
-      const link = document.createElement('link');
-      link.id = linkId;
-      link.rel = 'stylesheet';
-      link.href = 'https://cdn.jsdelivr.net/npm/xterm@5.5.0/css/xterm.css';
-      document.head.appendChild(link);
-    }
 
     const term = new Terminal({
       theme: {
