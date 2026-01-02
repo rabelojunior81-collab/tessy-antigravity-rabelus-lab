@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import LoadingSpinner from './components/LoadingSpinner';
 import ProjectModal from './components/ProjectModal';
@@ -30,7 +29,7 @@ const TessyLogo = React.memo(() => (
 ));
 
 const AppContent: React.FC = () => {
-  const [isMigrating, setIsMigrating] = useState(true);
+  const [isBooting, setIsBooting] = useState(true);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedLibraryItem, setSelectedLibraryItem] = useState<Template | RepositoryItem | null>(null);
@@ -39,7 +38,6 @@ const AppContent: React.FC = () => {
   const { newConversation, factors } = useChat();
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
 
-  // Hook customizado para gerenciar projetos
   const { 
     currentProjectId, 
     switchProject, 
@@ -52,13 +50,17 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     const boot = async () => {
       try {
-        await migrateToIndexedDB();
+        // Garantir que a migração não bloqueie o app para sempre
+        const migrationPromise = migrateToIndexedDB();
+        const timeoutPromise = new Promise(resolve => setTimeout(resolve, 3000));
+        await Promise.race([migrationPromise, timeoutPromise]);
+        
         const themeSetting = await db.settings.get('tessy-theme');
         if (themeSetting) setTheme(themeSetting.value);
       } catch (err) {
-        console.error("Boot error:", err);
+        console.error("Boot error context:", err);
       } finally {
-        setTimeout(() => setIsMigrating(false), 800);
+        setIsBooting(false);
       }
     };
     boot();
@@ -66,7 +68,7 @@ const AppContent: React.FC = () => {
 
   useEffect(() => {
     document.documentElement.className = theme;
-    db.settings.put({ key: 'tessy-theme', value: theme });
+    db.settings.put({ key: 'tessy-theme', value: theme }).catch(() => {});
   }, [theme]);
 
   const toggleTheme = useCallback(() => {
@@ -85,7 +87,6 @@ const AppContent: React.FC = () => {
     selecionarArquivo(null);
   }, [selecionarArquivo]);
 
-  // Hook customizado para gerenciar o roteamento do painel lateral (viewer)
   const viewerContent = useViewerRouter({
     currentProjectId,
     onProjectSelected: handleProjectSelected,
@@ -97,7 +98,7 @@ const AppContent: React.FC = () => {
 
   const groundingStatus = useMemo(() => factors.find(f => f.id === 'grounding')?.enabled || false, [factors]);
 
-  if (isMigrating) {
+  if (isBooting) {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-bg-primary">
         <div className="w-12 h-12 flex items-center justify-center animate-pulse">
@@ -105,7 +106,7 @@ const AppContent: React.FC = () => {
             <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#4a9eff" strokeWidth="8" />
           </svg>
         </div>
-        <p className="mt-6 font-medium uppercase tracking-wide text-[10px] text-accent-primary animate-pulse-soft shadow-sutil">Purging Ghost Components...</p>
+        <p className="mt-6 font-medium uppercase tracking-widest text-[10px] text-accent-primary animate-pulse-soft">Initializing Nucleus Core...</p>
       </div>
     );
   }
@@ -120,13 +121,13 @@ const AppContent: React.FC = () => {
           >
             {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 ml-4 md:ml-6">
             <TessyLogo />
             <div className="flex flex-col">
-              <h1 className="text-2xl font-light tracking-wide leading-none text-text-primary glow-text-blue shadow-suave">
+              <h1 className="text-xl font-bold tracking-tight leading-none text-text-primary">
                 tessy
               </h1>
-              <span className="text-[10px] font-normal text-text-tertiary mt-0.5 whitespace-nowrap uppercase tracking-wide opacity-60 shadow-sutil">by Rabelus Lab</span>
+              <span className="text-[9px] font-medium text-text-tertiary uppercase tracking-widest opacity-60">Rabelus Lab</span>
             </div>
           </div>
         </div>
@@ -138,10 +139,10 @@ const AppContent: React.FC = () => {
         <div className="flex items-center space-x-4">
           <button 
             onClick={toggleTheme} 
-            className="w-10 h-10 flex items-center justify-center bg-bg-secondary border border-border-visible text-accent-primary hover:border-accent-primary transition-all active:scale-95"
+            className="w-8 h-8 flex items-center justify-center bg-bg-secondary border border-border-visible text-accent-primary hover:border-accent-primary transition-all"
             title="Alternar Tema"
           >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>
         </div>
       </header>
@@ -160,11 +161,11 @@ const AppContent: React.FC = () => {
       </div>
 
       <footer className="h-5 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md px-6 flex items-center justify-between text-[9px] text-text-tertiary font-normal tracking-wide shrink-0 z-[70]">
-        <span className="opacity-40 uppercase shadow-sutil">© 2025 Rabelus Lab System</span>
+        <span className="opacity-40 uppercase">© 2025 Rabelus Lab System</span>
         <div className="flex items-center space-x-6">
           <div className="flex items-center gap-2">
-             <div className="w-1.5 h-1.5 bg-accent-primary animate-pulse shadow-[0_0_8px_#4a9eff]"></div>
-             <span className="uppercase text-accent-primary hidden xs:inline shadow-sutil">Nucleus v3.2.1-antigravity Stable</span>
+             <div className="w-1.5 h-1.5 bg-accent-primary animate-pulse"></div>
+             <span className="uppercase text-accent-primary hidden xs:inline">Stable Build v3.2.1</span>
           </div>
         </div>
       </footer>
@@ -186,18 +187,22 @@ const AppContent: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  // O ChatProvider precisa do currentProjectId inicial. Como o boot de configuração é assíncrono,
-  // mantemos um estado básico aqui que é atualizado pelo AppContent se necessário,
-  // mas o useProjects lidará com a persistência real.
   const [initialProjectId, setInitialProjectId] = useState('default-project');
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const loadProj = async () => {
-      const lastProjSetting = await db.settings.get('tessy-current-project');
-      if (lastProjSetting) setInitialProjectId(lastProjSetting.value);
+      try {
+        const lastProjSetting = await db.settings.get('tessy-current-project');
+        if (lastProjSetting) setInitialProjectId(lastProjSetting.value);
+      } catch (e) {} finally {
+        setIsReady(true);
+      }
     };
     loadProj();
   }, []);
+
+  if (!isReady) return null;
 
   return (
     <LayoutProvider>

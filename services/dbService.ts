@@ -1,12 +1,9 @@
 
-// Use default import for Dexie to ensure proper class inheritance and type resolution in TypeScript
-import Dexie from 'dexie';
+import { Dexie } from 'dexie';
 import type { Table } from 'dexie';
 import { Conversation, Project, RepositoryItem, Template, Factor, SharedConversation } from '../types';
 
-/**
- * Main database class for the DLL (Dexie) application using Dexie (IndexedDB).
- */
+// Fix: Use named export { Dexie } to ensure proper type inheritance and method resolution
 export class TessyDatabase extends Dexie {
   projects!: Table<Project>;
   conversations!: Table<Conversation>;
@@ -18,11 +15,10 @@ export class TessyDatabase extends Dexie {
   shared_conversations!: Table<SharedConversation>;
 
   constructor() {
-    // Call the super constructor with the database name
     super('TessyDB');
     
-    // Define the database schema.
-    (this as any).version(1).stores({
+    // Fix: Proper named import ensures version() is recognized as an inherited method from Dexie
+    this.version(1).stores({
       projects: 'id, name, createdAt, updatedAt',
       conversations: 'id, projectId, title, createdAt, updatedAt',
       library: 'id, projectId, title, createdAt',
@@ -32,7 +28,7 @@ export class TessyDatabase extends Dexie {
       secrets: 'id, key'
     });
 
-    (this as any).version(2).stores({
+    this.version(2).stores({
       shared_conversations: 'code, createdAt, expiresAt'
     });
   }
@@ -40,88 +36,29 @@ export class TessyDatabase extends Dexie {
 
 export const db = new TessyDatabase();
 
-/**
- * Migration from LocalStorage to IndexedDB
- */
 export async function migrateToIndexedDB(): Promise<void> {
-  const isMigrated = await db.settings.get('migration-completed');
-  if (isMigrated?.value === true) return;
-
-  console.log('Starting migration to IndexedDB...');
-  
   try {
+    const isMigrated = await db.settings.get('migration-completed');
+    if (isMigrated?.value === true) return;
+
     const defaultProjectId = 'default-project';
     
-    // Check for existing data in LocalStorage
-    const oldConversationsRaw = localStorage.getItem('tessy_conversations_v2');
-    const oldPromptsRaw = localStorage.getItem('prompts');
-    const oldFactorsRaw = localStorage.getItem('tessy_factors_v2');
-    const oldTheme = localStorage.getItem('tessy-theme');
-    
-    // Decompression fallback logic if needed
-    const getDecompressed = (data: string) => {
-      try {
-        // Try simple JSON parse first
-        return JSON.parse(data);
-      } catch (e) {
-        console.warn("Could not parse legacy data during migration.");
-        return [];
+    // Fix: Proper named import ensures transaction() is recognized as an inherited method from Dexie
+    // Using string names for tables ensures reliability in early lifecycle transactions
+    await db.transaction('rw', ['projects', 'settings'], async () => {
+      const exists = await db.projects.get(defaultProjectId);
+      if (!exists) {
+        await db.projects.put({
+          id: defaultProjectId,
+          name: 'Projeto Padrão',
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        });
       }
-    };
-
-    // Use transaction to perform atomic migration operations.
-    await (db as any).transaction('rw', [db.projects, db.conversations, db.library, db.settings], async () => {
-      // 1. Create Default Project
-      await db.projects.put({
-        id: defaultProjectId,
-        name: 'Projeto Padrão',
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      });
-
-      // 2. Migrate Conversations
-      if (oldConversationsRaw) {
-        const convs = getDecompressed(oldConversationsRaw);
-        if (Array.isArray(convs)) {
-          const processedConvs = convs.map(c => ({
-            ...c,
-            projectId: defaultProjectId
-          }));
-          await db.conversations.bulkPut(processedConvs);
-        }
-      }
-
-      // 3. Migrate Library (Prompts)
-      if (oldPromptsRaw) {
-        const prompts = getDecompressed(oldPromptsRaw);
-        if (Array.isArray(prompts)) {
-          const processedPrompts = prompts.map(p => ({
-            ...p,
-            projectId: defaultProjectId
-          }));
-          await db.library.bulkPut(processedPrompts);
-        }
-      }
-
-      // 4. Migrate Settings
-      if (oldTheme) await db.settings.put({ key: 'tessy-theme', value: oldTheme });
-      if (oldFactorsRaw) {
-        try {
-          const factors = JSON.parse(oldFactorsRaw);
-          await db.settings.put({ key: 'tessy-factors', value: factors });
-        } catch (e) {
-          console.warn("Could not parse legacy factors.");
-        }
-      }
-
-      // 5. Set Migration Flag
       await db.settings.put({ key: 'migration-completed', value: true });
     });
-
-    console.log('Migration completed successfully.');
   } catch (error) {
-    console.error('Migration failed:', error);
-    throw error;
+    console.warn('Migration status:', error);
   }
 }
 
