@@ -62,7 +62,7 @@ const SaveModal: React.FC<SaveModalProps> = ({ isOpen, onClose, conversation, on
           <button onClick={handleClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={16} /></button>
         </div>
 
-        <form onSubmit={handleSave} className="p-8 space-y-6">
+        <form onSubmit={handleSave} className="p-4 space-y-4">
           {error && <div className="text-[11px] font-medium uppercase text-red-400 flex items-center gap-2"><AlertCircle size={16} /> {error}</div>}
           <div className="space-y-2">
             <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Identificação da Sessão</label>

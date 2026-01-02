@@ -70,11 +70,11 @@ const OptimizeModal: React.FC<OptimizeModalProps> = ({ isOpen, inputText, onClos
           ) : result ? (
             <div className="space-y-10 animate-fade-in">
               <div className="grid grid-cols-2 gap-6">
-                <div className="p-6 bg-bg-tertiary/40 border border-border-visible text-center">
+                <div className="p-4 bg-bg-tertiary/40 border border-border-visible text-center">
                   <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest block mb-3">Score de Clareza</span>
                   <span className="text-4xl font-bold text-accent-primary">{result.clarity_score.toFixed(1)}</span>
                 </div>
-                <div className="p-6 bg-bg-tertiary/40 border border-border-visible text-center">
+                <div className="p-4 bg-bg-tertiary/40 border border-border-visible text-center">
                   <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest block mb-3">Score de Contexto</span>
                   <span className="text-4xl font-bold text-accent-primary">{result.completeness_score.toFixed(1)}</span>
                 </div>
@@ -84,7 +84,7 @@ const OptimizeModal: React.FC<OptimizeModalProps> = ({ isOpen, inputText, onClos
                 <h4 className="text-xs font-bold uppercase text-text-tertiary tracking-widest border-b border-border-visible pb-2 flex items-center gap-2">
                    Protocolo Otimizado
                 </h4>
-                <div className="p-6 bg-bg-primary border border-border-visible">
+                <div className="p-4 bg-bg-primary border border-border-visible">
                   <pre className="text-sm text-text-secondary font-mono whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto custom-scrollbar">
                     {result.optimized_prompt}
                   </pre>
@@ -96,7 +96,7 @@ const OptimizeModal: React.FC<OptimizeModalProps> = ({ isOpen, inputText, onClos
           )}
         </div>
 
-        <div className="p-8 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex gap-4 shrink-0">
+        <div className="p-4 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex gap-4 shrink-0">
           <button onClick={handleClose} className="flex-1 py-4 bg-bg-tertiary hover:bg-bg-elevated text-text-tertiary font-bold uppercase tracking-widest text-xs transition-all">Abortar</button>
           <button onClick={() => { onApply(result!.optimized_prompt); handleClose(); }} disabled={!result} className={`flex-1 py-4 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3 ${!result ? 'bg-bg-secondary text-text-tertiary opacity-30 cursor-not-allowed' : 'bg-accent-primary hover:bg-accent-secondary text-white shadow-lg'}`}>
             {result && <Check size={18} strokeWidth={3} />} Aplicar Instrução

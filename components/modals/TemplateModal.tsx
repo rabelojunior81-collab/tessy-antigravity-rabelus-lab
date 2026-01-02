@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { X, Search, Plus, Trash2, Edit3, ChevronRight, Hash, Bookmark } from 'lucide-react';
 import { db, generateUUID } from '../../services/dbService';
@@ -163,7 +162,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
           {/* Main Area */}
           <div className="flex-1 flex flex-col bg-bg-secondary overflow-hidden">
             {isFormOpen ? (
-              <form onSubmit={handleSave} className="flex-1 flex flex-col p-6 space-y-4 animate-fade-in">
+              <form onSubmit={handleSave} className="flex-1 flex flex-col p-4 space-y-3 animate-fade-in">
                 <div className="space-y-3">
                    <div className="flex gap-4">
                      <div className="flex-1 space-y-1">
@@ -199,7 +198,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
             ) : selectedTemplate ? (
               <div className="flex-1 flex flex-col overflow-hidden animate-fade-in">
                 {/* Compact Template Header */}
-                <div className="flex items-center justify-between px-6 py-3 border-b border-border-visible bg-bg-primary/20 shrink-0">
+                <div className="flex items-center justify-between px-4 py-2 border-b border-border-visible bg-bg-primary/20 shrink-0">
                   <div className="flex items-center overflow-hidden">
                     <span className="px-2 py-0.5 bg-accent-subtle/40 border border-accent-primary/30 text-accent-primary text-[9px] font-medium uppercase tracking-wide shrink-0">
                       {selectedTemplate.category}
@@ -225,7 +224,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
                 </div>
 
                 {/* Fixed Footer with Button */}
-                <div className="shrink-0 px-6 py-3 bg-bg-primary/60 border-t border-border-visible">
+                <div className="shrink-0 px-4 py-2 bg-bg-primary/60 border-t border-border-visible">
                   <button 
                     onClick={() => { onSelect(selectedTemplate.content); onClose(); }} 
                     className="w-full py-3 bg-accent-primary hover:bg-accent-secondary text-white text-xs font-medium tracking-normal transition-all active:scale-95 shadow-xl flex items-center justify-center gap-2"

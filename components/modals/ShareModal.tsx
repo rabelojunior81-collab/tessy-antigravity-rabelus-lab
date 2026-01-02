@@ -71,7 +71,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, conversation }
           ) : code ? (
             <div className="w-full space-y-8 animate-fade-in">
               <p className="text-xs text-text-tertiary font-bold uppercase tracking-widest">Código de Sincronização:</p>
-              <div className="py-6 bg-bg-primary border border-accent-primary/30 shadow-inner">
+              <div className="py-4 bg-bg-primary border border-accent-primary/30 shadow-inner">
                 <span className="text-4xl font-bold text-text-primary font-mono tracking-[0.3em] uppercase">{code}</span>
               </div>
               <button 
