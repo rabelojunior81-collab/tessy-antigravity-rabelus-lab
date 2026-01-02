@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Settings2, Sparkles, RotateCcw } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
@@ -28,7 +27,7 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
       <div className={`w-full max-w-lg bg-bg-secondary/95 backdrop-blur-2xl border border-border-visible flex flex-col shadow-2xl relative ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
         
         {/* Header - Minimalist */}
-        <div className="px-6 py-2.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="px-6 py-1 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <Settings2 className="text-accent-primary" size={14} />
             <h2 className="text-[10px] font-medium tracking-[0.2em] text-text-primary uppercase">Parâmetros Nucleares</h2>

@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { ArrowRight, Plus, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
@@ -78,7 +77,7 @@ const CoPilot: React.FC = () => {
   return (
     <aside className="w-full h-full bg-bg-secondary/60 backdrop-blur-xl border-l border-border-visible flex flex-col z-[60] shrink-0">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
+      <div className="flex items-center justify-between px-4 py-1 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-2">
           <div className={`w-1.5 h-1.5 ${isLoading ? 'bg-accent-secondary animate-pulse shadow-[0_0_8px_#4a9eff]' : 'bg-accent-primary'}`}></div>
           <h2 className="text-xs font-medium text-text-primary tracking-wide">Tessy Assistant</h2>

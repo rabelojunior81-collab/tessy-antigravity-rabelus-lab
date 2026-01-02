@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, Wand2, Check, AlertCircle, Loader2 } from 'lucide-react';
 import { OptimizationResult } from '../../types';
@@ -49,7 +48,7 @@ const OptimizeModal: React.FC<OptimizeModalProps> = ({ isOpen, inputText, onClos
   return (
     <div className={`fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
       <div className={`w-full max-w-4xl bg-bg-secondary/95 backdrop-blur-xl border border-border-visible flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
+        <div className="px-4 py-1 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Wand2 className="text-accent-primary" size={16} />
             <h2 className="text-xs font-medium tracking-normal text-text-primary uppercase">Otimização de Instrução</h2>

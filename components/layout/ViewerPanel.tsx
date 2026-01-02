@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { X } from 'lucide-react';
 import { useViewer } from '../../hooks/useViewer';
@@ -21,7 +20,7 @@ const ViewerPanel: React.FC<ViewerPanelProps> = ({ title, children }) => {
 
   return (
     <div className={panelClasses}>
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
+      <div className="flex items-center justify-between px-4 py-1 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <h3 className="text-xs font-medium tracking-normal text-text-primary glow-text-blue">{title}</h3>
         <button 
           onClick={fecharViewer}
