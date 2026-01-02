@@ -151,7 +151,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
             <div className="p-3 bg-bg-primary/60 border-t border-border-visible">
               <button 
                 onClick={() => { setFormData({ label: '', description: '', content: '', category: 'Personalizado' }); setIsFormOpen(true); }} 
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-medium tracking-normal transition-all active:scale-95 shadow-lg"
+                className="w-full flex items-center justify-center gap-2 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-medium tracking-normal transition-all active:scale-95 shadow-lg"
               >
                 <Plus size={14} strokeWidth={2} />
                 Criar Protocolo
@@ -191,8 +191,8 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
                   <textarea required value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })} className="flex-1 w-full bg-bg-tertiary border border-border-visible p-3 text-xs font-mono font-normal text-text-primary focus:border-accent-primary outline-none resize-none custom-scrollbar" />
                 </div>
                 <div className="flex gap-3">
-                  <button type="button" onClick={() => setIsFormOpen(false)} className="flex-1 py-3 bg-bg-tertiary text-text-tertiary font-medium uppercase tracking-wide text-[10px]">Cancelar</button>
-                  <button type="submit" className="flex-1 py-3 bg-accent-primary hover:bg-accent-secondary text-white font-medium uppercase tracking-wide text-[10px] transition-all">Sincronizar</button>
+                  <button type="button" onClick={() => setIsFormOpen(false)} className="flex-1 py-0.5 bg-bg-tertiary text-text-tertiary font-medium uppercase tracking-wide text-[10px]">Cancelar</button>
+                  <button type="submit" className="flex-1 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white font-medium uppercase tracking-wide text-[10px] transition-all">Sincronizar</button>
                 </div>
               </form>
             ) : selectedTemplate ? (
@@ -227,7 +227,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
                 <div className="shrink-0 px-4 py-2 bg-bg-primary/60 border-t border-border-visible">
                   <button 
                     onClick={() => { onSelect(selectedTemplate.content); onClose(); }} 
-                    className="w-full py-3 bg-accent-primary hover:bg-accent-secondary text-white text-xs font-medium tracking-normal transition-all active:scale-95 shadow-xl flex items-center justify-center gap-2"
+                    className="w-full py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-xs font-medium tracking-normal transition-all active:scale-95 shadow-xl flex items-center justify-center gap-2"
                   >
                     <ChevronRight size={16} strokeWidth={3} />
                     Carregar no Núcleo

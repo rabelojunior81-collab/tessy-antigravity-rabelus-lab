@@ -75,7 +75,7 @@ const GitHubViewer: React.FC = () => {
         </div>
         <div className="space-y-4">
           <input type="password" value={tokenInput} onChange={(e) => setTokenInput(e.target.value)} placeholder="TOKEN..." className="w-full bg-bg-primary border border-border-visible p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
-          <button onClick={() => updateToken(tokenInput)} className="w-full py-2 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg">Autenticar</button>
+          <button onClick={() => updateToken(tokenInput)} className="w-full py-0.5 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg">Autenticar</button>
         </div>
       </div>
     );
@@ -90,7 +90,7 @@ const GitHubViewer: React.FC = () => {
         </div>
         <div className="space-y-4">
           <input type="text" value={repoInput} onChange={(e) => setRepoInput(e.target.value)} placeholder="USUARIO/REPOS..." className="w-full bg-bg-primary border border-border-visible p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
-          <button onClick={() => connectRepo(repoInput)} className="w-full py-2 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all">Conectar</button>
+          <button onClick={() => connectRepo(repoInput)} className="w-full py-0.5 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all">Conectar</button>
         </div>
       </div>
     );
@@ -133,7 +133,7 @@ const GitHubViewer: React.FC = () => {
       </div>
 
       <div className="p-4 border-t border-border-visible bg-bg-primary/50">
-        <button onClick={disconnect} className="w-full py-2 border border-border-visible text-red-400/70 hover:text-red-400 text-[9px] font-bold uppercase tracking-widest transition-all">Desconectar</button>
+        <button onClick={disconnect} className="w-full py-0.5 border border-border-visible text-red-400/70 hover:text-red-400 text-[9px] font-bold uppercase tracking-widest transition-all">Desconectar</button>
       </div>
     </div>
   );

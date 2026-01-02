@@ -129,13 +129,13 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
         <div className="space-y-4 pt-4 border-t border-border-visible">
           <button 
             onClick={onNewConversation}
-            className="w-full py-2 bg-accent-primary hover:bg-accent-secondary text-white font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3 shadow-lg"
+            className="w-full py-0.5 bg-accent-primary hover:bg-accent-secondary text-white font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3 shadow-lg"
           >
             Iniciar Nova Sessão
           </button>
           <button 
             onClick={onOpenLibrary}
-            className="w-full py-2 bg-bg-tertiary border border-border-visible text-text-primary hover:bg-bg-elevated font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3"
+            className="w-full py-0.5 bg-bg-tertiary border border-border-visible text-text-primary hover:bg-bg-elevated font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3"
           >
             Acessar Biblioteca
           </button>

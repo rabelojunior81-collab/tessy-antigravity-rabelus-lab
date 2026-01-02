@@ -49,9 +49,9 @@ const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm,
         </div>
 
         <div className="p-4 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex flex-wrap gap-3 shrink-0">
-          <button onClick={handleClose} className="flex-1 min-w-[100px] py-3.5 bg-bg-tertiary hover:bg-bg-elevated text-text-tertiary font-medium uppercase tracking-wide text-xs transition-all">Cancelar</button>
-          <button onClick={onSave} className="flex-1 min-w-[100px] py-3.5 bg-accent-primary/20 hover:bg-accent-primary/30 border border-accent-primary/40 text-accent-primary font-medium uppercase tracking-wide text-xs transition-all">Arquivar</button>
-          <button onClick={handleConfirm} disabled={isRestarting} className="flex-1 min-w-[100px] py-3.5 bg-red-600 hover:bg-red-500 text-white font-medium uppercase tracking-wide text-xs transition-all shadow-lg">
+          <button onClick={handleClose} className="flex-1 min-w-[100px] py-0.5 bg-bg-tertiary hover:bg-bg-elevated text-text-tertiary font-medium uppercase tracking-wide text-xs transition-all">Cancelar</button>
+          <button onClick={onSave} className="flex-1 min-w-[100px] py-0.5 bg-accent-primary/20 hover:bg-accent-primary/30 border border-accent-primary/40 text-accent-primary font-medium uppercase tracking-wide text-xs transition-all">Arquivar</button>
+          <button onClick={handleConfirm} disabled={isRestarting} className="flex-1 min-w-[100px] py-0.5 bg-red-600 hover:bg-red-500 text-white font-medium uppercase tracking-wide text-xs transition-all shadow-lg">
             {isRestarting ? 'PURGANDO...' : 'PURGAR'}
           </button>
         </div>

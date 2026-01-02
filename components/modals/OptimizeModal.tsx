@@ -97,8 +97,8 @@ const OptimizeModal: React.FC<OptimizeModalProps> = ({ isOpen, inputText, onClos
         </div>
 
         <div className="p-4 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex gap-4 shrink-0">
-          <button onClick={handleClose} className="flex-1 py-4 bg-bg-tertiary hover:bg-bg-elevated text-text-tertiary font-bold uppercase tracking-widest text-xs transition-all">Abortar</button>
-          <button onClick={() => { onApply(result!.optimized_prompt); handleClose(); }} disabled={!result} className={`flex-1 py-4 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3 ${!result ? 'bg-bg-secondary text-text-tertiary opacity-30 cursor-not-allowed' : 'bg-accent-primary hover:bg-accent-secondary text-white shadow-lg'}`}>
+          <button onClick={handleClose} className="flex-1 py-0.5 bg-bg-tertiary hover:bg-bg-elevated text-text-tertiary font-bold uppercase tracking-widest text-xs transition-all">Abortar</button>
+          <button onClick={() => { onApply(result!.optimized_prompt); handleClose(); }} disabled={!result} className={`flex-1 py-0.5 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3 ${!result ? 'bg-bg-secondary text-text-tertiary opacity-30 cursor-not-allowed' : 'bg-accent-primary hover:bg-accent-secondary text-white shadow-lg'}`}>
             {result && <Check size={18} strokeWidth={3} />} Aplicar Instrução
           </button>
         </div>

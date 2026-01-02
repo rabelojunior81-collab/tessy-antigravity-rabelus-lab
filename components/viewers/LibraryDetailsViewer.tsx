@@ -192,13 +192,13 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
               <button 
                 type="button" 
                 onClick={() => isCreating ? onClose() : setIsEditing(false)} 
-                className="px-6 py-2.5 bg-bg-tertiary border border-border-visible text-text-tertiary text-[10px] font-bold uppercase tracking-widest hover:text-text-primary transition-all"
+                className="px-6 py-0.5 bg-bg-tertiary border border-border-visible text-text-tertiary text-[10px] font-bold uppercase tracking-widest hover:text-text-primary transition-all"
               >
                 Abortar
               </button>
               <button 
                 type="submit" 
-                className="px-6 py-2 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-xl"
+                className="px-6 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-xl"
               >
                 <Save size={14} /> Sincronizar
               </button>
@@ -231,14 +231,14 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
             <div className="px-8 py-5 bg-bg-primary/60 border-t border-border-visible flex items-center justify-between shrink-0">
               <button 
                 onClick={onClose}
-                className="px-6 py-2.5 bg-bg-tertiary border border-border-visible text-text-tertiary text-[10px] font-bold uppercase tracking-widest hover:text-text-primary transition-all"
+                className="px-6 py-0.5 bg-bg-tertiary border border-border-visible text-text-tertiary text-[10px] font-bold uppercase tracking-widest hover:text-text-primary transition-all"
               >
                 <Undo2 size={14} className="mr-2 inline" /> Voltar
               </button>
               
               <button 
                 onClick={() => onSelect(formData.content || '')}
-                className="px-6 py-2 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-3 shadow-xl active:scale-95 group"
+                className="px-6 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-3 shadow-xl active:scale-95 group"
               >
                 <ChevronRight size={16} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
                 Carregar no Núcleo

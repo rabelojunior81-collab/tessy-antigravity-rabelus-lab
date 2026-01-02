@@ -127,7 +127,7 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
           </button>
           <button 
             onClick={handleClose} 
-            className="px-6 py-2 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg"
+            className="px-6 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg"
           >
             Aplicar
           </button>

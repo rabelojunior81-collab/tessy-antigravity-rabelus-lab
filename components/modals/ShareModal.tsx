@@ -76,7 +76,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, conversation }
               </div>
               <button 
                 onClick={() => { navigator.clipboard.writeText(code); setIsCopied(true); setTimeout(() => setIsCopied(false), 2000); }} 
-                className={`w-full py-5 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-4 shadow-lg ${isCopied ? 'bg-accent-subtle/40 text-accent-primary border border-accent-primary' : 'bg-accent-primary hover:bg-accent-secondary text-white'}`}
+                className={`w-full py-0.5 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-4 shadow-lg ${isCopied ? 'bg-accent-subtle/40 text-accent-primary border border-accent-primary' : 'bg-accent-primary hover:bg-accent-secondary text-white'}`}
               >
                 {isCopied ? <Check size={20} strokeWidth={3} /> : <Copy size={20} />} {isCopied ? 'COPIADO' : 'COPIAR CÓDIGO'}
               </button>
