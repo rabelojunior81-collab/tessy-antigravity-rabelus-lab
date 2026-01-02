@@ -22,6 +22,85 @@ export class GitHubError extends Error {
   }
 }
 
+// --- Validation Helpers ---
+
+function validateCommitMessage(message: string): string {
+  const trimmed = message.trim();
+  if (!trimmed || trimmed.length < 3) {
+    throw new GitHubError('A mensagem do commit deve ter no mínimo 3 caracteres.', 400);
+  }
+  if (trimmed.length > 500) {
+    throw new GitHubError('A mensagem do commit é muito longa (máximo 500 caracteres).', 400);
+  }
+  // Remove multiple newlines (3 or more) to prevent abuse or malformed log displays
+  return trimmed.replace(/\n{3,}/g, '\n\n');
+}
+
+function validateBranchName(branch: string): string {
+  const trimmed = branch.trim();
+  if (!trimmed) {
+    throw new GitHubError('O nome da branch não pode estar vazio.', 400);
+  }
+  
+  const protectedBranches = ['HEAD', 'main', 'master'];
+  if (protectedBranches.includes(trimmed)) {
+    throw new GitHubError(`A branch '${trimmed}' é protegida e não pode ser usada como destino de escrita direta.`, 403);
+  }
+
+  // Regex rules: alphanumeric, -, _, /; no leading/trailing /; no double //
+  const branchRegex = /^(?!.*[\/]{2})[a-zA-Z0-9\-_]+(?:\/[a-zA-Z0-9\-_]+)*$/;
+  if (!branchRegex.test(trimmed)) {
+     throw new GitHubError('Nome de branch inválido. Use apenas letras, números, "-", "_" e "/". Não comece ou termine com "/".', 400);
+  }
+
+  return trimmed;
+}
+
+function validateFilePath(path: string): string {
+  const trimmed = path.trim();
+  if (!trimmed) {
+    throw new GitHubError('O caminho do arquivo não pode estar vazio.', 400);
+  }
+  if (trimmed.startsWith('/')) {
+    throw new GitHubError('O caminho do arquivo deve ser relativo (não comece com "/").', 400);
+  }
+  if (trimmed.includes('..')) {
+    throw new GitHubError('Caminho de arquivo inválido (navegação de diretório ".." não permitida).', 400);
+  }
+  if (trimmed.length > 255) {
+    throw new GitHubError('Caminho de arquivo muito longo (máximo 255 caracteres).', 400);
+  }
+  // Check for dangerous characters in file paths (cross-platform safety)
+  const dangerousChars = /[<>:"\\|?*]/;
+  if (dangerousChars.test(trimmed)) {
+    throw new GitHubError('Caminho de arquivo contém caracteres inválidos.', 400);
+  }
+  return trimmed;
+}
+
+function validateFileContent(content: string): string {
+  if (typeof content !== 'string') {
+    throw new GitHubError('O conteúdo do arquivo deve ser uma string válida.', 400);
+  }
+  // Check size: Max 1MB (1048576 bytes)
+  const size = new TextEncoder().encode(content).length;
+  if (size > 1048576) {
+    throw new GitHubError('O conteúdo do arquivo excede o limite de 1MB.', 400);
+  }
+  return content;
+}
+
+function validateTitle(title: string, type: 'Issue' | 'Pull Request'): string {
+  const trimmed = title.trim();
+  if (!trimmed || trimmed.length < 5) {
+    throw new GitHubError(`O título da ${type} deve ter no mínimo 5 caracteres.`, 400);
+  }
+  if (trimmed.length > 255) {
+    throw new GitHubError(`O título da ${type} é muito longo (máximo 255 caracteres).`, 400);
+  }
+  return trimmed;
+}
+
 const getHeaders = (token: string) => ({
   'Authorization': `Bearer ${token}`,
   'Accept': 'application/vnd.github.v3+json',
@@ -183,10 +262,13 @@ export const fetchCommits = async (token: string, repoPath: string, perPage = 5)
 };
 
 export const createIssue = async (token: string, repoPath: string, title: string, body: string): Promise<GitHubIssue> => {
+  const validatedTitle = validateTitle(title, 'Issue');
+  const sanitizedBody = body.trim();
+
   const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/issues`, {
     method: 'POST',
     headers: getHeaders(token),
-    body: JSON.stringify({ title, body })
+    body: JSON.stringify({ title: validatedTitle, body: sanitizedBody })
   });
   const data = await handleResponse(response);
   return {
@@ -329,7 +411,7 @@ export const fetchRepositoryStructure = async (token: string, repoPath: string, 
 // --- CRITICAL OPERATIONS (Require Approval) ---
 
 export const performCreateBranch = async (token: string, repoPath: string, branchName: string, fromBranch: string): Promise<any> => {
-  const refResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/get/refs/heads/${fromBranch}`, {
+  const refResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs/heads/${fromBranch}`, {
     headers: getHeaders(token)
   });
   const refData = await handleResponse(refResponse);
@@ -347,11 +429,13 @@ export const performCreateBranch = async (token: string, repoPath: string, branc
 };
 
 export const createBranch = async (token: string, repoPath: string, branchName: string, fromBranch: string): Promise<any> => {
+  const validatedBranch = validateBranchName(branchName);
+  
   const action: PendingAction = {
     id: generateUUID(),
     type: 'branch',
-    description: `Criar branch '${branchName}' a partir de '${fromBranch}'`,
-    params: { token, repoPath, branchName, fromBranch },
+    description: `Criar branch '${validatedBranch}' a partir de '${fromBranch}'`,
+    params: { token, repoPath, branchName: validatedBranch, fromBranch },
     timestamp: Date.now(),
     status: 'pending'
   };
@@ -413,11 +497,18 @@ export const performCommitChanges = async (token: string, repoPath: string, file
 };
 
 export const commitChanges = async (token: string, repoPath: string, files: Array<{ path: string; content: string }>, message: string, branch: string): Promise<any> => {
+  const validatedMessage = validateCommitMessage(message);
+  const validatedBranch = validateBranchName(branch);
+  const validatedFiles = files.map(f => ({
+    path: validateFilePath(f.path),
+    content: validateFileContent(f.content)
+  }));
+
   const action: PendingAction = {
     id: generateUUID(),
     type: 'commit',
-    description: `Commit de ${files.length} arquivos na branch '${branch}': "${message}"`,
-    params: { token, repoPath, files, message, branch },
+    description: `Commit de ${validatedFiles.length} arquivos na branch '${validatedBranch}': "${validatedMessage}"`,
+    params: { token, repoPath, files: validatedFiles, message: validatedMessage, branch: validatedBranch },
     timestamp: Date.now(),
     status: 'pending'
   };
@@ -440,11 +531,16 @@ export const performCreatePullRequest = async (token: string, repoPath: string, 
 };
 
 export const createPullRequest = async (token: string, repoPath: string, title: string, body: string, head: string, base: string): Promise<any> => {
+  const validatedTitle = validateTitle(title, 'Pull Request');
+  const validatedHead = validateBranchName(head);
+  const validatedBase = validateBranchName(base);
+  const sanitizedBody = body.trim();
+
   const action: PendingAction = {
     id: generateUUID(),
     type: 'pr',
-    description: `Criar Pull Request de '${head}' para '${base}': "${title}"`,
-    params: { token, repoPath, title, body, head, base },
+    description: `Criar Pull Request de '${validatedHead}' para '${validatedBase}': "${validatedTitle}"`,
+    params: { token, repoPath, title: validatedTitle, body: sanitizedBody, head: validatedHead, base: validatedBase },
     timestamp: Date.now(),
     status: 'pending'
   };
@@ -453,11 +549,18 @@ export const createPullRequest = async (token: string, repoPath: string, title: 
 };
 
 export const pushChanges = async (token: string, repoPath: string, files: Array<{ path: string; content: string }>, message: string, branch: string): Promise<any> => {
+  const validatedMessage = validateCommitMessage(message);
+  const validatedBranch = validateBranchName(branch);
+  const validatedFiles = files.map(f => ({
+    path: validateFilePath(f.path),
+    content: validateFileContent(f.content)
+  }));
+
   const action: PendingAction = {
     id: generateUUID(),
     type: 'push',
-    description: `Push de alterações diretas na branch '${branch}': "${message}"`,
-    params: { token, repoPath, files, message, branch },
+    description: `Push de alterações diretas na branch '${validatedBranch}': "${validatedMessage}"`,
+    params: { token, repoPath, files: validatedFiles, message: validatedMessage, branch: validatedBranch },
     timestamp: Date.now(),
     status: 'pending'
   };
