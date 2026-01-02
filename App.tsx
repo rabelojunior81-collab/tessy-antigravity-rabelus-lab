@@ -50,10 +50,7 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     const boot = async () => {
       try {
-        // Garantir que a migração não bloqueie o app para sempre
-        const migrationPromise = migrateToIndexedDB();
-        const timeoutPromise = new Promise(resolve => setTimeout(resolve, 3000));
-        await Promise.race([migrationPromise, timeoutPromise]);
+        await migrateToIndexedDB();
         
         const themeSetting = await db.settings.get('tessy-theme');
         if (themeSetting) setTheme(themeSetting.value);

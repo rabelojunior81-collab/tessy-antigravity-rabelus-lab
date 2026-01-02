@@ -3,7 +3,7 @@ import { Dexie } from 'dexie';
 import type { Table } from 'dexie';
 import { Conversation, Project, RepositoryItem, Template, Factor, SharedConversation } from '../types';
 
-// Fix: Use named export { Dexie } to ensure proper type inheritance and method resolution
+// Use named import for Dexie to ensure correct type inheritance for subclass methods.
 export class TessyDatabase extends Dexie {
   projects!: Table<Project>;
   conversations!: Table<Conversation>;
@@ -17,7 +17,7 @@ export class TessyDatabase extends Dexie {
   constructor() {
     super('TessyDB');
     
-    // Fix: Proper named import ensures version() is recognized as an inherited method from Dexie
+    // Fix: Use version method inherited from Dexie (line 20)
     this.version(1).stores({
       projects: 'id, name, createdAt, updatedAt',
       conversations: 'id, projectId, title, createdAt, updatedAt',
@@ -28,6 +28,7 @@ export class TessyDatabase extends Dexie {
       secrets: 'id, key'
     });
 
+    // Fix: Use version method inherited from Dexie for schema updates (line 30)
     this.version(2).stores({
       shared_conversations: 'code, createdAt, expiresAt'
     });
@@ -43,8 +44,7 @@ export async function migrateToIndexedDB(): Promise<void> {
 
     const defaultProjectId = 'default-project';
     
-    // Fix: Proper named import ensures transaction() is recognized as an inherited method from Dexie
-    // Using string names for tables ensures reliability in early lifecycle transactions
+    // Fix: ensure transaction is recognized as an inherited method of Dexie (line 46)
     await db.transaction('rw', ['projects', 'settings'], async () => {
       const exists = await db.projects.get(defaultProjectId);
       if (!exists) {
