@@ -15,15 +15,18 @@ export class GitHubError extends Error {
 const getHeaders = (token: string) => ({
   'Authorization': `Bearer ${token}`,
   'Accept': 'application/vnd.github.v3+json',
-  'User-Agent': 'Tessy-App'
+  'User-Agent': 'Tessy-App',
+  'Content-Type': 'application/json'
 });
 
 async function handleResponse(response: Response) {
   if (!response.ok) {
     let message = 'Erro na comunicação com o GitHub.';
+    const errorData = await response.json().catch(() => ({}));
     if (response.status === 401) message = 'Token inválido ou expirado.';
     if (response.status === 403) message = 'Limite de taxa excedido ou acesso negado.';
     if (response.status === 404) message = 'Recurso não encontrado no GitHub.';
+    if (errorData.message) message += ` Detalhes: ${errorData.message}`;
     throw new GitHubError(message, response.status);
   }
   return response.json();
@@ -66,20 +69,15 @@ export const createIssue = async (token: string, repoPath: string, title: string
   };
 };
 
-/**
- * Fetch the content of a specific file in the repository.
- */
 export const fetchFileContent = async (token: string, repoPath: string, filePath: string): Promise<GitHubFile> => {
   const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/contents/${filePath}`, {
     headers: getHeaders(token)
   });
   const data = await handleResponse(response);
   
-  // GitHub API returns content as base64 with newlines
   const decodeContent = (content: string, encoding: string) => {
     if (encoding === 'base64') {
       try {
-        // Remove newlines and decode
         return atob(content.replace(/\s/g, ''));
       } catch (e) {
         console.error("Failed to decode base64 content", e);
@@ -100,9 +98,6 @@ export const fetchFileContent = async (token: string, repoPath: string, filePath
   };
 };
 
-/**
- * Fetch the list of contents in a specific directory.
- */
 export const fetchDirectoryContents = async (token: string, repoPath: string, dirPath: string = ''): Promise<GitHubFile[]> => {
   const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/contents/${dirPath}`, {
     headers: getHeaders(token)
@@ -123,9 +118,6 @@ export const fetchDirectoryContents = async (token: string, repoPath: string, di
   }));
 };
 
-/**
- * Search for code within a specific repository.
- */
 export const searchCode = async (token: string, repoPath: string, query: string): Promise<GitHubFile[]> => {
   const response = await fetch(`${GITHUB_API_BASE}/search/code?q=${encodeURIComponent(query)}+repo:${repoPath}`, {
     headers: getHeaders(token)
@@ -142,9 +134,6 @@ export const searchCode = async (token: string, repoPath: string, query: string)
   }));
 };
 
-/**
- * Fetch all branches of the repository.
- */
 export const fetchBranches = async (token: string, repoPath: string): Promise<string[]> => {
   const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/branches`, {
     headers: getHeaders(token)
@@ -153,9 +142,6 @@ export const fetchBranches = async (token: string, repoPath: string): Promise<st
   return data.map((item: any) => item.name);
 };
 
-/**
- * Fetch details of a specific commit including changed files.
- */
 export const fetchCommitDetails = async (token: string, repoPath: string, sha: string): Promise<GitHubCommit> => {
   const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/commits/${sha}`, {
     headers: getHeaders(token)
@@ -177,9 +163,6 @@ export const fetchCommitDetails = async (token: string, repoPath: string, sha: s
   };
 };
 
-/**
- * Fetch the README content of the repository.
- */
 export const fetchReadme = async (token: string, repoPath: string): Promise<string> => {
   const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/readme`, {
     headers: getHeaders(token)
@@ -192,9 +175,6 @@ export const fetchReadme = async (token: string, repoPath: string): Promise<stri
   return data.content;
 };
 
-/**
- * Fetch the full repository structure recursively up to a certain depth.
- */
 export const fetchRepositoryStructure = async (token: string, repoPath: string, maxDepth = 2): Promise<any> => {
   const getStructure = async (path = '', depth = 0): Promise<any> => {
     if (depth > maxDepth) return { type: 'dir', path, items: [] };
@@ -215,6 +195,107 @@ export const fetchRepositoryStructure = async (token: string, repoPath: string, 
   };
 
   return getStructure();
+};
+
+/**
+ * Creates a new branch from a source branch.
+ */
+export const createBranch = async (token: string, repoPath: string, branchName: string, fromBranch: string): Promise<any> => {
+  // 1. Get SHA of the from branch
+  const refResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs/heads/${fromBranch}`, {
+    headers: getHeaders(token)
+  });
+  const refData = await handleResponse(refResponse);
+  const sha = refData.object.sha;
+
+  // 2. Create the new ref
+  const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs`, {
+    method: 'POST',
+    headers: getHeaders(token),
+    body: JSON.stringify({
+      ref: `refs/heads/${branchName}`,
+      sha: sha
+    })
+  });
+  return handleResponse(response);
+};
+
+/**
+ * Creates a commit with multiple file changes using the Git Database API.
+ */
+export const commitChanges = async (token: string, repoPath: string, files: Array<{ path: string; content: string }>, message: string, branch: string): Promise<any> => {
+  // 1. Get the last commit SHA of the branch
+  const refResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs/heads/${branch}`, {
+    headers: getHeaders(token)
+  });
+  const refData = await handleResponse(refResponse);
+  const lastCommitSha = refData.object.sha;
+
+  // 2. Get the tree SHA of that commit
+  const commitResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/commits/${lastCommitSha}`, {
+    headers: getHeaders(token)
+  });
+  const commitData = await handleResponse(commitResponse);
+  const baseTreeSha = commitData.tree.sha;
+
+  // 3. Create a new tree with the file changes
+  const treeItems = files.map(file => ({
+    path: file.path,
+    mode: '100644',
+    type: 'blob',
+    content: file.content
+  }));
+
+  const treeResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/trees`, {
+    method: 'POST',
+    headers: getHeaders(token),
+    body: JSON.stringify({
+      base_tree: baseTreeSha,
+      tree: treeItems
+    })
+  });
+  const treeData = await handleResponse(treeResponse);
+  const newTreeSha = treeData.sha;
+
+  // 4. Create a new commit
+  const newCommitResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/commits`, {
+    method: 'POST',
+    headers: getHeaders(token),
+    body: JSON.stringify({
+      message: message,
+      tree: newTreeSha,
+      parents: [lastCommitSha]
+    })
+  });
+  const newCommitData = await handleResponse(newCommitResponse);
+  const newCommitSha = newCommitData.sha;
+
+  // 5. Update the branch ref to point to the new commit
+  const updateRefResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs/heads/${branch}`, {
+    method: 'PATCH',
+    headers: getHeaders(token),
+    body: JSON.stringify({
+      sha: newCommitSha
+    })
+  });
+  return handleResponse(updateRefResponse);
+};
+
+/**
+ * Creates a Pull Request.
+ */
+export const createPullRequest = async (token: string, repoPath: string, title: string, body: string, head: string, base: string): Promise<any> => {
+  const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/pulls`, {
+    method: 'POST',
+    headers: getHeaders(token),
+    body: JSON.stringify({
+      title,
+      body,
+      head,
+      base
+    })
+  });
+  return handleResponse(response);
 };
 
 export const formatRelativeDate = (dateString: string): string => {

@@ -42,6 +42,18 @@ async function executeFunctionCall(fc: { name: string; args: any }, githubToken:
         const structure = await githubService.fetchRepositoryStructure(githubToken, repoPath, fc.args.max_depth || 2);
         return { success: true, structure };
       }
+      case 'create_branch': {
+        const result = await githubService.createBranch(githubToken, repoPath, fc.args.branch_name, fc.args.from_branch);
+        return { success: true, result };
+      }
+      case 'commit_changes': {
+        const result = await githubService.commitChanges(githubToken, repoPath, fc.args.files, fc.args.message, fc.args.branch);
+        return { success: true, result };
+      }
+      case 'create_pull_request': {
+        const result = await githubService.createPullRequest(githubToken, repoPath, fc.args.title, fc.args.body, fc.args.head_branch, fc.args.base_branch);
+        return { success: true, result };
+      }
       default:
         return { success: false, error: "Função desconhecida" };
     }

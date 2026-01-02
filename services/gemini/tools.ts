@@ -86,6 +86,80 @@ export const GITHUB_FUNCTION_DECLARATIONS: FunctionDeclaration[] = [
         }
       }
     }
+  },
+  {
+    name: "create_branch",
+    description: "Cria uma nova branch no repositório GitHub conectado.",
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        branch_name: {
+          type: Type.STRING,
+          description: "Nome da nova branch a ser criada."
+        },
+        from_branch: {
+          type: Type.STRING,
+          description: "Nome da branch de origem (ex: main, master)."
+        }
+      },
+      required: ["branch_name", "from_branch"]
+    }
+  },
+  {
+    name: "commit_changes",
+    description: "Cria um commit com múltiplos arquivos em uma branch específica do repositório GitHub.",
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        files: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              path: { type: Type.STRING, description: "Caminho do arquivo." },
+              content: { type: Type.STRING, description: "Conteúdo textual do arquivo." }
+            },
+            required: ["path", "content"]
+          },
+          description: "Lista de arquivos para commitar."
+        },
+        message: {
+          type: Type.STRING,
+          description: "Mensagem do commit."
+        },
+        branch: {
+          type: Type.STRING,
+          description: "Branch onde as alterações serão commitadas."
+        }
+      },
+      required: ["files", "message", "branch"]
+    }
+  },
+  {
+    name: "create_pull_request",
+    description: "Cria um novo Pull Request (PR) entre duas branches no repositório GitHub.",
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        title: {
+          type: Type.STRING,
+          description: "Título do Pull Request."
+        },
+        body: {
+          type: Type.STRING,
+          description: "Descrição detalhada do Pull Request."
+        },
+        head_branch: {
+          type: Type.STRING,
+          description: "Branch que contém as alterações (source)."
+        },
+        base_branch: {
+          type: Type.STRING,
+          description: "Branch para onde as alterações serão enviadas (target)."
+        }
+      },
+      required: ["title", "body", "head_branch", "base_branch"]
+    }
   }
 ];
 
