@@ -104,7 +104,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
           
           {/* Sidebar - Narrower 280px */}
           <div className="w-[280px] flex flex-col border-r border-border-visible bg-bg-primary/40 shrink-0">
-            <div className="p-3 border-b border-border-visible">
+            <div className="px-3 py-0.5 border-b border-border-visible">
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-tertiary" size={12} />
                 <input 
