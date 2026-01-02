@@ -1,10 +1,17 @@
 
-import { GitHubRepo, GitHubCommit, GitHubIssue, GitHubFile } from '../types';
-import { db } from './dbService';
+import { GitHubRepo, GitHubCommit, GitHubIssue, GitHubFile, PendingAction } from '../types';
+import { db, generateUUID } from './dbService';
 
 const GITHUB_API_BASE = 'https://api.github.com';
 const ENCRYPTION_PWD = 'tessy-nucleus-lab-internal-v1';
 const PBKDF2_SALT = new Uint8Array([12, 45, 78, 90, 123, 156, 189, 210, 15, 67, 98, 111, 234, 54, 87, 12]);
+
+// Listener for pending actions queue
+let queueListener: ((action: PendingAction) => void) | null = null;
+
+export const setGitHubQueueListener = (listener: (action: PendingAction) => void) => {
+  queueListener = listener;
+};
 
 export class GitHubError extends Error {
   status: number;
@@ -116,9 +123,7 @@ export const getGitHubToken = async (): Promise<string | null> => {
     const secret = await db.secrets.get('github-token');
     if (!secret?.value) return null;
 
-    // Detection for legacy plain text tokens
     if (secret.value.startsWith('ghp_')) {
-      // Automatic migration to encrypted format
       await setGitHubToken(secret.value);
       return secret.value;
     }
@@ -129,7 +134,6 @@ export const getGitHubToken = async (): Promise<string | null> => {
         return await decryptToken(encryptedData);
       }
     } catch (parseError) {
-      // Fallback if it's not JSON but was saved somehow
       if (secret.value.startsWith('ghp_')) return secret.value;
       return null;
     }
@@ -322,8 +326,10 @@ export const fetchRepositoryStructure = async (token: string, repoPath: string, 
   return getStructure();
 };
 
-export const createBranch = async (token: string, repoPath: string, branchName: string, fromBranch: string): Promise<any> => {
-  const refResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs/heads/${fromBranch}`, {
+// --- CRITICAL OPERATIONS (Require Approval) ---
+
+export const performCreateBranch = async (token: string, repoPath: string, branchName: string, fromBranch: string): Promise<any> => {
+  const refResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/get/refs/heads/${fromBranch}`, {
     headers: getHeaders(token)
   });
   const refData = await handleResponse(refResponse);
@@ -340,7 +346,20 @@ export const createBranch = async (token: string, repoPath: string, branchName: 
   return handleResponse(response);
 };
 
-export const commitChanges = async (token: string, repoPath: string, files: Array<{ path: string; content: string }>, message: string, branch: string): Promise<any> => {
+export const createBranch = async (token: string, repoPath: string, branchName: string, fromBranch: string): Promise<any> => {
+  const action: PendingAction = {
+    id: generateUUID(),
+    type: 'branch',
+    description: `Criar branch '${branchName}' a partir de '${fromBranch}'`,
+    params: { token, repoPath, branchName, fromBranch },
+    timestamp: Date.now(),
+    status: 'pending'
+  };
+  if (queueListener) queueListener(action);
+  return { success: true, status: 'pending_approval', message: 'Criação de branch aguardando aprovação.' };
+};
+
+export const performCommitChanges = async (token: string, repoPath: string, files: Array<{ path: string; content: string }>, message: string, branch: string): Promise<any> => {
   const refResponse = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/git/refs/heads/${branch}`, {
     headers: getHeaders(token)
   });
@@ -393,7 +412,20 @@ export const commitChanges = async (token: string, repoPath: string, files: Arra
   return handleResponse(updateRefResponse);
 };
 
-export const createPullRequest = async (token: string, repoPath: string, title: string, body: string, head: string, base: string): Promise<any> => {
+export const commitChanges = async (token: string, repoPath: string, files: Array<{ path: string; content: string }>, message: string, branch: string): Promise<any> => {
+  const action: PendingAction = {
+    id: generateUUID(),
+    type: 'commit',
+    description: `Commit de ${files.length} arquivos na branch '${branch}': "${message}"`,
+    params: { token, repoPath, files, message, branch },
+    timestamp: Date.now(),
+    status: 'pending'
+  };
+  if (queueListener) queueListener(action);
+  return { success: true, status: 'pending_approval', message: 'Commit aguardando aprovação.' };
+};
+
+export const performCreatePullRequest = async (token: string, repoPath: string, title: string, body: string, head: string, base: string): Promise<any> => {
   const response = await fetch(`${GITHUB_API_BASE}/repos/${repoPath}/pulls`, {
     method: 'POST',
     headers: getHeaders(token),
@@ -405,6 +437,32 @@ export const createPullRequest = async (token: string, repoPath: string, title: 
     })
   });
   return handleResponse(response);
+};
+
+export const createPullRequest = async (token: string, repoPath: string, title: string, body: string, head: string, base: string): Promise<any> => {
+  const action: PendingAction = {
+    id: generateUUID(),
+    type: 'pr',
+    description: `Criar Pull Request de '${head}' para '${base}': "${title}"`,
+    params: { token, repoPath, title, body, head, base },
+    timestamp: Date.now(),
+    status: 'pending'
+  };
+  if (queueListener) queueListener(action);
+  return { success: true, status: 'pending_approval', message: 'Pull Request aguardando aprovação.' };
+};
+
+export const pushChanges = async (token: string, repoPath: string, files: Array<{ path: string; content: string }>, message: string, branch: string): Promise<any> => {
+  const action: PendingAction = {
+    id: generateUUID(),
+    type: 'push',
+    description: `Push de alterações diretas na branch '${branch}': "${message}"`,
+    params: { token, repoPath, files, message, branch },
+    timestamp: Date.now(),
+    status: 'pending'
+  };
+  if (queueListener) queueListener(action);
+  return { success: true, status: 'pending_approval', message: 'Push aguardando aprovação.' };
 };
 
 export const formatRelativeDate = (dateString: string): string => {

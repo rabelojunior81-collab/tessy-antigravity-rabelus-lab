@@ -154,3 +154,12 @@ export interface GitHubRepo {
   url: string;
   default_branch: string;
 }
+
+export interface PendingAction {
+  id: string;
+  type: 'commit' | 'pr' | 'branch' | 'push';
+  description: string;
+  params: any;
+  timestamp: number;
+  status: 'pending' | 'approved' | 'rejected';
+}

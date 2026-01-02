@@ -1,11 +1,14 @@
+
 import React from 'react';
 import { Clock, Library, Folder, Github, Command } from 'lucide-react';
 import { useViewer } from '../../hooks/useViewer';
 import { ViewerType, useLayoutContext } from '../../contexts/LayoutContext';
+import { useGitHub } from '../../contexts/GitHubContext';
 
 const Sidebar: React.FC = () => {
   const { viewerAberto, abrirViewer } = useViewer();
   const { isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutContext();
+  const { pendingActions, setIsActionsModalOpen } = useGitHub();
 
   const items: { id: ViewerType; icon: React.FC<any>; label: string }[] = [
     { id: 'projects', icon: Folder, label: 'Protocolos' },
@@ -33,6 +36,9 @@ const Sidebar: React.FC = () => {
         <div className="flex flex-col items-center gap-2 w-full">
           {items.map((item) => {
             const isActive = viewerAberto === item.id;
+            const isGithub = item.id === 'github';
+            const hasPendingActions = isGithub && pendingActions.length > 0;
+            
             return (
               <button
                 key={item.id}
@@ -45,6 +51,18 @@ const Sidebar: React.FC = () => {
                 }`}
               >
                 <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                
+                {hasPendingActions && (
+                  <div 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsActionsModalOpen(true);
+                    }}
+                    className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] bg-accent-primary text-white text-[9px] font-bold flex items-center justify-center px-1 animate-pulse shadow-lg cursor-pointer hover:scale-125 transition-transform"
+                  >
+                    {pendingActions.length}
+                  </div>
+                )}
                 
                 <span className="absolute left-full ml-3 px-3 py-1.5 bg-bg-tertiary/90 border border-border-visible text-text-primary text-xs font-bold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 translate-x-[-10px] group-hover:translate-x-0 z-[100] shadow-xl backdrop-blur-md">
                   {item.label}

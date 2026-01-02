@@ -162,11 +162,17 @@ const CoPilot: React.FC = () => {
                       <Download size={14} />
                     </button>
                     <div className="flex-1"></div>
-                    <button className="text-[11px] font-normal px-3 py-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
-                       <ThumbsUp size={12} /> Positive
+                    <button 
+                      className="p-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all"
+                      title="Feedback positivo"
+                    >
+                       <ThumbsUp size={14} />
                     </button>
-                    <button className="text-[11px] font-normal px-3 py-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
-                       <ThumbsDown size={12} /> Negative
+                    <button 
+                      className="p-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all"
+                      title="Feedback negativo"
+                    >
+                       <ThumbsDown size={14} />
                     </button>
                   </div>
                 </div>

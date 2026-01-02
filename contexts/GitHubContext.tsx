@@ -1,8 +1,17 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
-import { fetchRepositoryStructure, fetchFileContent, getGitHubToken, setGitHubToken as ghSetToken } from '../services/githubService';
+import { 
+  fetchRepositoryStructure, 
+  fetchFileContent, 
+  getGitHubToken, 
+  setGitHubToken as ghSetToken,
+  setGitHubQueueListener,
+  performCommitChanges,
+  performCreateBranch,
+  performCreatePullRequest
+} from '../services/githubService';
 import { db } from '../services/dbService';
-import { GitHubFile } from '../types';
+import { GitHubFile, PendingAction } from '../types';
 
 interface GitHubState {
   token: string | null;
@@ -10,6 +19,7 @@ interface GitHubState {
   tree: any | null;
   isLoading: boolean;
   error: string | null;
+  pendingActions: PendingAction[];
 }
 
 interface GitHubContextType extends GitHubState {
@@ -18,6 +28,10 @@ interface GitHubContextType extends GitHubState {
   disconnect: () => Promise<void>;
   refreshTree: () => Promise<void>;
   getFileContent: (path: string) => Promise<GitHubFile>;
+  approveAction: (id: string) => Promise<void>;
+  rejectAction: (id: string) => void;
+  isActionsModalOpen: boolean;
+  setIsActionsModalOpen: (open: boolean) => void;
 }
 
 const GitHubContext = createContext<GitHubContextType | undefined>(undefined);
@@ -29,7 +43,9 @@ export const GitHubProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     tree: null,
     isLoading: false,
     error: null,
+    pendingActions: [],
   });
+  const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
 
   const loadInitialState = useCallback(async () => {
     const token = await getGitHubToken();
@@ -49,6 +65,14 @@ export const GitHubProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   useEffect(() => {
     loadInitialState();
+    
+    // Subscribe to pending actions queue
+    setGitHubQueueListener((action) => {
+      setState(prev => ({
+        ...prev,
+        pendingActions: [...prev.pendingActions, action]
+      }));
+    });
   }, [loadInitialState]);
 
   const refreshTreeInternal = async (token: string, path: string) => {
@@ -101,6 +125,45 @@ export const GitHubProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     return await fetchFileContent(state.token, state.repoPath, path);
   };
 
+  const approveAction = async (id: string) => {
+    const action = state.pendingActions.find(a => a.id === id);
+    if (!action) return;
+
+    setState(prev => ({ ...prev, isLoading: true }));
+    try {
+      const { params } = action;
+      switch (action.type) {
+        case 'commit':
+        case 'push':
+          await performCommitChanges(params.token, params.repoPath, params.files, params.message, params.branch);
+          break;
+        case 'branch':
+          await performCreateBranch(params.token, params.repoPath, params.branchName, params.fromBranch);
+          break;
+        case 'pr':
+          await performCreatePullRequest(params.token, params.repoPath, params.title, params.body, params.head, params.base);
+          break;
+      }
+      
+      setState(prev => ({
+        ...prev,
+        pendingActions: prev.pendingActions.filter(a => a.id !== id),
+        isLoading: false
+      }));
+      refreshTree();
+    } catch (err: any) {
+      setState(prev => ({ ...prev, error: err.message, isLoading: false }));
+      alert(`Erro na execução: ${err.message}`);
+    }
+  };
+
+  const rejectAction = (id: string) => {
+    setState(prev => ({
+      ...prev,
+      pendingActions: prev.pendingActions.filter(a => a.id !== id)
+    }));
+  };
+
   return (
     <GitHubContext.Provider value={{
       ...state,
@@ -108,7 +171,11 @@ export const GitHubProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       connectRepo,
       disconnect,
       refreshTree,
-      getFileContent
+      getFileContent,
+      approveAction,
+      rejectAction,
+      isActionsModalOpen,
+      setIsActionsModalOpen
     }}>
       {children}
     </GitHubContext.Provider>

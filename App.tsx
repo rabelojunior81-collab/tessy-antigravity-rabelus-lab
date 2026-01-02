@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import LoadingSpinner from './components/LoadingSpinner';
 import ProjectModal from './components/ProjectModal';
@@ -16,6 +17,7 @@ import { useViewerRouter } from './hooks/useViewerRouter';
 
 // Modals & Icons
 import GitHubTokenModal from './components/GitHubTokenModal';
+import PendingActionsModal from './components/modals/PendingActionsModal';
 import { Menu, Moon, Sun, X } from 'lucide-react';
 
 const TessyLogo = React.memo(() => (
@@ -178,6 +180,7 @@ const AppContent: React.FC = () => {
         onClose={() => setIsGitHubTokenModalOpen(false)} 
         onSuccess={() => setIsGitHubTokenModalOpen(false)} 
       />
+      <PendingActionsModal />
     </div>
   );
 };
