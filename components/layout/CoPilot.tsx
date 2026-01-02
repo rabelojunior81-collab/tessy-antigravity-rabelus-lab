@@ -146,30 +146,29 @@ const CoPilot: React.FC = () => {
                     {turn.tessyResponse}
                   </ReactMarkdown>
                   
-                  <div className="flex items-center gap-3 mt-6 border-t border-border-subtle pt-4">
+                  <div className="flex items-center justify-end gap-3 mt-6 border-t border-border-subtle pt-4">
                     <button 
                       onClick={() => copyToClipboard(turn.tessyResponse)}
-                      className="p-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all"
+                      className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
                       title="Copiar texto"
                     >
                       <Copy size={14} />
                     </button>
                     <button 
                       onClick={() => openMarkdownModal(turn.tessyResponse)}
-                      className="p-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all"
+                      className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
                       title="Compartilhar em Markdown"
                     >
                       <Download size={14} />
                     </button>
-                    <div className="flex-1"></div>
                     <button 
-                      className="p-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all"
+                      className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
                       title="Feedback positivo"
                     >
                        <ThumbsUp size={14} />
                     </button>
                     <button 
-                      className="p-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all"
+                      className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
                       title="Feedback negativo"
                     >
                        <ThumbsDown size={14} />
