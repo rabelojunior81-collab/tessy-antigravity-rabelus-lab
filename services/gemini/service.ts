@@ -159,6 +159,13 @@ export const applyFactorsAndGenerate = async (
       });
     }
 
+    if (!response.text || response.text.trim() === '') {
+      return {
+        text: "Desculpe, não consegui processar sua solicitação completamente. O modelo retornou apenas chamadas de função sem resposta textual. Por favor, tente reformular sua pergunta de forma mais específica.",
+        groundingChunks: response.candidates?.[0]?.groundingMetadata?.groundingChunks
+      };
+    }
+
     return {
       text: response.text || "Sem resposta.",
       groundingChunks: response.candidates?.[0]?.groundingMetadata?.groundingChunks
