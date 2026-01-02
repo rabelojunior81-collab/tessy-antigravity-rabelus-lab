@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Search, Trash2, MessageSquare, Plus } from 'lucide-react';
 import { db } from '../../services/dbService';
@@ -90,7 +89,7 @@ const HistoryViewer: React.FC<HistoryViewerProps> = ({ currentProjectId, activeI
             <div
               key={conv.id}
               onClick={() => onLoad(conv)}
-              className={`p-4 border transition-all cursor-pointer group relative ${
+              className={`p-2 border transition-all cursor-pointer group relative ${
                 conv.id === activeId ? 'bg-accent-subtle/30 border-accent-primary' : 'bg-bg-primary/80 border-border-visible hover:border-accent-primary/30'
               }`}
             >

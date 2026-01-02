@@ -73,7 +73,7 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
               <div
                 key={project.id}
                 onClick={() => onSelectProject(project.id)}
-                className={`group p-4 border transition-all cursor-pointer relative ${
+                className={`group p-2 border transition-all cursor-pointer relative ${
                   isActive ? 'bg-accent-subtle/20 border-accent-primary' : 'bg-bg-primary/80 border-border-visible hover:border-accent-primary/40'
                 }`}
               >

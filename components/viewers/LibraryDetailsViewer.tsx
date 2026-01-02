@@ -97,11 +97,11 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
   const title = formData.label || (isCreating ? 'Novo Protocolo' : 'Detalhes');
 
   return (
-    <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col p-4 animate-fade-in h-full">
+    <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col p-2 animate-fade-in h-full">
       <div className="flex-1 flex flex-col h-full overflow-hidden border border-border-visible bg-bg-tertiary/40 backdrop-blur-lg shadow-2xl">
         
         {/* Header */}
-        <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4 overflow-hidden">
             <span className="px-2 py-0.5 bg-accent-subtle/40 text-accent-primary text-[9px] font-bold uppercase border border-accent-primary/30 shrink-0 tracking-widest">
               {isEditing ? 'EDITOR' : category}
@@ -135,7 +135,7 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
         {isEditing ? (
           /* FORM VIEW */
           <form onSubmit={handleSave} className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Nome do Protocolo</label>
@@ -215,12 +215,12 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
               </div>
             )}
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
               <div className="flex items-center gap-2 mb-4">
                  <Code size={12} className="text-accent-primary opacity-50" />
                  <h4 className="text-[10px] font-bold text-text-tertiary uppercase tracking-[0.2em]">Núcleo do Protocolo</h4>
               </div>
-              <div className="bg-bg-primary/40 border border-border-visible p-4 shadow-inner group relative">
+              <div className="bg-bg-primary/40 border border-border-visible p-2 shadow-inner group relative">
                 <pre className="text-sm text-text-secondary font-mono font-normal whitespace-pre-wrap leading-relaxed select-all">
                   {formData.content}
                 </pre>

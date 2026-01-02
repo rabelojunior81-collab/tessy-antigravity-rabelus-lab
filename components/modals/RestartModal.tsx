@@ -30,7 +30,7 @@ const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm,
   return (
     <div className={`fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
       <div className={`w-full max-sm bg-bg-secondary/95 backdrop-blur-xl border border-red-900/40 flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="px-4 py-1 border-b border-red-900/20 bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
+        <div className="px-4 py-0.5 border-b border-red-900/20 bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShieldAlert className="text-red-500" size={16} />
             <h2 className="text-[10px] font-medium tracking-wide text-red-400">Alerta Crítico</h2>

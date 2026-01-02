@@ -91,8 +91,8 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose}>
       <div className="w-full max-w-5xl h-[85vh] bg-bg-secondary/95 backdrop-blur-xl border border-border-visible flex flex-col shadow-2xl animate-zoom-in overflow-hidden" onClick={e => e.stopPropagation()}>
         
-        {/* Header - Compacted py-2, icon 16 */}
-        <div className="flex items-center justify-between px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
+        {/* Header - Compacted py-0.5, icon 16 */}
+        <div className="flex items-center justify-between px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-2">
             <Bookmark className="text-accent-primary" size={16} />
             <h2 className="text-xs font-medium tracking-normal text-text-primary">Biblioteca de Protocolos</h2>
@@ -162,7 +162,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
           {/* Main Area */}
           <div className="flex-1 flex flex-col bg-bg-secondary overflow-hidden">
             {isFormOpen ? (
-              <form onSubmit={handleSave} className="flex-1 flex flex-col p-4 space-y-3 animate-fade-in">
+              <form onSubmit={handleSave} className="flex-1 flex flex-col p-2 space-y-3 animate-fade-in">
                 <div className="space-y-3">
                    <div className="flex gap-4">
                      <div className="flex-1 space-y-1">
@@ -198,7 +198,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
             ) : selectedTemplate ? (
               <div className="flex-1 flex flex-col overflow-hidden animate-fade-in">
                 {/* Compact Template Header */}
-                <div className="flex items-center justify-between px-4 py-2 border-b border-border-visible bg-bg-primary/20 shrink-0">
+                <div className="flex items-center justify-between px-4 py-0.5 border-b border-border-visible bg-bg-primary/20 shrink-0">
                   <div className="flex items-center overflow-hidden">
                     <span className="px-2 py-0.5 bg-accent-subtle/40 border border-accent-primary/30 text-accent-primary text-[9px] font-medium uppercase tracking-wide shrink-0">
                       {selectedTemplate.category}
@@ -219,7 +219,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
                 </div>
 
                 {/* Maximized Preview Area */}
-                <div className="flex-1 bg-bg-primary/30 border-b border-border-visible p-4 overflow-y-auto custom-scrollbar relative">
+                <div className="flex-1 bg-bg-primary/30 border-b border-border-visible p-2 overflow-y-auto custom-scrollbar relative">
                   <pre className="text-xs text-text-secondary font-mono font-normal whitespace-pre-wrap leading-relaxed">{selectedTemplate.content}</pre>
                 </div>
 

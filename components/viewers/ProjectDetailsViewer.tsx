@@ -39,8 +39,8 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
 
   return (
     <div className="h-full flex flex-col bg-bg-secondary animate-fade-in overflow-hidden">
-      {/* Header - Compact py-1, icon 16 */}
-      <div className="px-4 py-1 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+      {/* Header - Compact py-0.5, icon 16 */}
+      <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <Folder size={16} className="text-accent-primary" />
           <h2 className="text-xs font-medium tracking-normal text-text-primary">Detalhes do Protocolo</h2>
@@ -50,9 +50,9 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
         {/* Active Project Card */}
-        <div className="mb-10 p-4 bg-bg-tertiary/80 border border-border-visible relative overflow-hidden group shadow-md">
+        <div className="mb-10 p-2 bg-bg-tertiary/80 border border-border-visible relative overflow-hidden group shadow-md">
           <div className="flex justify-between items-start relative z-10">
             <div className="flex-1 min-w-0 pr-4">
               <div className="flex items-center gap-2 mb-4">
@@ -89,14 +89,14 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-4 mb-10">
-          <div className="p-4 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
+          <div className="p-2 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Layout size={14} className="text-accent-primary/60" />
               <span className="text-xs font-medium uppercase text-text-tertiary tracking-wide">Sessões</span>
             </div>
             <span className="text-4xl font-normal text-text-primary">{stats.conversations}</span>
           </div>
-          <div className="p-4 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
+          <div className="p-2 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Database size={14} className="text-accent-primary/60" />
               <span className="text-xs font-medium uppercase text-text-tertiary tracking-wide">Biblioteca</span>
