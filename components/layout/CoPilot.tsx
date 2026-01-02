@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Plus, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown } from 'lucide-react';
+import { ArrowRight, Plus, RotateCcw, FileText, Wand2, Save, Share2, Settings2, ThumbsUp, ThumbsDown, ChevronDown, Copy, Download } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -9,6 +9,7 @@ import SaveModal from '../modals/SaveModal';
 import ShareModal from '../modals/ShareModal';
 import RestartModal from '../modals/RestartModal';
 import ControllersModal from '../modals/ControllersModal';
+import MarkdownShareModal from '../modals/MarkdownShareModal';
 import FilePreview from '../FilePreview';
 import { useViewer } from '../../hooks/useViewer';
 
@@ -34,6 +35,8 @@ const CoPilot: React.FC = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isRestartModalOpen, setIsRestartModalOpen] = useState(false);
   const [isControllersModalOpen, setIsControllersModalOpen] = useState(false);
+  const [isMarkdownModalOpen, setIsMarkdownModalOpen] = useState(false);
+  const [selectedMarkdownContent, setSelectedMarkdownContent] = useState('');
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -62,6 +65,19 @@ const CoPilot: React.FC = () => {
         sendMessage();
       }
     }
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('Erro ao copiar:', err);
+    }
+  };
+
+  const openMarkdownModal = (content: string) => {
+    setSelectedMarkdownContent(content);
+    setIsMarkdownModalOpen(true);
   };
 
   const hasMessages = useMemo(() => (currentConversation?.turns.length || 0) > 0, [currentConversation]);
@@ -130,7 +146,22 @@ const CoPilot: React.FC = () => {
                     {turn.tessyResponse}
                   </ReactMarkdown>
                   
-                  <div className="flex items-center gap-4 mt-6 border-t border-border-subtle pt-4">
+                  <div className="flex items-center gap-3 mt-6 border-t border-border-subtle pt-4">
+                    <button 
+                      onClick={() => copyToClipboard(turn.tessyResponse)}
+                      className="p-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all"
+                      title="Copiar texto"
+                    >
+                      <Copy size={14} />
+                    </button>
+                    <button 
+                      onClick={() => openMarkdownModal(turn.tessyResponse)}
+                      className="p-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all"
+                      title="Compartilhar em Markdown"
+                    >
+                      <Download size={14} />
+                    </button>
+                    <div className="flex-1"></div>
                     <button className="text-[11px] font-normal px-3 py-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all flex items-center gap-2">
                        <ThumbsUp size={12} /> Positive
                     </button>
@@ -224,6 +255,11 @@ const CoPilot: React.FC = () => {
         onSave={() => { setIsRestartModalOpen(false); setIsSaveModalOpen(true); }} 
       />
       <ControllersModal isOpen={isControllersModalOpen} onClose={() => setIsControllersModalOpen(false)} />
+      <MarkdownShareModal 
+        isOpen={isMarkdownModalOpen} 
+        content={selectedMarkdownContent}
+        onClose={() => setIsMarkdownModalOpen(false)} 
+      />
     </aside>
   );
 };
