@@ -15,8 +15,8 @@ export interface Factor {
 
 export interface GroundingChunk {
   web?: {
-    uri: string;
-    title: string;
+    uri?: string;
+    title?: string;
   };
 }
 
@@ -27,6 +27,7 @@ export interface ConversationTurn {
   timestamp: number;
   attachedFiles?: AttachedFile[];
   groundingChunks?: GroundingChunk[];
+  feedback?: 'positive' | 'negative' | null;
 }
 
 export interface Conversation {
@@ -164,7 +165,7 @@ export interface PendingAction {
   status: 'pending' | 'approved' | 'rejected';
 }
 
-export type GitHubErrorCode = 
+export type GitHubErrorCode =
   | 'INVALID_TOKEN'
   | 'TOKEN_EXPIRED'
   | 'RATE_LIMIT'

@@ -2,14 +2,23 @@
   "name": "tessy-rabelus-lab",
   "version": "3.2.1",
   "private": true,
+  "scripts": {
+    "dev": "vite"
+  },
   "dependencies": {
+    "@fontsource/dm-sans": "^5.2.8",
     "@google/genai": "^1.34.0",
     "dexie": "^4.0.11",
+    "framer-motion": "^12.23.26",
     "jspdf": "^2.5.1",
     "lucide-react": "0.460.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-markdown": "^9.0.1",
     "react-syntax-highlighter": "^15.6.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
+    "vite": "^7.3.0"
   }
 }

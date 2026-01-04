@@ -11,20 +11,18 @@ import { Template, RepositoryItem } from '../../types';
 
 interface CentralCanvasProps {
   currentProjectId: string;
-  selectedProjectId: string | null;
-  setSelectedProjectId: (id: string | null) => void;
-  selectedLibraryItem: Template | RepositoryItem | { isCreating: boolean } | null;
-  setSelectedLibraryItem: (item: any) => void;
 }
 
-const CentralCanvas: React.FC<CentralCanvasProps> = ({ 
-  currentProjectId,
-  selectedProjectId, 
-  setSelectedProjectId,
-  selectedLibraryItem,
-  setSelectedLibraryItem
+const CentralCanvas: React.FC<CentralCanvasProps> = ({
+  currentProjectId
 }) => {
-  const { arquivoSelecionado, selecionarArquivo } = useLayout();
+  const {
+    arquivoSelecionado, selecionarArquivo,
+    projetoSelecionado: selectedProjectId,
+    setProjetoSelecionado: setSelectedProjectId,
+    itemBibliotecaSelecionado: selectedLibraryItem,
+    setItemBibliotecaSelecionado: setSelectedLibraryItem
+  } = useLayout();
   const { newConversation, setInputText } = useChat();
   const [copied, setCopied] = React.useState(false);
 
@@ -56,40 +54,40 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
               </span>
             </div>
             <div className="flex items-center gap-4">
-               {!isImage(arquivoSelecionado.language) && (
-                 <button 
-                   onClick={handleCopy}
-                   className="text-text-tertiary hover:text-text-primary transition-colors flex items-center gap-2"
-                 >
-                   {copied ? <Check size={14} className="text-accent-primary" /> : <Copy size={14} />}
-                   <span className="text-[10px] font-medium uppercase tracking-wide">{copied ? 'OK' : 'Copiar'}</span>
-                 </button>
-               )}
-               <button 
-                 onClick={() => selecionarArquivo(null)}
-                 className="p-1 text-text-tertiary hover:text-red-400 transition-colors"
-               >
-                 <X size={16} />
-               </button>
+              {!isImage(arquivoSelecionado.language) && (
+                <button
+                  onClick={handleCopy}
+                  className="text-text-tertiary hover:text-text-primary transition-colors flex items-center gap-2"
+                >
+                  {copied ? <Check size={14} className="text-accent-primary" /> : <Copy size={14} />}
+                  <span className="text-[10px] font-medium uppercase tracking-wide">{copied ? 'OK' : 'Copiar'}</span>
+                </button>
+              )}
+              <button
+                onClick={() => selecionarArquivo(null)}
+                className="p-1 text-text-tertiary hover:text-red-400 transition-colors"
+              >
+                <X size={16} />
+              </button>
             </div>
           </div>
-          
+
           <div className="flex-1 overflow-auto custom-scrollbar relative">
             {isImage(arquivoSelecionado.language) ? (
               <div className="w-full h-full flex items-center justify-center p-8">
-                 <img 
-                   src={`data:image/${arquivoSelecionado.language};base64,${arquivoSelecionado.content}`} 
-                   alt={arquivoSelecionado.path}
-                   className="max-w-full max-h-full object-contain border border-border-visible shadow-2xl" 
-                 />
+                <img
+                  src={`data:image/${arquivoSelecionado.language};base64,${arquivoSelecionado.content}`}
+                  alt={arquivoSelecionado.path}
+                  className="max-w-full max-h-full object-contain border border-border-visible shadow-2xl"
+                />
               </div>
             ) : (
-              <SyntaxHighlighter 
-                language={arquivoSelecionado.language.toLowerCase()} 
+              <SyntaxHighlighter
+                language={arquivoSelecionado.language.toLowerCase()}
                 style={prismTheme as any}
                 showLineNumbers={true}
-                customStyle={{ 
-                  margin: 0, 
+                customStyle={{
+                  margin: 0,
                   padding: '24px',
                   backgroundColor: 'transparent',
                   fontSize: '13px',
@@ -110,7 +108,7 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
     const isCreating = (selectedLibraryItem as any)?.isCreating || false;
     return (
       <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col relative p-6">
-        <LibraryDetailsViewer 
+        <LibraryDetailsViewer
           item={isCreating ? null : selectedLibraryItem as any}
           isCreating={isCreating}
           currentProjectId={currentProjectId}
@@ -135,11 +133,11 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
     return (
       <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col relative p-6">
         <div className="flex-1 border border-border-visible overflow-hidden shadow-xl">
-          <ProjectDetailsViewer 
-            projectId={selectedProjectId} 
+          <ProjectDetailsViewer
+            projectId={selectedProjectId}
             onClose={() => setSelectedProjectId(null)}
             onNewConversation={() => { newConversation(); setSelectedProjectId(null); }}
-            onOpenLibrary={() => {}} // Library view handled via selection
+            onOpenLibrary={() => { }} // Library view handled via selection
           />
         </div>
       </div>

@@ -58,7 +58,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
       setSelectedTags([]);
       return;
     }
-    setSelectedTags(prev => 
+    setSelectedTags(prev =>
       prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
   };
@@ -68,7 +68,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
 
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
-      results = results.filter(item => 
+      results = results.filter(item =>
         (item as any).title.toLowerCase().includes(term) ||
         (item.description && item.description.toLowerCase().includes(term)) ||
         (item.content && item.content.toLowerCase().substring(0, 100).includes(term))
@@ -76,7 +76,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
     }
 
     if (selectedTags.length > 0) {
-      results = results.filter(item => 
+      results = results.filter(item =>
         selectedTags.every(tag => item.tags?.some(t => t.toLowerCase() === tag))
       );
     }
@@ -95,7 +95,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
   return (
     <div className="flex flex-col h-full bg-bg-secondary animate-fade-in">
       <div className="p-4 border-b border-border-visible space-y-4 bg-bg-primary/80 backdrop-blur-md">
-        <button 
+        <button
           onClick={() => onSelectItem({ isCreating: true } as any)}
           className="w-full flex items-center justify-center gap-2 py-2.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-md"
         >
@@ -116,9 +116,8 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
         <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-1">
           <button
             onClick={() => toggleTag('todos')}
-            className={`px-2 py-1 text-[9px] font-medium uppercase tracking-wider border transition-all whitespace-nowrap ${
-              selectedTags.length === 0 ? 'bg-accent-subtle/40 border-accent-primary text-accent-primary' : 'bg-bg-tertiary/80 text-text-tertiary border-border-visible hover:text-text-primary'
-            }`}
+            className={`px-2 py-1 text-[9px] font-medium uppercase tracking-wider border transition-all whitespace-nowrap ${selectedTags.length === 0 ? 'bg-accent-subtle/40 border-accent-primary text-accent-primary' : 'bg-bg-tertiary/80 text-text-tertiary border-border-visible hover:text-text-primary'
+              }`}
           >
             Todos
           </button>
@@ -128,9 +127,8 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className={`px-2 py-1 text-[9px] font-medium uppercase tracking-wider border transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                  isActive ? 'bg-accent-subtle/40 border-accent-primary text-accent-primary' : 'bg-bg-tertiary/80 text-text-tertiary border-border-visible hover:text-text-primary'
-                }`}
+                className={`px-2 py-1 text-[9px] font-medium uppercase tracking-wider border transition-all whitespace-nowrap flex items-center gap-1.5 ${isActive ? 'bg-accent-subtle/40 border-accent-primary text-accent-primary' : 'bg-bg-tertiary/80 text-text-tertiary border-border-visible hover:text-text-primary'
+                  }`}
               >
                 {isActive && <Check size={10} />}
                 {tag}
@@ -150,7 +148,6 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
             const isSystem = 'isSystem' in item;
             const animationStyle = index < 20 ? {
               animationDelay: `${index * 30}ms`,
-              opacity: 0,
               animationFillMode: 'forwards' as const
             } : {};
 
@@ -159,7 +156,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
                 key={item.id}
                 onClick={() => onSelectItem(item as any)}
                 style={animationStyle}
-                className={`p-3 bg-bg-tertiary/40 border border-border-visible hover:border-accent-primary/40 transition-all cursor-pointer group shadow-sm ${index < 20 ? 'animate-slide-in-right' : ''}`}
+                className={`p-3 bg-bg-tertiary/40 border border-border-visible hover:border-accent-primary/40 transition-all cursor-pointer group shadow-sm ${index < 20 ? 'opacity-0 animate-slide-in-right' : 'opacity-100'}`}
               >
                 <div className="flex justify-between items-start gap-2 mb-1.5">
                   <div className="flex items-center gap-2 overflow-hidden">
@@ -170,8 +167,8 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
                   </div>
                   <div className="flex items-center gap-2">
                     {!isSystem && (
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); onEditTemplate?.(item as any); onSelectItem({...item, isEditing: true} as any); }}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onEditTemplate?.(item as any); onSelectItem({ ...item, isEditing: true } as any); }}
                         className="opacity-0 group-hover:opacity-100 text-text-tertiary hover:text-accent-primary transition-colors"
                       >
                         <Edit3 size={11} />

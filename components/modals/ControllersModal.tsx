@@ -23,9 +23,9 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
   };
 
   return (
-    <div className={`fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
+    <div className={`fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
       <div className={`w-full max-w-lg bg-bg-secondary/95 backdrop-blur-2xl border border-border-visible flex flex-col shadow-2xl relative ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        
+
         {/* Header - Minimalist */}
         <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
@@ -58,22 +58,21 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
                   <div className="flex items-center justify-between">
                     <label className="text-[10px] font-medium text-text-secondary/80 uppercase tracking-widest block">{factor.label}</label>
                     {factor.type === 'toggle' && (
-                      <button 
-                        onClick={() => updateFactor(factor.id)} 
-                        className={`w-10 h-5 border transition-all flex items-center px-0.5 relative cursor-pointer ${
-                          factor.enabled ? 'bg-accent-primary/20 border-accent-primary' : 'bg-bg-primary border-border-visible'
-                        }`}
+                      <button
+                        onClick={() => updateFactor(factor.id)}
+                        className={`w-10 h-5 border transition-all flex items-center px-0.5 relative cursor-pointer ${factor.enabled ? 'bg-accent-primary/20 border-accent-primary' : 'bg-bg-primary border-border-visible'
+                          }`}
                       >
                         <div className={`w-3.5 h-3.5 bg-white transition-transform shadow-sm ${factor.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
                       </button>
                     )}
                   </div>
-                  
+
                   {factor.type === 'dropdown' && (
                     <div className="relative group">
-                      <select 
-                        value={factor.value} 
-                        onChange={(e) => updateFactor(factor.id, e.target.value)} 
+                      <select
+                        value={factor.value}
+                        onChange={(e) => updateFactor(factor.id, e.target.value)}
                         className="w-full bg-bg-primary/60 border border-border-visible/40 p-2 text-xs font-normal text-text-primary outline-none focus:border-accent-primary/60 transition-all appearance-none uppercase"
                       >
                         {factor.options?.map(opt => <option key={opt} value={opt} className="bg-bg-secondary">{opt.toUpperCase()}</option>)}
@@ -83,28 +82,28 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
                       </div>
                     </div>
                   )}
-                  
+
                   {factor.type === 'slider' && (
                     <div className="flex items-center gap-3">
-                      <input 
-                        type="range" 
-                        min={factor.min} 
-                        max={factor.max} 
-                        value={factor.value} 
-                        onChange={(e) => updateFactor(factor.id, parseInt(e.target.value))} 
-                        className="flex-1 h-1 bg-border-subtle appearance-none cursor-pointer accent-accent-primary" 
+                      <input
+                        type="range"
+                        min={factor.min}
+                        max={factor.max}
+                        value={factor.value}
+                        onChange={(e) => updateFactor(factor.id, parseInt(e.target.value))}
+                        className="flex-1 h-1 bg-border-subtle appearance-none cursor-pointer accent-accent-primary"
                       />
                       <span className="text-xs font-mono font-medium text-accent-primary w-6 text-right">{factor.value}</span>
                     </div>
                   )}
 
                   {factor.type === 'text' && (
-                    <textarea 
-                      value={factor.value} 
+                    <textarea
+                      value={factor.value}
                       // Fixed: missing arrow function syntax and updateFactor call
-                      onChange={(e) => updateFactor(factor.id, e.target.value)} 
-                      placeholder="Diretrizes de contexto..." 
-                      className="w-full h-20 bg-bg-primary/60 border border-border-visible/40 p-2 text-xs font-normal text-text-primary placeholder:text-text-tertiary/40 focus:border-accent-primary/60 transition-all resize-none custom-scrollbar" 
+                      onChange={(e) => updateFactor(factor.id, e.target.value)}
+                      placeholder="Diretrizes de contexto..."
+                      className="w-full h-20 bg-bg-primary/60 border border-border-visible/40 p-2 text-xs font-normal text-text-primary placeholder:text-text-tertiary/40 focus:border-accent-primary/60 transition-all resize-none custom-scrollbar"
                     />
                   )}
                 </div>
@@ -120,14 +119,14 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
 
         {/* Footer - Minimalist */}
         <div className="px-4 py-3 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
-          <button 
-            onClick={() => confirm('Resetar parâmetros?') && resetFactors()} 
+          <button
+            onClick={() => confirm('Resetar parâmetros?') && resetFactors()}
             className="flex items-center gap-2 text-text-tertiary/60 hover:text-red-400 text-[9px] font-normal uppercase tracking-wider transition-all"
           >
             <RotateCcw size={12} /> Resetar
           </button>
-          <button 
-            onClick={handleClose} 
+          <button
+            onClick={handleClose}
             className="px-6 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg"
           >
             Aplicar

@@ -1,0 +1,40 @@
+// BACKUP DE LÓGICA DE STREAMING (DEPRECIADO)
+// Este código foi removido por instabilidade com o SDK oficial no ambiente atual.
+
+const generateStreamWithRetry = async (model: any, params: any, onStream: (text: string) => void, retries = 3, delay = 2000): Promise<any> => {
+  try {
+    const result = await model.generateContentStream(params);
+    let fullText = "";
+    let lastResponse = null;
+
+    for await (const chunk of result) {
+      lastResponse = chunk;
+      const chunkText = typeof chunk.text === 'function'
+        ? chunk.text()
+        : (chunk.candidates?.[0]?.content?.parts?.[0]?.text || "");
+
+      if (chunkText) {
+        fullText += chunkText;
+        onStream(fullText);
+      }
+    }
+
+    try {
+      const finalResp = await result.response;
+      if (finalResp) return finalResp;
+    } catch (e) {
+      console.warn("[Gemini Service] Fallback de resposta consolidada.");
+    }
+
+    return {
+      text: fullText,
+      functionCalls: lastResponse?.functionCalls || [],
+      candidates: lastResponse?.candidates || [{ content: { parts: [{ text: fullText }] } }]
+    };
+  } catch (error: any) {
+    if (retries > 0 && (error.status === 429)) {
+       // ... retry logic ...
+    }
+    throw error;
+  }
+};

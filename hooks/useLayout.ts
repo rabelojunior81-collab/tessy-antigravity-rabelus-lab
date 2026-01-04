@@ -2,15 +2,19 @@
 import { useLayoutContext } from '../contexts/LayoutContext';
 
 export const useLayout = () => {
-  const { 
-    selectedFile, 
-    setSelectedFile, 
-    terminalHeight, 
+  const {
+    selectedFile,
+    setSelectedFile,
+    terminalHeight,
     setTerminalHeight,
     viewerPanelWidth,
     setViewerPanelWidth,
     coPilotWidth,
-    setCoPilotWidth
+    setCoPilotWidth,
+    selectedProjectId,
+    setSelectedProjectId,
+    selectedLibraryItem,
+    setSelectedLibraryItem
   } = useLayoutContext();
 
   return {
@@ -21,6 +25,10 @@ export const useLayout = () => {
     larguraViewer: viewerPanelWidth,
     ajustarLarguraViewer: setViewerPanelWidth,
     larguraCoPilot: coPilotWidth,
-    ajustarLarguraCoPilot: setCoPilotWidth
+    ajustarLarguraCoPilot: setCoPilotWidth,
+    projetoSelecionado: selectedProjectId,
+    setProjetoSelecionado: setSelectedProjectId,
+    itemBibliotecaSelecionado: selectedLibraryItem,
+    setItemBibliotecaSelecionado: setSelectedLibraryItem
   };
 };

@@ -3,6 +3,7 @@ import { X, Wand2, Check, AlertCircle, Loader2 } from 'lucide-react';
 import { OptimizationResult } from '../../types';
 // Fix: Corrected import path from refactored geminiService.ts to services/gemini/service.ts
 import * as geminiService from '../../services/gemini/service';
+import { getGeminiToken } from '../../services/gemini/client';
 
 interface OptimizeModalProps {
   isOpen: boolean;
@@ -26,7 +27,12 @@ const OptimizeModal: React.FC<OptimizeModalProps> = ({ isOpen, inputText, onClos
     setError(null);
     setResult(null);
     try {
-      const res = await geminiService.optimizePrompt(inputText);
+      const token = await getGeminiToken();
+      if (!token) {
+        setError('Chave Gemini ausente. Configure nos Parâmetros.');
+        return;
+      }
+      const res = await geminiService.optimizePrompt(token, inputText);
       setResult(res);
     } catch (err) {
       setError('Erro no núcleo de otimização.');
@@ -82,7 +88,7 @@ const OptimizeModal: React.FC<OptimizeModalProps> = ({ isOpen, inputText, onClos
 
               <div className="space-y-4">
                 <h4 className="text-xs font-bold uppercase text-text-tertiary tracking-widest border-b border-border-visible pb-2 flex items-center gap-2">
-                   Protocolo Otimizado
+                  Protocolo Otimizado
                 </h4>
                 <div className="p-2 bg-bg-primary border border-border-visible">
                   <pre className="text-sm text-text-secondary font-mono whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto custom-scrollbar">
@@ -92,7 +98,7 @@ const OptimizeModal: React.FC<OptimizeModalProps> = ({ isOpen, inputText, onClos
               </div>
             </div>
           ) : (
-             <div className="h-64 flex flex-col items-center justify-center opacity-10"><Wand2 size={64} /></div>
+            <div className="h-64 flex flex-col items-center justify-center opacity-10"><Wand2 size={64} /></div>
           )}
         </div>
 

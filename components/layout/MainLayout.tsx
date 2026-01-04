@@ -6,33 +6,26 @@ import Terminal from './Terminal';
 import CoPilot from './CoPilot';
 import { useViewer } from '../../hooks/useViewer';
 import { useLayout } from '../../hooks/useLayout';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface MainLayoutProps {
   currentProjectId: string;
   viewerContent: React.ReactNode;
-  selectedProjectId: string | null;
-  setSelectedProjectId: (id: string | null) => void;
-  selectedLibraryItem: any;
-  setSelectedLibraryItem: (item: any) => void;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ 
+const MainLayout: React.FC<MainLayoutProps> = ({
   currentProjectId,
-  viewerContent, 
-  selectedProjectId, 
-  setSelectedProjectId,
-  selectedLibraryItem,
-  setSelectedLibraryItem
+  viewerContent
 }) => {
   const { viewerAberto } = useViewer();
-  const { 
-    larguraViewer, ajustarLarguraViewer, 
-    alturaTerminal, ajustarAlturaTerminal, 
-    larguraCoPilot, ajustarLarguraCoPilot 
+  const {
+    larguraViewer, ajustarLarguraViewer,
+    alturaTerminal, ajustarAlturaTerminal,
+    larguraCoPilot, ajustarLarguraCoPilot
   } = useLayout();
 
   const getViewerTitle = () => {
-    switch(viewerAberto) {
+    switch (viewerAberto) {
       case 'history': return 'Histórico';
       case 'library': return 'Biblioteca';
       case 'projects': return 'Protocolos';
@@ -102,39 +95,47 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   return (
     <div className="flex h-full w-full overflow-hidden bg-bg-primary">
       <Sidebar />
-      
+
       <main className="flex-1 flex flex-row min-w-0 relative overflow-hidden bg-bg-secondary">
         {/* Viewer Panel */}
-        {viewerAberto && (
-          <>
-            <div style={{ width: `${larguraViewer}px` }} className="h-full shrink-0 flex flex-col">
-              <ViewerPanel title={getViewerTitle()}>
-                {viewerContent}
-              </ViewerPanel>
-            </div>
-            {/* Viewer Resize Handle */}
-            <div 
-              onMouseDown={handleViewerResize}
-              className="w-0.5 bg-border-visible hover:bg-accent-primary cursor-col-resize transition-colors relative group shrink-0 z-50"
-            >
-              <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-accent-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            </div>
-          </>
-        )}
-        
+        {/* Viewer Panel */}
+        <AnimatePresence>
+          {viewerAberto && (
+            <>
+              <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: larguraViewer, opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="h-full shrink-0 flex flex-col overflow-hidden"
+              >
+                <ViewerPanel title={getViewerTitle()}>
+                  {viewerContent}
+                </ViewerPanel>
+              </motion.div>
+              {/* Viewer Resize Handle */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onMouseDown={handleViewerResize}
+                className="w-0.5 bg-border-visible hover:bg-accent-primary cursor-col-resize transition-colors relative group shrink-0 z-50"
+              >
+                <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-accent-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-bg-secondary">
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <CentralCanvas 
+            <CentralCanvas
               currentProjectId={currentProjectId}
-              selectedProjectId={selectedProjectId} 
-              setSelectedProjectId={setSelectedProjectId} 
-              selectedLibraryItem={selectedLibraryItem}
-              setSelectedLibraryItem={setSelectedLibraryItem}
             />
           </div>
 
           {/* Terminal Resize Handle */}
-          <div 
+          <div
             onMouseDown={handleTerminalResize}
             className="h-0.5 bg-border-visible hover:bg-accent-primary cursor-row-resize transition-colors relative group shrink-0 z-50"
           >
@@ -147,7 +148,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         </div>
 
         {/* CoPilot Resize Handle */}
-        <div 
+        <div
           onMouseDown={handleCoPilotResize}
           className="w-0.5 bg-border-visible hover:bg-accent-primary cursor-col-resize transition-colors relative group shrink-0 z-50"
         >

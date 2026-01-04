@@ -42,8 +42,8 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
   const filteredTemplates = useMemo(() => {
     if (!searchTerm.trim()) return allTemplates;
     const term = searchTerm.toLowerCase();
-    return allTemplates.filter(t => 
-      t.label.toLowerCase().includes(term) || 
+    return allTemplates.filter(t =>
+      t.label.toLowerCase().includes(term) ||
       (t.description || '').toLowerCase().includes(term) ||
       t.content.toLowerCase().substring(0, 100).includes(term)
     );
@@ -65,12 +65,12 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
     e.preventDefault();
     if (!formData.label || !formData.content) return;
     const id = formData.id || generateUUID();
-    const newTemplate: Template = { 
-      ...formData as Template, 
-      id, 
-      isCustom: true, 
-      updatedAt: Date.now(), 
-      createdAt: formData.createdAt || Date.now() 
+    const newTemplate: Template = {
+      ...formData as Template,
+      id,
+      isCustom: true,
+      updatedAt: Date.now(),
+      createdAt: formData.createdAt || Date.now()
     };
     await db.templates.put(newTemplate);
     await loadTemplates();
@@ -88,9 +88,9 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose}>
+    <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose}>
       <div className="w-full max-w-5xl h-[85vh] bg-bg-secondary/95 backdrop-blur-xl border border-border-visible flex flex-col shadow-2xl animate-zoom-in overflow-hidden" onClick={e => e.stopPropagation()}>
-        
+
         {/* Header - Compacted py-0.5, icon 16 */}
         <div className="flex items-center justify-between px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-2">
@@ -101,22 +101,22 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
         </div>
 
         <div className="flex-1 flex flex-row overflow-hidden">
-          
+
           {/* Sidebar - Narrower 280px */}
           <div className="w-[280px] flex flex-col border-r border-border-visible bg-bg-primary/40 shrink-0">
             <div className="px-3 py-0.5 border-b border-border-visible">
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-tertiary" size={12} />
-                <input 
-                  type="text" 
-                  value={searchTerm} 
-                  onChange={e => setSearchTerm(e.target.value)} 
-                  placeholder="FILTRAR..." 
-                  className="w-full bg-bg-primary border border-border-visible py-1.5 pl-8 pr-3 text-[11px] font-normal text-text-primary focus:border-accent-primary outline-none tracking-normal" 
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  placeholder="FILTRAR..."
+                  className="w-full bg-bg-primary border border-border-visible py-1.5 pl-8 pr-3 text-[11px] font-normal text-text-primary focus:border-accent-primary outline-none tracking-normal"
                 />
               </div>
             </div>
-            
+
             <div className="flex-1 overflow-y-auto custom-scrollbar p-1.5 space-y-4">
               {(Object.entries(groupedTemplates) as [string, Template[]][]).map(([category, items]) => (
                 <div key={category} className="space-y-0.5">
@@ -126,14 +126,13 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
                   </div>
                   <div className="space-y-0.5">
                     {items.map(t => (
-                      <div 
-                        key={t.id} 
-                        onClick={() => { setSelectedId(t.id); setIsFormOpen(false); }} 
-                        className={`group px-2 py-2 border transition-all cursor-pointer flex items-center justify-between ${
-                          selectedId === t.id 
-                            ? 'bg-accent-subtle/40 border-accent-primary' 
+                      <div
+                        key={t.id}
+                        onClick={() => { setSelectedId(t.id); setIsFormOpen(false); }}
+                        className={`group px-2 py-2 border transition-all cursor-pointer flex items-center justify-between ${selectedId === t.id
+                            ? 'bg-accent-subtle/40 border-accent-primary'
                             : 'bg-bg-primary/30 border-transparent hover:border-accent-primary/20'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-2 overflow-hidden">
                           <Hash size={10} className={selectedId === t.id ? 'text-accent-primary' : 'text-text-tertiary opacity-40'} />
@@ -147,10 +146,10 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
                 </div>
               ))}
             </div>
-            
+
             <div className="p-3 bg-bg-primary/60 border-t border-border-visible">
-              <button 
-                onClick={() => { setFormData({ label: '', description: '', content: '', category: 'Personalizado' }); setIsFormOpen(true); }} 
+              <button
+                onClick={() => { setFormData({ label: '', description: '', content: '', category: 'Personalizado' }); setIsFormOpen(true); }}
                 className="w-full flex items-center justify-center gap-2 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-medium tracking-normal transition-all active:scale-95 shadow-lg"
               >
                 <Plus size={14} strokeWidth={2} />
@@ -164,27 +163,27 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
             {isFormOpen ? (
               <form onSubmit={handleSave} className="flex-1 flex flex-col p-2 space-y-3 animate-fade-in">
                 <div className="space-y-3">
-                   <div className="flex gap-4">
-                     <div className="flex-1 space-y-1">
-                       <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Nome do Protocolo</label>
-                       <input type="text" required value={formData.label} onChange={e => setFormData({ ...formData, label: e.target.value })} className="w-full bg-bg-tertiary border border-border-visible p-2 text-xs font-normal text-text-primary focus:border-accent-primary outline-none" />
-                     </div>
-                     <div className="w-[180px] space-y-1">
-                       <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Categoria</label>
-                       <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value as any })} className="w-full bg-bg-tertiary border border-border-visible p-2 text-xs font-normal text-text-primary focus:border-accent-primary outline-none">
-                         <option value="Código">Código</option>
-                         <option value="Escrita">Escrita</option>
-                         <option value="Análise">Análise</option>
-                         <option value="Ensino">Ensino</option>
-                         <option value="Criativo">Criativo</option>
-                         <option value="Personalizado">Personalizado</option>
-                       </select>
-                     </div>
-                   </div>
-                   <div className="space-y-1">
-                     <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Descrição</label>
-                     <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full h-16 bg-bg-tertiary border border-border-visible p-2 text-xs font-normal text-text-secondary outline-none focus:border-accent-primary resize-none custom-scrollbar" />
-                   </div>
+                  <div className="flex gap-4">
+                    <div className="flex-1 space-y-1">
+                      <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Nome do Protocolo</label>
+                      <input type="text" required value={formData.label} onChange={e => setFormData({ ...formData, label: e.target.value })} className="w-full bg-bg-tertiary border border-border-visible p-2 text-xs font-normal text-text-primary focus:border-accent-primary outline-none" />
+                    </div>
+                    <div className="w-[180px] space-y-1">
+                      <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Categoria</label>
+                      <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value as any })} className="w-full bg-bg-tertiary border border-border-visible p-2 text-xs font-normal text-text-primary focus:border-accent-primary outline-none">
+                        <option value="Código">Código</option>
+                        <option value="Escrita">Escrita</option>
+                        <option value="Análise">Análise</option>
+                        <option value="Ensino">Ensino</option>
+                        <option value="Criativo">Criativo</option>
+                        <option value="Personalizado">Personalizado</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Descrição</label>
+                    <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full h-16 bg-bg-tertiary border border-border-visible p-2 text-xs font-normal text-text-secondary outline-none focus:border-accent-primary resize-none custom-scrollbar" />
+                  </div>
                 </div>
                 <div className="flex-1 flex flex-col space-y-1">
                   <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Núcleo do Prompt</label>
@@ -207,7 +206,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
                       {selectedTemplate.label}
                     </h3>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 shrink-0">
                     {selectedTemplate.isCustom && (
                       <>
@@ -225,8 +224,8 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
 
                 {/* Fixed Footer with Button */}
                 <div className="shrink-0 px-4 py-2 bg-bg-primary/60 border-t border-border-visible">
-                  <button 
-                    onClick={() => { onSelect(selectedTemplate.content); onClose(); }} 
+                  <button
+                    onClick={() => { onSelect(selectedTemplate.content); onClose(); }}
                     className="w-full py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-xs font-medium tracking-normal transition-all active:scale-95 shadow-xl flex items-center justify-center gap-2"
                   >
                     <ChevronRight size={16} strokeWidth={3} />

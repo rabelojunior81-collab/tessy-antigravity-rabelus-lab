@@ -16,8 +16,9 @@ import { useViewerRouter } from './hooks/useViewerRouter';
 
 // Modals & Icons
 import GitHubTokenModal from './components/GitHubTokenModal';
+import GeminiTokenModal from './components/modals/GeminiTokenModal';
 import PendingActionsModal from './components/modals/PendingActionsModal';
-import { Menu, Moon, Sun, X } from 'lucide-react';
+import { Menu, Moon, Sun, X, Settings } from 'lucide-react';
 
 const TessyLogo = React.memo(() => (
   <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
@@ -31,27 +32,32 @@ const TessyLogo = React.memo(() => (
 const AppContent: React.FC = () => {
   const [isMigrating, setIsMigrating] = useState(true);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [selectedLibraryItem, setSelectedLibraryItem] = useState<Template | RepositoryItem | null>(null);
-  const { isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutContext();
+  const {
+    isMobileMenuOpen,
+    setIsMobileMenuOpen,
+    setSelectedProjectId,
+    setSelectedLibraryItem,
+    isGeminiModalOpen,
+    setIsGeminiModalOpen
+  } = useLayoutContext();
   const { selecionarArquivo } = useLayout();
   const { newConversation, factors } = useChat();
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
 
-  const { 
-    currentProjectId, 
-    switchProject, 
-    isProjectModalOpen, 
-    editingProjectId, 
-    openProjectModal, 
-    closeProjectModal 
+  const {
+    currentProjectId,
+    switchProject,
+    isProjectModalOpen,
+    editingProjectId,
+    openProjectModal,
+    closeProjectModal
   } = useProjects(newConversation);
 
   useEffect(() => {
     const boot = async () => {
       try {
         await migrateToIndexedDB();
-        
+
         const themeSetting = await db.settings.get('tessy-theme');
         if (themeSetting) setTheme(themeSetting.value);
       } catch (err) {
@@ -65,7 +71,7 @@ const AppContent: React.FC = () => {
 
   useEffect(() => {
     document.documentElement.className = theme;
-    db.settings.put({ key: 'tessy-theme', value: theme }).catch(() => {});
+    db.settings.put({ key: 'tessy-theme', value: theme }).catch(() => { });
   }, [theme]);
 
   const toggleTheme = useCallback(() => {
@@ -76,13 +82,13 @@ const AppContent: React.FC = () => {
     selecionarArquivo(null);
     setSelectedLibraryItem(null);
     setSelectedProjectId(id || null);
-  }, [selecionarArquivo]);
+  }, [selecionarArquivo, setSelectedLibraryItem, setSelectedProjectId]);
 
   const handleLibraryItemSelected = useCallback((item: RepositoryItem | Template) => {
     setSelectedLibraryItem(item);
-    setSelectedProjectId(null);
     selecionarArquivo(null);
-  }, [selecionarArquivo]);
+    // REMOVED: setSelectedProjectId(null) to prevent ChatContext (and input text) from resetting
+  }, [selecionarArquivo, setSelectedLibraryItem]);
 
   const viewerContent = useViewerRouter({
     currentProjectId,
@@ -99,7 +105,7 @@ const AppContent: React.FC = () => {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-bg-primary">
         <div className="w-12 h-12 flex items-center justify-center animate-pulse">
-           <svg viewBox="0 0 100 100" className="w-full h-full">
+          <svg viewBox="0 0 100 100" className="w-full h-full">
             <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#4a9eff" strokeWidth="8" />
           </svg>
         </div>
@@ -110,9 +116,9 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-accent-primary/30 bg-bg-primary text-text-primary">
-      <header className="h-11 flex items-center justify-between pl-0 pr-6 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md z-[70] shrink-0">
+      <header className="h-11 flex items-center justify-between pl-0 pr-6 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md z-sticky shrink-0">
         <div className="flex items-center space-x-2 min-w-0">
-          <button 
+          <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2 text-text-tertiary hover:text-accent-primary transition-colors border border-border-visible bg-bg-secondary/40"
           >
@@ -132,37 +138,41 @@ const AppContent: React.FC = () => {
         <div className="hidden lg:flex items-center gap-9">
           <DateAnchor groundingEnabled={groundingStatus} />
         </div>
-        
+
         <div className="flex items-center space-x-4">
-          <button 
-            onClick={toggleTheme} 
+          <button
+            onClick={toggleTheme}
             className="w-8 h-8 flex items-center justify-center bg-bg-secondary border border-border-visible text-accent-primary hover:border-accent-primary transition-all"
             title="Alternar Tema"
           >
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+
+          <button
+            onClick={() => setIsGeminiModalOpen(true)}
+            className="w-8 h-8 flex items-center justify-center bg-bg-secondary border border-border-visible text-accent-secondary hover:border-accent-secondary transition-all"
+            title="Configurar Gemini"
+          >
+            <Settings size={16} />
           </button>
         </div>
       </header>
 
       <div className="flex-1 overflow-hidden relative">
         <Suspense fallback={<LoadingSpinner />}>
-          <MainLayout 
+          <MainLayout
             currentProjectId={currentProjectId}
-            viewerContent={viewerContent} 
-            selectedProjectId={selectedProjectId} 
-            setSelectedProjectId={setSelectedProjectId} 
-            selectedLibraryItem={selectedLibraryItem}
-            setSelectedLibraryItem={setSelectedLibraryItem}
+            viewerContent={viewerContent}
           />
         </Suspense>
       </div>
 
-      <footer className="h-5 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md px-6 flex items-center justify-between text-[9px] text-text-tertiary font-normal tracking-wide shrink-0 z-[70]">
+      <footer className="h-5 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md px-6 flex items-center justify-between text-[9px] text-text-tertiary font-normal tracking-wide shrink-0 z-sticky">
         <span className="opacity-40 uppercase">© 2025 Rabelus Lab System</span>
         <div className="flex items-center space-x-6">
           <div className="flex items-center gap-2">
-             <div className="w-1.5 h-1.5 bg-accent-primary animate-pulse"></div>
-             <span className="uppercase text-accent-primary hidden xs:inline">Stable Build v3.2.1</span>
+            <div className="w-1.5 h-1.5 bg-accent-primary animate-pulse"></div>
+            <span className="uppercase text-accent-primary hidden xs:inline">Stable Build v3.2.1</span>
           </div>
         </div>
       </footer>
@@ -173,10 +183,15 @@ const AppContent: React.FC = () => {
         projectId={editingProjectId}
         onSuccess={(id) => { switchProject(id); closeProjectModal(); }}
       />
-      <GitHubTokenModal 
-        isOpen={isGitHubTokenModalOpen} 
-        onClose={() => setIsGitHubTokenModalOpen(false)} 
-        onSuccess={() => setIsGitHubTokenModalOpen(false)} 
+      <GitHubTokenModal
+        isOpen={isGitHubTokenModalOpen}
+        onClose={() => setIsGitHubTokenModalOpen(false)}
+        onSuccess={() => setIsGitHubTokenModalOpen(false)}
+      />
+      <GeminiTokenModal
+        isOpen={isGeminiModalOpen}
+        onClose={() => setIsGeminiModalOpen(false)}
+        onSuccess={() => setIsGeminiModalOpen(false)}
       />
       <PendingActionsModal />
     </div>
@@ -192,7 +207,7 @@ const App: React.FC = () => {
       try {
         const lastProjSetting = await db.settings.get('tessy-current-project');
         if (lastProjSetting) setInitialProjectId(lastProjSetting.value);
-      } catch (e) {} finally {
+      } catch (e) { } finally {
         setIsReady(true);
       }
     };

@@ -1,70 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Tessy by Rabelus Lab - Advanced AI Prompt Engineering IDE">
-    <meta name="theme-color" content="#1e3a5f">
-    <title>tessy // Rabelus Lab</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'system-ui', 'sans-serif'],
-              mono: ['JetBrains Mono', 'monospace'],
-            },
-            colors: {
-              'bg-primary': '#1e3a5f',
-              'bg-secondary': '#0d2847',
-              'bg-tertiary': '#1a3a5a',
-              'bg-elevated': '#243447',
-              'text-primary': '#f0f8ff',
-              'text-secondary': '#d0e0f0',
-              'text-tertiary': '#a8b8c8',
-              'accent-primary': '#569cd6',
-              'accent-secondary': '#264f78',
-              'accent-subtle': '#1e3a5f',
-              'border-visible': '#3a5a7f',
-              'border-subtle': '#152238',
-            },
-            animation: {
-              'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
-              'fade-in': 'fadeIn 0.2s ease-out forwards',
-              'zoom-in': 'zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-            },
-            keyframes: {
-              pulseSoft: { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.6 } },
-              fadeIn: { from: { opacity: 0 }, to: { opacity: 1 } },
-              zoomIn: { from: { opacity: 0, transform: 'scale(0.98)' }, to: { opacity: 1, transform: 'scale(1)' } },
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Tessy by Rabelus Lab - Advanced AI Prompt Engineering IDE">
+  <meta name="theme-color" content="#1e3a5f">
+  <title>tessy // Rabelus Lab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['DM Sans', 'Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
           },
+          colors: {
+            'bg-primary': '#050505', /* Infinite Black */
+            'bg-secondary': '#0a0a0a',
+            'bg-tertiary': '#121212',
+            'bg-elevated': '#1a1a1a',
+            'text-primary': '#ffffff',
+            'text-secondary': '#a1a1aa',
+            'text-tertiary': '#52525b',
+            'accent-primary': '#3b82f6', /* DeepMind Blue */
+            'accent-secondary': '#1d4ed8',
+            'accent-subtle': '#1e3a8a',
+            'border-visible': '#27272a',
+            'border-subtle': '#18181b',
+          },
+          animation: {
+            'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
+            'fade-in': 'fadeIn 0.2s ease-out forwards',
+            'fade-out': 'fadeOut 0.2s ease-out forwards',
+            'zoom-in': 'zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'zoom-out': 'zoomOut 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'slide-in-right': 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'slide-in-left': 'slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          },
+          keyframes: {
+            pulseSoft: { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.6 } },
+            fadeIn: { from: { opacity: 0 }, to: { opacity: 1 } },
+            fadeOut: { from: { opacity: 1 }, to: { opacity: 0 } },
+            zoomIn: { from: { opacity: 0, transform: 'scale(0.98)' }, to: { opacity: 1, transform: 'scale(1)' } },
+            zoomOut: { from: { opacity: 1, transform: 'scale(1)' }, to: { opacity: 0, transform: 'scale(0.95)' } },
+            slideInRight: { from: { opacity: 0, transform: 'translateX(20px)' }, to: { opacity: 1, transform: 'translateX(0)' } },
+            slideInLeft: { from: { opacity: 0, transform: 'translateX(-20px)' }, to: { opacity: 1, transform: 'translateX(0)' } },
+          },
+          zIndex: {
+            'base': '0',
+            'docked': '10',
+            'dropdown': '100',
+            'sticky': '200',
+            'overlay': '300',
+            'modal': '400',
+            'tooltip': '500',
+            'max': '999',
+          }
         },
-      }
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #569cd6; --bg-body: #1e3a5f; --text-body: #f0f8ff; }
-        * { -webkit-tap-highlight-color: transparent; border-radius: 0 !important; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-body);
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(13, 27, 42, 0.1); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(86, 156, 214, 0.3); }
-        .prose { font-size: 14px !important; line-height: 1.6 !important; color: #f0f8ff !important; }
-    </style>
-<script type="importmap">
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary: #569cd6;
+      --bg-body: #1e3a5f;
+      --text-body: #f0f8ff;
+      --z-base: 0;
+      --z-docked: 10;
+      --z-dropdown: 100;
+      --z-sticky: 200;
+      --z-overlay: 300;
+      --z-modal: 400;
+      --z-tooltip: 500;
+      --z-max: 999;
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+      border-radius: 0 !important;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-body);
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(13, 27, 42, 0.1);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(86, 156, 214, 0.3);
+    }
+
+    .prose {
+      font-size: 14px !important;
+      line-height: 1.6 !important;
+      color: #f0f8ff !important;
+    }
+  </style>
+  <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@19.2.3",
@@ -86,8 +139,10 @@
 }
 </script>
 </head>
+
 <body class="bg-bg-primary">
-    <div id="root"></div>
-    <script type="module" src="index.tsx"></script>
+  <div id="root"></div>
+  <script type="module" src="index.tsx"></script>
 </body>
+
 </html>

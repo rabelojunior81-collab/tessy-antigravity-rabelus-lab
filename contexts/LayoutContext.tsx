@@ -1,5 +1,6 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { Template, RepositoryItem } from '../types';
 
 export type ViewerType = 'history' | 'library' | 'projects' | 'controllers' | 'github' | null;
 
@@ -16,6 +17,8 @@ interface LayoutContextType {
   viewerPanelWidth: number;
   coPilotWidth: number;
   isMobileMenuOpen: boolean;
+  selectedProjectId: string | null;
+  selectedLibraryItem: Template | RepositoryItem | { isCreating: boolean } | null;
   openViewer: (viewer: ViewerType) => void;
   closeViewer: () => void;
   setSelectedFile: (file: SelectedFile | null) => void;
@@ -23,6 +26,10 @@ interface LayoutContextType {
   setViewerPanelWidth: (width: number) => void;
   setCoPilotWidth: (width: number) => void;
   setIsMobileMenuOpen: (open: boolean) => void;
+  setSelectedProjectId: (id: string | null) => void;
+  setSelectedLibraryItem: (item: Template | RepositoryItem | { isCreating: boolean } | null) => void;
+  isGeminiModalOpen: boolean;
+  setIsGeminiModalOpen: (open: boolean) => void;
 }
 
 const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
@@ -31,6 +38,9 @@ export const LayoutProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [activeViewer, setActiveViewer] = useState<ViewerType>(null);
   const [selectedFile, setSelectedFile] = useState<SelectedFile | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [selectedLibraryItem, setSelectedLibraryItem] = useState<Template | RepositoryItem | { isCreating: boolean } | null>(null);
+  const [isGeminiModalOpen, setIsGeminiModalOpen] = useState(false);
 
   // Initialize values from localStorage or defaults
   const [terminalHeight, setTerminalHeight] = useState(() => {
@@ -78,13 +88,19 @@ export const LayoutProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       viewerPanelWidth,
       coPilotWidth,
       isMobileMenuOpen,
+      selectedProjectId,
+      selectedLibraryItem,
       openViewer,
       closeViewer,
       setSelectedFile,
       setTerminalHeight,
       setViewerPanelWidth,
       setCoPilotWidth,
-      setIsMobileMenuOpen
+      setIsMobileMenuOpen,
+      setSelectedProjectId,
+      setSelectedLibraryItem,
+      isGeminiModalOpen,
+      setIsGeminiModalOpen
     }}>
       {children}
     </LayoutContext.Provider>

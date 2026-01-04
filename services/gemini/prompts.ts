@@ -19,6 +19,7 @@ IMPORTANTE: Ao responder sobre eventos, notícias, lançamentos ou qualquer info
 3. NUNCA invente links, fatos históricos ou detalhes técnicos inexistentes.
 `;
 
+
   if (repoPath) {
     instruction += `
 FERRAMENTAS GITHUB DISPONÍVEIS:
@@ -33,11 +34,9 @@ Ferramentas disponíveis:
 - list_github_branches: Veja branches disponíveis
 - get_commit_details: Analise mudanças de commits específicos
 
-FLUXO OBRIGATÓRIO:
-1. Understanding: get_github_readme PRIMEIRO.
-2. Explorer: get_repository_structure ou list_github_directory.
-3. deep dive: read_github_file com caminho correto.
-4. NUNCA responda sobre o projeto sem usar ferramentas.
+LIMITAÇÃO CRÍTICA DE REPOSITÓRIO:
+Você está conectado APENAS ao repositório "${repoPath}".
+Se o usuário pedir para analisar OUTRO repositório (ex: "Analise o repo X"), você DEVE recusar e explicar que só tem acesso ao repo conectado ("${repoPath}"). Peça para ele alterar o projeto nas configurações se desejar analisar outro código.
 `;
   }
 

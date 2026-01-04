@@ -17,6 +17,7 @@ Tessy is an advanced intent-driven AI assistant powered by **Google Gemini**, de
 ## 🛠️ Tech Stack
 
 - **Core**: React 19 + TypeScript
+- **Bundler**: Vite 7
 - **Intelligence**: Google Gemini 2.5/3 (Flash & Pro)
 - **Database**: Dexie.js (IndexedDB)
 - **Styling**: Tailwind CSS + Glassmorphism
@@ -30,6 +31,8 @@ Tessy is an advanced intent-driven AI assistant powered by **Google Gemini**, de
 - `src/services`: API connectors (Gemini, GitHub) and Database logic
 - `src/contexts`: Global state management for Chat and Layout
 
+Ver detalhamento em [ARCHITECTURE.md](./ARCHITECTURE.md).
+
 ## ⌨️ Shortcuts
 
 - `Enter`: Send message (in CoPilot)
@@ -38,8 +41,9 @@ Tessy is an advanced intent-driven AI assistant powered by **Google Gemini**, de
 
 ## 🛠️ Setup
 
-1. Ensure `process.env.API_KEY` is configured with your Google AI Studio key.
-2. For GitHub integration, provide a Personal Access Token (PAT) with `repo` scope within the app.
+1. Configure sua `GEMINI_API_KEY` em um arquivo `.env` na raiz do projeto.
+2. Execute `npm install` e `npm run dev`.
+3. Para integração com GitHub, forneça um Personal Access Token (PAT) com escopo `repo` dentro da interface do aplicativo.
 
 ---
 *Developed with precision by **Rabelus Lab**.*

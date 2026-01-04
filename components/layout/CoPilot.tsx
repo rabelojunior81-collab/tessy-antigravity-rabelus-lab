@@ -12,20 +12,22 @@ import ControllersModal from '../modals/ControllersModal';
 import MarkdownShareModal from '../modals/MarkdownShareModal';
 import FilePreview from '../FilePreview';
 import { useViewer } from '../../hooks/useViewer';
+import { TypewriterText } from './TypewriterText';
 
 const CoPilot: React.FC = () => {
-  const { 
-    currentConversation, 
-    isLoading, 
-    inputText, 
-    setInputText, 
-    sendMessage, 
+  const {
+    currentConversation,
+    isLoading,
+    inputText,
+    setInputText,
+    sendMessage,
     newConversation,
     loadConversation,
     attachedFiles,
     addFile,
     removeFile,
-    isUploadingFiles
+    isUploadingFiles,
+    sendFeedback
   } = useChat();
 
   const { abrirViewer } = useViewer();
@@ -37,7 +39,7 @@ const CoPilot: React.FC = () => {
   const [isControllersModalOpen, setIsControllersModalOpen] = useState(false);
   const [isMarkdownModalOpen, setIsMarkdownModalOpen] = useState(false);
   const [selectedMarkdownContent, setSelectedMarkdownContent] = useState('');
-  
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -84,7 +86,7 @@ const CoPilot: React.FC = () => {
 
   const toolbarItems = [
     { icon: FileText, label: 'Biblioteca', onClick: () => abrirViewer('library'), disabled: false },
-    { icon: Wand2, label: 'Otimizar', onClick: () => setIsOptimizeModalOpen(true), disabled: !inputText.trim() },
+    { icon: Wand2, label: 'Otimizar', onClick: () => setIsOptimizeModalOpen(true), disabled: false },
     { icon: Save, label: 'Salvar', onClick: () => setIsSaveModalOpen(true), disabled: !hasMessages },
     { icon: Share2, label: 'Partilhar', onClick: () => setIsShareModalOpen(true), disabled: !hasMessages },
     { icon: RotateCcw, label: 'Reiniciar', onClick: () => setIsRestartModalOpen(true), disabled: !hasMessages, color: 'text-red-400' },
@@ -98,7 +100,7 @@ const CoPilot: React.FC = () => {
           <div className={`w-1.5 h-1.5 ${isLoading ? 'bg-accent-secondary animate-pulse shadow-[0_0_8px_#4a9eff]' : 'bg-accent-primary'}`}></div>
           <h2 className="text-xs font-medium text-text-primary tracking-wide">Tessy Assistant</h2>
         </div>
-        <button 
+        <button
           onClick={() => setIsControllersModalOpen(true)}
           className="p-1.5 text-text-tertiary hover:text-accent-primary transition-all active:scale-95"
           title="Parâmetros"
@@ -124,58 +126,94 @@ const CoPilot: React.FC = () => {
               </div>
 
               <div className="flex flex-col items-start gap-2">
-                <div className="flex items-center gap-2 px-1">
-                   <ChevronDown size={10} className="text-text-tertiary" />
-                   <span className="text-[9px] font-normal text-text-tertiary uppercase tracking-wide opacity-50">Nucleus Interpretation Active</span>
+
+                <div className="w-full bg-bg-tertiary/20 border border-border-visible p-5 prose max-w-none shadow-sm font-normal min-h-[60px]">
+                  {(() => {
+                    const isLast = turn.id === currentConversation?.turns[currentConversation.turns.length - 1].id;
+                    if (isLast && isLoading && !turn.tessyResponse) {
+                      return (
+                        <div className="flex items-center gap-3 animate-pulse">
+                          <div className="w-2 h-2 bg-accent-primary rounded-full"></div>
+                          <span className="text-sm text-text-secondary">Processando...</span>
+                        </div>
+                      );
+                    }
+
+                    if (!turn.tessyResponse) return null;
+
+                    const markdownRenderer = (content: string) => (
+                      <ReactMarkdown
+                        components={{
+                          code({ node, inline, className, children, ...props }: any) {
+                            const match = /language-(\w+)/.exec(className || '');
+                            return !inline && match ? (
+                              <SyntaxHighlighter style={prismTheme as any} language={match[1]} PreTag="div" {...props} customStyle={{ margin: '1rem 0', padding: '16px', background: '#050505', borderRadius: '4px', border: '1px solid #27272a', fontSize: '12px' }}>
+                                {String(children).replace(/\n$/, '')}
+                              </SyntaxHighlighter>
+                            ) : (
+                              <code className="bg-bg-elevated px-1 text-accent-primary font-normal" {...props}>{children}</code>
+                            );
+                          }
+                        }}
+                      >
+                        {content}
+                      </ReactMarkdown>
+                    );
+
+                    // Apenas aplica o efeito de digitação na última resposta recebida
+                    if (isLast && !isLoading) {
+                      const handleAutoScroll = () => {
+                        if (scrollRef.current) {
+                          scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'auto' });
+                        }
+                      };
+                      return (
+                        <TypewriterText
+                          text={turn.tessyResponse}
+                          onTick={handleAutoScroll}
+                          renderFinal={markdownRenderer}
+                        />
+                      );
+                    }
+
+                    // Respostas anteriores já finalizadas renderizam diretamente
+                    return markdownRenderer(turn.tessyResponse);
+                  })()}
+
+                  {turn.tessyResponse && (
+                    <div className="flex items-center justify-end gap-3 mt-6 border-t border-border-subtle pt-4">
+                      <button
+                        onClick={() => copyToClipboard(turn.tessyResponse)}
+                        className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
+                        title="Copiar texto"
+                      >
+                        <Copy size={14} />
+                      </button>
+                      <button
+                        onClick={() => openMarkdownModal(turn.tessyResponse)}
+                        className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
+                        title="Compartilhar em Markdown"
+                      >
+                        <Download size={14} />
+                      </button>
+                      <button
+                        onClick={() => sendFeedback(turn.id, 'positive')}
+                        className={`p-1 transition-all ${turn.feedback === 'positive' ? 'text-accent-primary scale-110' : 'text-text-tertiary hover:text-accent-primary hover:scale-110 active:scale-90'}`}
+                        title="Feedback positivo"
+                      >
+                        <ThumbsUp size={14} fill={turn.feedback === 'positive' ? "currentColor" : "none"} />
+                      </button>
+                      <button
+                        onClick={() => sendFeedback(turn.id, 'negative')}
+                        className={`p-1 transition-all ${turn.feedback === 'negative' ? 'text-red-400 scale-110' : 'text-text-tertiary hover:text-red-400 hover:scale-110 active:scale-90'}`}
+                        title="Feedback negativo"
+                      >
+                        <ThumbsDown size={14} fill={turn.feedback === 'negative' ? "currentColor" : "none"} />
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <div className="w-full bg-bg-tertiary/20 border border-border-visible p-5 prose max-w-none shadow-sm font-normal">
-                  <ReactMarkdown
-                    components={{
-                      code({ node, inline, className, children, ...props }: any) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        return !inline && match ? (
-                          <SyntaxHighlighter style={prismTheme as any} language={match[1]} PreTag="div" {...props} customStyle={{ margin: '1rem 0', padding: '16px', background: '#0a1628', fontSize: '12px' }}>
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        ) : (
-                          <code className="bg-bg-elevated px-1 text-accent-primary font-normal" {...props}>{children}</code>
-                        );
-                      }
-                    }}
-                  >
-                    {turn.tessyResponse}
-                  </ReactMarkdown>
-                  
-                  <div className="flex items-center justify-end gap-3 mt-6 border-t border-border-subtle pt-4">
-                    <button 
-                      onClick={() => copyToClipboard(turn.tessyResponse)}
-                      className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
-                      title="Copiar texto"
-                    >
-                      <Copy size={14} />
-                    </button>
-                    <button 
-                      onClick={() => openMarkdownModal(turn.tessyResponse)}
-                      className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
-                      title="Compartilhar em Markdown"
-                    >
-                      <Download size={14} />
-                    </button>
-                    <button 
-                      className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
-                      title="Feedback positivo"
-                    >
-                       <ThumbsUp size={14} />
-                    </button>
-                    <button 
-                      className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
-                      title="Feedback negativo"
-                    >
-                       <ThumbsDown size={14} />
-                    </button>
-                  </div>
-                </div>
-                
+
                 {turn.groundingChunks && turn.groundingChunks.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-2 px-1">
                     {turn.groundingChunks.map((chunk, idx) => chunk.web ? (
@@ -189,19 +227,13 @@ const CoPilot: React.FC = () => {
             </div>
           ))}
 
-          {isLoading && (
-            <div className="flex flex-col items-start gap-3 animate-pulse px-4">
-              <div className="w-[85%] h-3 bg-bg-tertiary/40 border border-border-visible"></div>
-              <div className="w-[65%] h-3 bg-bg-tertiary/40 border border-border-visible"></div>
-              <div className="w-[75%] h-3 bg-bg-tertiary/40 border border-border-visible"></div>
-            </div>
-          )}
+
         </div>
 
         <div className="px-4 pb-4 pt-1 bg-transparent shrink-0">
           <div className="px-1 pb-2 flex items-center gap-4 bg-transparent">
             {toolbarItems.map((item, idx) => (
-              <button 
+              <button
                 key={idx}
                 onClick={item.onClick}
                 disabled={item.disabled}
@@ -218,17 +250,17 @@ const CoPilot: React.FC = () => {
               <FilePreview files={attachedFiles} onRemove={removeFile} />
             </div>
           )}
-          
+
           <div className="flex items-end gap-3 bg-bg-tertiary/80 backdrop-blur-xl border border-border-visible p-2 focus-within:border-accent-primary transition-all shadow-xl">
-            <button 
-              onClick={() => fileInputRef.current?.click()} 
+            <button
+              onClick={() => fileInputRef.current?.click()}
               className="p-1 text-text-tertiary hover:text-accent-primary shrink-0 transition-colors"
               title="Anexar arquivo"
             >
               <Plus size={20} />
             </button>
             <input type="file" ref={fileInputRef} onChange={(e) => e.target.files && addFile(e.target.files[0])} className="hidden" />
-            
+
             <textarea
               ref={textareaRef}
               value={inputText}
@@ -237,8 +269,8 @@ const CoPilot: React.FC = () => {
               placeholder="Digite sua instrução..."
               className="flex-1 bg-transparent border-none outline-none text-text-primary text-sm font-normal resize-none min-h-[32px] py-1 leading-relaxed placeholder:text-text-tertiary/50 custom-scrollbar transition-[height] duration-200"
             />
-            
-            <button 
+
+            <button
               onClick={() => sendMessage()}
               disabled={isLoading || isUploadingFiles || (!inputText.trim() && attachedFiles.length === 0)}
               className={`p-1 transition-all ${(!inputText.trim() && attachedFiles.length === 0) ? 'text-text-tertiary opacity-20' : 'text-accent-primary hover:scale-110 active:scale-90'}`}
@@ -253,17 +285,17 @@ const CoPilot: React.FC = () => {
       <OptimizeModal isOpen={isOptimizeModalOpen} inputText={inputText} onClose={() => setIsOptimizeModalOpen(false)} onApply={setInputText} />
       <SaveModal isOpen={isSaveModalOpen} conversation={currentConversation} onClose={() => setIsSaveModalOpen(false)} onSuccess={loadConversation} />
       <ShareModal isOpen={isShareModalOpen} conversation={currentConversation} onClose={() => setIsShareModalOpen(false)} />
-      <RestartModal 
-        isOpen={isRestartModalOpen} 
-        onClose={() => setIsRestartModalOpen(false)} 
-        onConfirm={() => newConversation(true)} 
-        onSave={() => { setIsRestartModalOpen(false); setIsSaveModalOpen(true); }} 
+      <RestartModal
+        isOpen={isRestartModalOpen}
+        onClose={() => setIsRestartModalOpen(false)}
+        onConfirm={() => newConversation(true)}
+        onSave={() => { setIsRestartModalOpen(false); setIsSaveModalOpen(true); }}
       />
       <ControllersModal isOpen={isControllersModalOpen} onClose={() => setIsControllersModalOpen(false)} />
-      <MarkdownShareModal 
-        isOpen={isMarkdownModalOpen} 
+      <MarkdownShareModal
+        isOpen={isMarkdownModalOpen}
         content={selectedMarkdownContent}
-        onClose={() => setIsMarkdownModalOpen(false)} 
+        onClose={() => setIsMarkdownModalOpen(false)}
       />
     </aside>
   );

@@ -9,17 +9,17 @@ const PendingActionsModal: React.FC = () => {
   if (!isActionsModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setIsActionsModalOpen(false)}>
+    <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setIsActionsModalOpen(false)}>
       <div className="w-full max-w-2xl bg-bg-secondary border border-border-visible flex flex-col shadow-2xl animate-zoom-in overflow-hidden" onClick={e => e.stopPropagation()}>
-        
+
         {/* Header minimalista */}
         <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
             <ShieldAlert className="text-accent-primary" size={14} />
             <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-text-primary">Aprovação de Operações Críticas</h2>
           </div>
-          <button 
-            onClick={() => setIsActionsModalOpen(false)} 
+          <button
+            onClick={() => setIsActionsModalOpen(false)}
             className="p-1 text-text-tertiary hover:text-text-primary transition-all"
             disabled={isLoading}
           >
@@ -50,7 +50,7 @@ const PendingActionsModal: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button 
+                    <button
                       onClick={() => rejectAction(action.id)}
                       disabled={isLoading}
                       className="p-1.5 bg-red-900/10 text-red-400 border border-red-900/20 hover:bg-red-900/20 transition-all disabled:opacity-30"
@@ -58,7 +58,7 @@ const PendingActionsModal: React.FC = () => {
                     >
                       <Trash2 size={14} />
                     </button>
-                    <button 
+                    <button
                       onClick={() => approveAction(action.id)}
                       disabled={isLoading}
                       className="px-4 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
@@ -67,12 +67,12 @@ const PendingActionsModal: React.FC = () => {
                         <Loader2 size={14} className="animate-spin" />
                       ) : (
                         <Check size={14} strokeWidth={3} />
-                      )} 
+                      )}
                       Aprovar
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="p-3 bg-bg-primary/40 border border-border-visible/30 text-[11px] font-mono text-text-secondary whitespace-pre-wrap leading-relaxed">
                   {action.description}
                 </div>
@@ -83,8 +83,8 @@ const PendingActionsModal: React.FC = () => {
 
         <div className="px-4 py-2 border-t border-border-visible bg-bg-primary/80 text-[10px] text-text-tertiary flex items-center justify-between">
           <span className="uppercase tracking-widest font-bold opacity-40">Pendências: {pendingActions.length}</span>
-          <button 
-            onClick={() => setIsActionsModalOpen(false)} 
+          <button
+            onClick={() => setIsActionsModalOpen(false)}
             className="text-accent-primary font-bold uppercase tracking-widest hover:underline disabled:opacity-30"
             disabled={isLoading}
           >

@@ -6,6 +6,7 @@ import { getSystemInstruction, OPTIMIZATION_INSTRUCTION } from "./prompts";
 import { Factor, AttachedFile, OptimizationResult, ConversationTurn, GroundingChunk } from "../../types";
 import * as githubService from "../githubService";
 import { db, generateUUID } from '../dbService';
+import { ContextManager } from './contextManager';
 
 interface GenerateResponse {
   text: string;
@@ -63,23 +64,37 @@ async function executeFunctionCall(fc: { name: string; args: any }, githubToken:
   }
 }
 
+const generateWithRetry = async (model: any, params: any, retries = 3, delay = 2000): Promise<any> => {
+  try {
+    return await model.generateContent(params);
+  } catch (error: any) {
+    if (retries > 0 && (error.status === 429 || error.message?.includes('429') || error.message?.includes('quota'))) {
+      console.warn(`[Gemini Service] Rate Limit hit (429). Retrying in ${delay}ms... (${retries} attempts left)`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return generateWithRetry(model, params, retries - 1, delay * 2);
+    }
+    throw error;
+  }
+};
+
 export const interpretIntent = async (
-  text: string, 
-  files: AttachedFile[] = [], 
+  geminiToken: string,
+  text: string,
+  files: AttachedFile[] = [],
   history: ConversationTurn[] = []
 ): Promise<any> => {
   if (!text.trim() && files.length === 0) return null;
 
   try {
-    const ai = getAIClient();
+    const ai = getAIClient(geminiToken);
     let contextStr = history.length > 0 ? "CONTEXTO DA CONVERSA:\n" + history.slice(-3).map(t => `Usuário: ${t.userMessage}\nTessy: ${t.tessyResponse.slice(0, 150)}...`).join("\n\n") + "\n\n" : "";
 
     const parts: any[] = [{ text: `${contextStr}Analise a seguinte nova entrada do usuário e extraia a intenção estruturada: "${text}"` }];
     files.forEach(file => parts.push({ inlineData: { mimeType: file.mimeType, data: file.data } }));
 
-    const response = await ai.models.generateContent({
+    const response = await generateWithRetry(ai.models, {
       model: MODEL_FLASH,
-      contents: { parts },
+      contents: [{ role: 'user', parts }],
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -102,9 +117,13 @@ export const interpretIntent = async (
   }
 };
 
+
+
 export const applyFactorsAndGenerate = async (
-  interpretation: any, 
-  factors: Factor[], 
+  geminiToken: string,
+  interpretation: any,
+  userInput: string,
+  factors: Factor[],
   files: AttachedFile[] = [],
   history: ConversationTurn[] = [],
   groundingEnabled: boolean = true,
@@ -114,7 +133,7 @@ export const applyFactorsAndGenerate = async (
   if (!interpretation) return { text: "Interpretação inválida." };
 
   try {
-    const ai = getAIClient();
+    const ai = getAIClient(geminiToken);
     const currentDateStr = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
     const systemInstruction = getSystemInstruction(currentDateStr, repoPath, groundingEnabled, factors);
     const modelChoice = factors.find(f => f.id === 'model')?.value || MODEL_FLASH;
@@ -125,7 +144,7 @@ export const applyFactorsAndGenerate = async (
       contents.push({ role: 'model', parts: [{ text: turn.tessyResponse }] });
     });
 
-    const parts: any[] = [{ text: `Execute a tarefa: ${interpretation.task} sobre ${interpretation.subject}. Detalhes: ${interpretation.details || ''}` }];
+    const parts: any[] = [{ text: userInput }];
     files.forEach(file => parts.push({ inlineData: { mimeType: file.mimeType, data: file.data } }));
     contents.push({ role: 'user', parts });
 
@@ -133,7 +152,7 @@ export const applyFactorsAndGenerate = async (
     if (repoPath) tools.push(githubTools);
     else if (groundingEnabled) tools.push({ googleSearch: {} });
 
-    let response = await ai.models.generateContent({
+    let response = await generateWithRetry(ai.models, {
       model: modelChoice,
       contents: contents,
       config: { systemInstruction, temperature: 0.7, tools },
@@ -142,32 +161,49 @@ export const applyFactorsAndGenerate = async (
     let iteration = 0;
     const githubToken = await githubService.getGitHubToken();
 
-    while (response.functionCalls && response.functionCalls.length > 0 && iteration < 5) {
+    while (response.functionCalls && response.functionCalls.length > 0 && iteration < 10) {
       iteration++;
+      console.log(`[Tessy Core] Interação de Ferramenta #${iteration}:`, response.functionCalls.map(f => f.name).join(', '));
+
       contents.push(response.candidates[0].content);
       const functionResponses = await Promise.all(response.functionCalls.map(async (fc) => ({
         id: fc.id,
-        name: fc.name,
-        response: (githubToken && repoPath) ? await executeFunctionCall(fc, githubToken, repoPath) : { success: false, error: "Configuração ausente." }
+        name: fc.name || '',
+        response: (githubToken && repoPath) ? await executeFunctionCall(fc as any, githubToken, repoPath) : { success: false, error: "Configuração ausente." }
       })));
 
-      contents.push({ parts: functionResponses.map(fr => ({ functionResponse: fr })) });
-      response = await ai.models.generateContent({
+      contents.push({ role: 'function', parts: functionResponses.map(fr => ({ functionResponse: fr })) });
+
+      const nextParams = {
         model: modelChoice,
         contents: contents,
-        config: { systemInstruction, temperature: 0.7, tools },
-      });
+        config: {
+          systemInstruction: systemInstruction + "\nIMPORTANTE: Forneça agora uma resposta textual para o usuário baseada nos dados obtidos.",
+          temperature: 0.7,
+          tools
+        },
+      };
+
+      response = await generateWithRetry(ai.models, nextParams);
     }
 
-    if (!response.text || response.text.trim() === '') {
+    let finalOutput = response.text || "";
+    if (!finalOutput && response.candidates?.[0]?.content?.parts) {
+      finalOutput = response.candidates[0].content.parts
+        .filter(p => 'text' in p)
+        .map(p => (p as any).text)
+        .join("\n");
+    }
+
+    if (!finalOutput || finalOutput.trim() === '') {
       return {
-        text: "Desculpe, não consegui processar sua solicitação completamente. O modelo retornou apenas chamadas de função sem resposta textual. Por favor, tente reformular sua pergunta de forma mais específica.",
+        text: "Desculpe, não consegui processar sua solicitação completamente.",
         groundingChunks: response.candidates?.[0]?.groundingMetadata?.groundingChunks
       };
     }
 
     return {
-      text: response.text || "Sem resposta.",
+      text: finalOutput,
       groundingChunks: response.candidates?.[0]?.groundingMetadata?.groundingChunks
     };
   } catch (error) {
@@ -176,9 +212,9 @@ export const applyFactorsAndGenerate = async (
   }
 };
 
-export const optimizePrompt = async (prompt: string): Promise<OptimizationResult> => {
+export const optimizePrompt = async (geminiToken: string, prompt: string): Promise<OptimizationResult> => {
   try {
-    const ai = getAIClient();
+    const ai = getAIClient(geminiToken);
     const response = await ai.models.generateContent({
       model: MODEL_PRO,
       contents: `Analise este prompt: "${prompt}"`,

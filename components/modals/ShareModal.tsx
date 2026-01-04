@@ -47,7 +47,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, conversation }
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
+    <div className={`fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
       <div className={`w-full max-w-sm bg-bg-secondary/95 backdrop-blur-xl border border-border-visible flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
         <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -74,8 +74,8 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, conversation }
               <div className="py-4 bg-bg-primary border border-accent-primary/30 shadow-inner">
                 <span className="text-4xl font-bold text-text-primary font-mono tracking-[0.3em] uppercase">{code}</span>
               </div>
-              <button 
-                onClick={() => { navigator.clipboard.writeText(code); setIsCopied(true); setTimeout(() => setIsCopied(false), 2000); }} 
+              <button
+                onClick={() => { navigator.clipboard.writeText(code); setIsCopied(true); setTimeout(() => setIsCopied(false), 2000); }}
                 className={`w-full py-0.5 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-4 shadow-lg ${isCopied ? 'bg-accent-subtle/40 text-accent-primary border border-accent-primary' : 'bg-accent-primary hover:bg-accent-secondary text-white'}`}
               >
                 {isCopied ? <Check size={20} strokeWidth={3} /> : <Copy size={20} />} {isCopied ? 'COPIADO' : 'COPIAR CÓDIGO'}

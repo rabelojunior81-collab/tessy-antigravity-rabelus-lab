@@ -1,10 +1,13 @@
 # Changelog - Tessy Alpha
 
+## [v3.2.3-STABLE] - 2026-01-04
+### Estabilização e Protocolo de Segurança (TSP)
+- **Reversão de Experimento**: Removida implementação instável de Chain of Thought e Streaming (arquivados em `docs/research/`).
+- **Implementação do TSP**: Instituído o *Tessy Safety Protocol* para versionamento agêntico e gestão de riscos.
+- **Cadência Visual**: Preparação da base para efeito typewriter humanizado.
+- **Higiene de Dependências**: Limpeza de referências órfãs e componentes experimentais falhos.
+
 ## [v3.2.1-STABLE] - 2025-02-24
-### Limpeza de Sistema
-- **Expurgo Físico Concluído**: Remoção definitiva dos arquivos stub legados (`Canvas.tsx`, `FactorPanel.tsx`, `Controllers.tsx`, `HistorySidebar.tsx`, `ProjectSwitcher.tsx`, `TemplateLibraryModal.tsx`).
-- **Integridade de Referências**: Verificação completa do grafo de dependências para garantir zero referências a componentes obsoletos.
-- **Otimização de Build**: Redução final do tamanho do bundle após remoção de código morto.
 
 ## [v3.1.5-POLISH] - 2024-05-30
 ### Refinement & Production Prep

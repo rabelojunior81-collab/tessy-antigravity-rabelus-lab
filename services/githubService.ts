@@ -1,10 +1,9 @@
 
 import { GitHubRepo, GitHubCommit, GitHubIssue, GitHubFile, PendingAction, GitHubErrorCode, GitHubErrorDetail } from '../types';
 import { db, generateUUID } from './dbService';
+import { encryptData, decryptData, EncryptedData } from './cryptoService';
 
 const GITHUB_API_BASE = 'https://api.github.com';
-const ENCRYPTION_PWD = 'tessy-nucleus-lab-internal-v1';
-const PBKDF2_SALT = new Uint8Array([12, 45, 78, 90, 123, 156, 189, 210, 15, 67, 98, 111, 234, 54, 87, 12]);
 
 // Listener for pending actions queue
 let queueListener: ((action: PendingAction) => void) | null = null;
@@ -61,7 +60,7 @@ function validateBranchName(branch: string): string {
       suggestedAction: 'Insira um nome válido para a branch.'
     });
   }
-  
+
   const protectedBranches = ['HEAD', 'main', 'master'];
   if (protectedBranches.includes(trimmed)) {
     throw new GitHubError({
@@ -75,12 +74,12 @@ function validateBranchName(branch: string): string {
   // Regex rules: alphanumeric, -, _, /; no leading/trailing /; no double //
   const branchRegex = /^(?!.*[\/]{2})[a-zA-Z0-9\-_]+(?:\/[a-zA-Z0-9\-_]+)*$/;
   if (!branchRegex.test(trimmed)) {
-     throw new GitHubError({
-       code: 'VALIDATION_ERROR',
-       message: 'Nome de branch inválido.',
-       status: 400,
-       suggestedAction: 'Use apenas letras, números, "-", "_" e "/". Não comece ou termine com "/".'
-     });
+    throw new GitHubError({
+      code: 'VALIDATION_ERROR',
+      message: 'Nome de branch inválido.',
+      status: 400,
+      suggestedAction: 'Use apenas letras, números, "-", "_" e "/". Não comece ou termine com "/".'
+    });
   }
 
   return trimmed;
@@ -236,78 +235,12 @@ async function handleResponse(response: Response) {
   return response.json();
 }
 
-// --- Encryption Helpers ---
-
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  let binary = '';
-  const bytes = new Uint8Array(buffer);
-  for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return window.btoa(binary);
+async function encryptToken(token: string): Promise<EncryptedData> {
+  return encryptData(token);
 }
 
-function base64ToArrayBuffer(base64: string): ArrayBuffer {
-  const binaryString = window.atob(base64);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
-
-async function generateEncryptionKey(): Promise<CryptoKey> {
-  const enc = new TextEncoder();
-  const baseKey = await window.crypto.subtle.importKey(
-    'raw',
-    enc.encode(ENCRYPTION_PWD),
-    'PBKDF2',
-    false,
-    ['deriveKey']
-  );
-  return window.crypto.subtle.deriveKey(
-    {
-      name: 'PBKDF2',
-      salt: PBKDF2_SALT,
-      iterations: 100000,
-      hash: 'SHA-256'
-    },
-    baseKey,
-    { name: 'AES-GCM', length: 256 },
-    false,
-    ['encrypt', 'decrypt']
-  );
-}
-
-async function encryptToken(token: string): Promise<{ ciphertext: string; iv: string; salt: string }> {
-  const key = await generateEncryptionKey();
-  const iv = window.crypto.getRandomValues(new Uint8Array(12));
-  const enc = new TextEncoder();
-  const ciphertext = await window.crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv },
-    key,
-    enc.encode(token)
-  );
-
-  return {
-    ciphertext: arrayBufferToBase64(ciphertext),
-    iv: arrayBufferToBase64(iv.buffer),
-    salt: arrayBufferToBase64(PBKDF2_SALT.buffer)
-  };
-}
-
-async function decryptToken(encryptedData: { ciphertext: string; iv: string; salt: string }): Promise<string> {
-  const key = await generateEncryptionKey();
-  const ciphertext = base64ToArrayBuffer(encryptedData.ciphertext);
-  const iv = new Uint8Array(base64ToArrayBuffer(encryptedData.iv));
-  
-  const decrypted = await window.crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv },
-    key,
-    ciphertext
-  );
-  
-  return new TextDecoder().decode(decrypted);
+async function decryptToken(encryptedData: EncryptedData): Promise<string> {
+  return decryptData(encryptedData);
 }
 
 // --- Public Token Management ---
@@ -331,7 +264,7 @@ export const getGitHubToken = async (): Promise<string | null> => {
       if (secret.value.startsWith('ghp_')) return secret.value;
       return null;
     }
-    
+
     return null;
   } catch (err) {
     console.error('Falha na recuperação/descriptografia do token:', err);
@@ -342,10 +275,10 @@ export const getGitHubToken = async (): Promise<string | null> => {
 export const setGitHubToken = async (token: string): Promise<void> => {
   try {
     const encrypted = await encryptToken(token);
-    await db.secrets.put({ 
-      id: 'github-token', 
-      key: 'token', 
-      value: JSON.stringify(encrypted) 
+    await db.secrets.put({
+      id: 'github-token',
+      key: 'token',
+      value: JSON.stringify(encrypted)
     });
   } catch (err) {
     console.error('Falha na criptografia do token:', err);
@@ -400,7 +333,7 @@ export const fetchFileContent = async (token: string, repoPath: string, filePath
     headers: getHeaders(token)
   });
   const data = await handleResponse(response);
-  
+
   const decodeContent = (content: string, encoding: string) => {
     if (encoding === 'base64') {
       try {
@@ -429,7 +362,7 @@ export const fetchDirectoryContents = async (token: string, repoPath: string, di
     headers: getHeaders(token)
   });
   const data = await handleResponse(response);
-  
+
   if (!Array.isArray(data)) {
     throw new GitHubError({
       code: 'VALIDATION_ERROR',
@@ -454,7 +387,7 @@ export const searchCode = async (token: string, repoPath: string, query: string)
     headers: getHeaders(token)
   });
   const data = await handleResponse(response);
-  
+
   return data.items.map((item: any) => ({
     path: item.path,
     name: item.name,
@@ -478,7 +411,7 @@ export const fetchCommitDetails = async (token: string, repoPath: string, sha: s
     headers: getHeaders(token)
   });
   const data = await handleResponse(response);
-  
+
   return {
     sha: data.sha,
     message: data.commit.message,
@@ -499,7 +432,7 @@ export const fetchReadme = async (token: string, repoPath: string): Promise<stri
     headers: getHeaders(token)
   });
   const data = await handleResponse(response);
-  
+
   if (data.encoding === 'base64') {
     return atob(data.content.replace(/\s/g, ''));
   }
@@ -550,7 +483,7 @@ export const performCreateBranch = async (token: string, repoPath: string, branc
 
 export const createBranch = async (token: string, repoPath: string, branchName: string, fromBranch: string): Promise<any> => {
   const validatedBranch = validateBranchName(branchName);
-  
+
   const action: PendingAction = {
     id: generateUUID(),
     type: 'branch',
@@ -697,6 +630,6 @@ export const formatRelativeDate = (dateString: string): string => {
   if (diffInSeconds < 3600) return `há ${Math.floor(diffInSeconds / 60)} minutos`;
   if (diffInSeconds < 86400) return `há ${Math.floor(diffInSeconds / 3600)} horas`;
   if (diffInSeconds < 2592000) return `há ${Math.floor(diffInSeconds / 86400)} dias`;
-  
+
   return date.toLocaleDateString('pt-BR');
 };

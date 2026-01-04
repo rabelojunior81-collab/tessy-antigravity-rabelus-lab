@@ -52,7 +52,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ isOpen, onClose, projectId,
   };
 
   return (
-    <div className={`fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
+    <div className={`fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
       <div className={`w-full max-w-md bg-bg-secondary border border-border-visible flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
         <div className="px-6 py-4 border-b border-border-subtle bg-bg-primary flex items-center justify-between">
           <h2 className="text-[12px] font-bold uppercase tracking-[0.2em] text-text-primary">{projectId ? 'Editar Protocolo' : 'Novo Protocolo'}</h2>

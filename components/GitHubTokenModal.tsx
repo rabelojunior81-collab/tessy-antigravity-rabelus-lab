@@ -32,11 +32,11 @@ const GitHubTokenModal: React.FC<GitHubTokenModalProps> = ({ isOpen, onClose, on
       await setGitHubToken(token.trim());
       onSuccess();
       handleClose();
-    } catch (err) {}
+    } catch (err) { }
   };
 
   return (
-    <div className={`fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
+    <div className={`fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
       <div className={`w-full max-w-sm bg-bg-secondary border border-border-visible flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
         <div className="px-6 py-4 border-b border-border-subtle bg-bg-primary flex items-center justify-between">
           <div className="flex items-center gap-2">
