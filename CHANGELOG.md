@@ -1,5 +1,11 @@
 # Changelog - Tessy Alpha
 
+## [v3.2.4-HUMANIZED] - 2026-01-04
+### UX & Cadência
+- **Cadência Visual**: Efeito Typewriter implementado (25ms/char) para resposta progressiva.
+- **Auto-Scroll**: Chat acompanha automaticamente a geração de texto.
+- **TSP**: Ciclo completo de Feature Branch -> Main executado com sucesso.
+
 ## [v3.2.3-STABLE] - 2026-01-04
 ### Estabilização e Protocolo de Segurança (TSP)
 - **Reversão de Experimento**: Removida implementação instável de Chain of Thought e Streaming (arquivados em `docs/research/`).
