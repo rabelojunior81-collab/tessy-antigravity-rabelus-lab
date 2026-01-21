@@ -12,29 +12,24 @@ const OUTPUT_DIR = path.join(__dirname, '../.agent/docs/ecosystem');
 
 const targets = [
     {
-        name: 'Gemini-JS-SDK-Core',
-        url: 'https://googleapis.github.io/js-genai/release_docs/index.html',
-        waitFor: '.container'
+        name: 'Gemini-JS-SDK',
+        url: 'https://github.com/googleapis/js-genai/blob/main/README.md',
+        waitFor: 'article'
     },
     {
-        name: 'MCP-Introduction',
-        url: 'https://modelcontextprotocol.io/introduction',
+        name: 'MCP-Intro',
+        url: 'https://modelcontextprotocol.io/docs/getting-started/intro',
         waitFor: 'main'
     },
     {
-        name: 'Z-AI-GLM-4.7',
-        url: 'https://aimlapi.com/models/zhipu/glm-4.7', // Pág de specs que costuma ter texto
-        waitFor: 'body'
-    },
-    {
-        name: 'Grok-xAI-Docs',
-        url: 'https://x.ai/api',
-        waitFor: 'body'
+        name: 'Google-Identity-OAuth',
+        url: 'https://developers.google.com/identity/gsi/web/guides/display-button',
+        waitFor: 'article'
     }
 ];
 
 async function updateDocs() {
-    console.log('🚀 [Auto-Doc Engine v2.0] Iniciando captura profunda via Puppeteer...');
+    console.log('🚀 [Auto-Doc Engine v3.2] Iniciando captura robusta via Puppeteer...');
 
     if (!fs.existsSync(OUTPUT_DIR)) {
         fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -48,7 +43,7 @@ async function updateDocs() {
     const indexContent = [
         '# 📚 Ecossistema de Documentação (Rabelus Lab)',
         '',
-        'Repositório de conhecimento profundo, capturado com renderização JS completa via Puppeteer.',
+        'Repositório de conhecimento profundo, capturado com renderização JS completa e limpeza cirúrgica.',
         '',
         '## 📑 Documentos Sincronizados',
         ''
@@ -57,20 +52,60 @@ async function updateDocs() {
     for (const target of targets) {
         const page = await browser.newPage();
         try {
-            console.log(`📥 Capturando (Deep): ${target.name}...`);
+            console.log(`📥 Capturando: ${target.name}...`);
 
-            // UA de desktop real para evitar 403 em alguns sites
             await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
             await page.goto(target.url, { waitUntil: 'networkidle2', timeout: 60000 });
 
             if (target.waitFor) {
-                await page.waitForSelector(target.waitFor, { timeout: 10000 }).catch(() => null);
+                await page.waitForSelector(target.waitFor, { timeout: 15000 }).catch(() => null);
+                // Aguarda um pouco mais para garantir hidratação completa
+                await new Promise(r => setTimeout(r, 2000));
             }
 
-            // Extrai o conteúdo renderizado
-            const renderedHtml = await page.content();
-            const markdown = turndownService.turndown(renderedHtml);
+            // Extração Cirúrgica: Remove o que atrapalha, mantém o que informa
+            const content = await page.evaluate((selector) => {
+                const root = (selector ? document.querySelector(selector) : null) || document.body;
+                const clone = root.cloneNode(true);
+
+                // 1. Remove tags indesejadas
+                const blacklist = [
+                    'script', 'style', 'nav', 'footer', 'header', 'aside',
+                    'noscript', 'template', 'svg', 'iframe', 'button', 'input',
+                    '.ad', '.ads', '.sidebar', '#sidebar', '.menu', '.navbar',
+                    '.cookie-banner', '.social-share', '.newsletter-signup',
+                    '[aria-hidden="true"]', '[style*="display: none"]'
+                ];
+
+                blacklist.forEach(sel => {
+                    clone.querySelectorAll(sel).forEach(el => el.remove());
+                });
+
+                // 2. Limpa atributos de todos os elementos restantes
+                const allowedAttrs = ['href', 'src', 'alt', 'title', 'id'];
+                clone.querySelectorAll('*').forEach(el => {
+                    const attrs = el.attributes;
+                    if (attrs) {
+                        for (let i = attrs.length - 1; i >= 0; i--) {
+                            const attrName = attrs[i].name;
+                            if (!allowedAttrs.includes(attrName)) {
+                                el.removeAttribute(attrName);
+                            }
+                        }
+                    }
+
+                    // 3. Remove blocos que parecem ser apenas JS/CSS vazado (heurística)
+                    const text = el.innerText || "";
+                    if (text.length > 50 && (text.includes('function(') || text.includes('var ') || text.includes('{--') || text.includes('self.__next'))) {
+                        el.remove();
+                    }
+                });
+
+                return clone.innerHTML;
+            }, target.waitFor);
+
+            const markdown = turndownService.turndown(content);
 
             const filePath = path.join(OUTPUT_DIR, `${target.name}.md`);
             const fileHeader = `---

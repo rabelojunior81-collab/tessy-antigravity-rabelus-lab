@@ -6,6 +6,7 @@ import HistoryViewer from '../components/viewers/HistoryViewer';
 import LibraryViewer from '../components/viewers/LibraryViewer';
 import ProjectsViewer from '../components/viewers/ProjectsViewer';
 import GitHubViewer from '../components/viewers/GitHubViewer';
+import FileExplorer from '../components/viewers/FileExplorer';
 import { RepositoryItem, Template } from '../types';
 
 interface UseViewerRouterProps {
@@ -32,26 +33,26 @@ export const useViewerRouter = ({
     switch (viewerAberto) {
       case 'history':
         return (
-          <HistoryViewer 
-            currentProjectId={currentProjectId} 
-            activeId={currentConversation?.id || ''} 
-            onLoad={(conv) => { 
-              loadConversation(conv); 
-              fecharViewer(); 
+          <HistoryViewer
+            currentProjectId={currentProjectId}
+            activeId={currentConversation?.id || ''}
+            onLoad={(conv) => {
+              loadConversation(conv);
+              fecharViewer();
               onProjectSelected(''); // Limpa seleção de visualização ao carregar conversa
-            }} 
+            }}
             onDelete={deleteConversation}
-            onNew={() => { 
-              onNewConversation(); 
-              fecharViewer(); 
+            onNew={() => {
+              onNewConversation();
+              fecharViewer();
               onProjectSelected('');
             }}
           />
         );
       case 'library':
         return (
-          <LibraryViewer 
-            currentProjectId={currentProjectId} 
+          <LibraryViewer
+            currentProjectId={currentProjectId}
             onSelectItem={(item) => {
               onLibraryItemSelected(item as any);
             }}
@@ -59,11 +60,11 @@ export const useViewerRouter = ({
         );
       case 'projects':
         return (
-          <ProjectsViewer 
-            currentProjectId={currentProjectId} 
-            onSwitch={(id) => { 
-              handleSwitchProject(id); 
-              fecharViewer(); 
+          <ProjectsViewer
+            currentProjectId={currentProjectId}
+            onSwitch={(id) => {
+              handleSwitchProject(id);
+              fecharViewer();
             }}
             onOpenModal={() => onOpenProjectModal()}
             onEditProject={(id) => onOpenProjectModal(id)}
@@ -72,20 +73,29 @@ export const useViewerRouter = ({
         );
       case 'github':
         return <GitHubViewer />;
+      case 'files':
+        return (
+          <FileExplorer
+            onFileSelect={(content, fileName, language) => {
+              // TODO: Integrate with editor/terminal
+              console.log(`Opened: ${fileName} (${language})`);
+            }}
+          />
+        );
       default:
         return null;
     }
   }, [
-    viewerAberto, 
-    currentProjectId, 
-    currentConversation, 
-    loadConversation, 
-    deleteConversation, 
-    fecharViewer, 
-    onNewConversation, 
-    onLibraryItemSelected, 
-    handleSwitchProject, 
-    onOpenProjectModal, 
+    viewerAberto,
+    currentProjectId,
+    currentConversation,
+    loadConversation,
+    deleteConversation,
+    fecharViewer,
+    onNewConversation,
+    onLibraryItemSelected,
+    handleSwitchProject,
+    onOpenProjectModal,
     onProjectSelected
   ]);
 

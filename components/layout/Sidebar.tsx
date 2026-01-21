@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Clock, Library, Folder, Github, Command } from 'lucide-react';
+import { Clock, Library, Folder, Github, Command, FolderOpen } from 'lucide-react';
 import { useViewer } from '../../hooks/useViewer';
 import { ViewerType, useLayoutContext } from '../../contexts/LayoutContext';
 import { useGitHub } from '../../contexts/GitHubContext';
@@ -12,6 +12,7 @@ const Sidebar: React.FC = () => {
 
   const items: { id: ViewerType; icon: React.FC<any>; label: string }[] = [
     { id: 'projects', icon: Folder, label: 'Projetos' },
+    { id: 'files', icon: FolderOpen, label: 'Arquivos Locais' },
     { id: 'history', icon: Clock, label: 'Histórico' },
     { id: 'library', icon: Library, label: 'Biblioteca' },
     { id: 'github', icon: Github, label: 'GitHub Sync' },

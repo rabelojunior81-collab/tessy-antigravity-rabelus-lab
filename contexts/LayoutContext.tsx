@@ -2,7 +2,7 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { Template, RepositoryItem } from '../types';
 
-export type ViewerType = 'history' | 'library' | 'projects' | 'controllers' | 'github' | null;
+export type ViewerType = 'history' | 'library' | 'projects' | 'controllers' | 'github' | 'files' | null;
 
 interface SelectedFile {
   path: string;

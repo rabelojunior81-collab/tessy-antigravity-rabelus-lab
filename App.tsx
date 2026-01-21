@@ -19,7 +19,8 @@ import GitHubTokenModal from './components/GitHubTokenModal';
 import GeminiTokenModal from './components/modals/GeminiTokenModal';
 import PendingActionsModal from './components/modals/PendingActionsModal';
 import VisualSettingsModal from './components/modals/VisualSettingsModal';
-import { Menu, Moon, Sun, X, Settings, Palette, BookOpen } from 'lucide-react';
+import AuthPanel from './components/modals/AuthPanel';
+import { Menu, Moon, Sun, X, Settings, Palette, BookOpen, Key } from 'lucide-react';
 import { VisualProvider, useVisual } from './contexts/VisualContext';
 import AutoDocModal from './components/modals/AutoDocModal';
 
@@ -48,6 +49,7 @@ const AppContent: React.FC = () => {
   const { setIsVisualModalOpen } = useVisual();
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
   const [isAutoDocModalOpen, setIsAutoDocModalOpen] = useState(false);
+  const [isAuthPanelOpen, setIsAuthPanelOpen] = useState(false);
 
   const {
     currentProjectId,
@@ -174,11 +176,11 @@ const AppContent: React.FC = () => {
           </button>
 
           <button
-            onClick={() => setIsGeminiModalOpen(true)}
-            className="w-8 h-8 flex items-center justify-center glass-button text-glass-secondary"
-            title="Configurar Gemini"
+            onClick={() => setIsAuthPanelOpen(true)}
+            className="w-8 h-8 flex items-center justify-center glass-button text-glass-accent"
+            title="Central de Autenticação"
           >
-            <Settings size={16} />
+            <Key size={16} />
           </button>
         </div>
       </header>
@@ -223,6 +225,10 @@ const AppContent: React.FC = () => {
       <AutoDocModal
         isOpen={isAutoDocModalOpen}
         onClose={() => setIsAutoDocModalOpen(false)}
+      />
+      <AuthPanel
+        isOpen={isAuthPanelOpen}
+        onClose={() => setIsAuthPanelOpen(false)}
       />
     </div >
   );

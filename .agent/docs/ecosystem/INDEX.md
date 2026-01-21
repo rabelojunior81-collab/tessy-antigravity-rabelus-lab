@@ -1,25 +1,21 @@
 # 📚 Ecossistema de Documentação (Rabelus Lab)
 
-Repositório de conhecimento profundo, capturado com renderização JS completa via Puppeteer.
+Repositório de conhecimento profundo, capturado com renderização JS completa e limpeza cirúrgica.
 
 ## 📑 Documentos Sincronizados
 
-- **[Gemini-JS-SDK-Core](file:///C:/Dev_Room/.agent/docs/ecosystem/Gemini-JS-SDK-Core.md)**
-  - *Fonte:* [https://googleapis.github.io/js-genai/release_docs/index.html](https://googleapis.github.io/js-genai/release_docs/index.html)
-  - *Data:* 21/01/2026, 00:02:38
+- **[Gemini-JS-SDK](file:///C:/Dev_Room/.agent/docs/ecosystem/Gemini-JS-SDK.md)**
+  - *Fonte:* [https://github.com/googleapis/js-genai/blob/main/README.md](https://github.com/googleapis/js-genai/blob/main/README.md)
+  - *Data:* 21/01/2026, 00:16:40
 
-- **[MCP-Introduction](file:///C:/Dev_Room/.agent/docs/ecosystem/MCP-Introduction.md)**
-  - *Fonte:* [https://modelcontextprotocol.io/introduction](https://modelcontextprotocol.io/introduction)
-  - *Data:* 21/01/2026, 00:02:51
+- **[MCP-Intro](file:///C:/Dev_Room/.agent/docs/ecosystem/MCP-Intro.md)**
+  - *Fonte:* [https://modelcontextprotocol.io/docs/getting-started/intro](https://modelcontextprotocol.io/docs/getting-started/intro)
+  - *Data:* 21/01/2026, 00:17:00
 
-- **[Z-AI-GLM-4.7](file:///C:/Dev_Room/.agent/docs/ecosystem/Z-AI-GLM-4.7.md)**
-  - *Fonte:* [https://aimlapi.com/models/zhipu/glm-4.7](https://aimlapi.com/models/zhipu/glm-4.7)
-  - *Data:* 21/01/2026, 00:02:54
-
-- **[Grok-xAI-Docs](file:///C:/Dev_Room/.agent/docs/ecosystem/Grok-xAI-Docs.md)**
-  - *Fonte:* [https://x.ai/api](https://x.ai/api)
-  - *Data:* 21/01/2026, 00:02:56
+- **[Google-Identity-OAuth](file:///C:/Dev_Room/.agent/docs/ecosystem/Google-Identity-OAuth.md)**
+  - *Fonte:* [https://developers.google.com/identity/gsi/web/guides/display-button](https://developers.google.com/identity/gsi/web/guides/display-button)
+  - *Data:* 21/01/2026, 00:17:05
 
 
 ---
-*Gerado automaticamente pela Tessy Dev (Deep Engine) em 21/01/2026, 00:02:57*
+*Gerado automaticamente pela Tessy Dev (Deep Engine) em 21/01/2026, 00:17:06*

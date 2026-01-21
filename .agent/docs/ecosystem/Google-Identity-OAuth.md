@@ -1,238 +1,172 @@
 ---
 title: Google-Identity-OAuth
-url: https://developers.google.com/identity/protocols/oauth2
-updated: 2026-01-21T02:52:09.376Z
+url: https://developers.google.com/identity/gsi/web/guides/display-button
+updated: 2026-01-21T03:17:05.980Z
+method: Puppeteer Deep Scrape
 ---
 
-/\* Styles inlined from /identity/assets/css/identity.css \*/ :root { --blue-50: #e8f0fe; --green-50: #e6f4ea; --headline-font: 400 64px / 72px Google Sans, Noto Sans, Noto Sans JP, Noto Sans KR, Noto Naskh Arabic, Noto Sans Thai, Noto Sans Hebrew, Noto Sans Bengali, sans-serif; --overview-font: 400 18px / 24px Roboto, Noto Sans, Noto Sans JP, Noto Sans KR, Noto Naskh Arabic, Noto Sans Thai, Noto Sans Hebrew, Noto Sans Bengali, sans-serif; --shadow: #3c40434d; --text-color: #000; .color-scheme--dark { --blue-50: #132137; --green-50: #112719; --text-color: #fff; } } /\* \*\* Landing pages \*\* \* \* Colors \* add dgc-identity-background-\[color\] to a row to set the custom background \* color of the row. \*/ .dgc-identity-background-blue:not(\[background\]) { background-color: var(--blue-50); } .dgc-identity-background-green:not(\[background\]) { background-color: var(--green-50); } /\* overrides the default link styling of headings \*/ .dgc-identity .devsite-landing-row-item h3 a, .dgc-identity .devsite-landing-row-item\[background="grey"\] h3 a { color: var(--text-color); } /\* Spacing \* custom padding for landing pages on /identity \*/ .dgc-identity .devsite-landing-row-inner { padding: 0 80px; } .dgc-identity .devsite-landing-row-group { padding-bottom: 16px; } /\* Hero \* Custom hero layout for landing pages on /identity with increased heading size. \*/ .dgc-identity .dgc-identity-landing-page-hero .devsite-landing-row-item-media { grid-column: 9 / span 5; } .dgc-identity .dgc-identity-landing-page-hero .devsite-landing-row-item-description { grid-column: 1 / span 8; } .dgc-identity .dgc-identity-landing-page-hero .devsite-landing-row-item-description h3 { font: var(--headline-font); } /\* Cards \* Custom styling for cards on landing pages on /identity. \*/ .dgc-identity .dgc-identity-promo-cards .devsite-landing-row-item-media img { max-width: 240px; } .dgc-identity .dgc-identity-promo-cards .devsite-landing-row-item-description { padding-left: 24px; } /\* Quick links \* Custom component inspired by go/dac-prod/design-system/items/quick-links \* Displays a list of links vertically. \*/ .dgc-identity .dgc-identity-quick-links .devsite-landing-row-inner { gap: 140px; } .dgc-identity .dgc-identity-quick-links .devsite-landing-row-group { display: flex; flex-direction: column; } .dgc-identity .dgc-identity-quick-links .devsite-landing-row-item-description { align-items: center; } .dgc-identity .dgc-identity-quick-links .devsite-landing-row-item-description h3 { margin: 0; span { float: right; } } .dgc-identity .dgc-identity-quick-links .devsite-landing-row-item-icon-container { margin: 8px 32px 8px 0; } /\* \*\* Guides \*\* \*/ .dgc-identity-guides .devsite-landing-row-description { max-width: none; } /\* prevent video form going ful width on guides pages but remain centered \*/ .dgc-identity-guides .dgc-identity-video-container-small { grid-column: 4 / span 6; } /\* Icon+Copy component for docs (html) \* \* Apply dgc-identity-icon-copy-list to the list element containing icons and \* copy to remove the default list bullets and fix its items layout. \* Also requires the devsite built-in \`attempt-left\` and \`clear\` classes on the \* icon to position it correctly. \* \* example: \* \* <ul class="dgc-identity-icon-copy-list"> \* <li> \* <span class="material-symbols-outlined attempt-left clear"> \* code \* </span> \* <strong>Authorization codes</strong><br>256 bytes \* </li> \* ... \* https://screenshot.googleplex.com/NChjYgppNDAKbVE.png \*/ .dgc-identity-icon-copy-list { list-style-type: none; } .dgc-identity-icon-copy-list li { min-height: 24px; position: relative; span, img { position: absolute; margin-inline-start: -40px; } } /\* Fully clickable cards \* \* dgc-identity-fully-clickable class on an item makes the entire item \* clickable. Requires a URL and an empty span element with the class "overlay" \* to be placed within the item's heading. Example: \* \* - classname: dgc-identity-fully-clickable \* heading: Heading <span class="overlay"></span> \* descripiton: ... \* path: / \*/ .dgc-identity-fully-clickable .overlay { position: absolute; inset: 0; } /\* \* dgc-identity-large-text to be used on guides pages built with yaml to match \* font between row descriptions and item descriptions. \*/ .dgc-identity-large-text { font: var(--overview-font); } /\* Styles inlined from /identity/assets/css/identity.css \*/ :root { --blue-50: #e8f0fe; --green-50: #e6f4ea; --headline-font: 400 64px / 72px Google Sans, Noto Sans, Noto Sans JP, Noto Sans KR, Noto Naskh Arabic, Noto Sans Thai, Noto Sans Hebrew, Noto Sans Bengali, sans-serif; --overview-font: 400 18px / 24px Roboto, Noto Sans, Noto Sans JP, Noto Sans KR, Noto Naskh Arabic, Noto Sans Thai, Noto Sans Hebrew, Noto Sans Bengali, sans-serif; --shadow: #3c40434d; --text-color: #000; .color-scheme--dark { --blue-50: #132137; --green-50: #112719; --text-color: #fff; } } /\* \*\* Landing pages \*\* \* \* Colors \* add dgc-identity-background-\[color\] to a row to set the custom background \* color of the row. \*/ .dgc-identity-background-blue:not(\[background\]) { background-color: var(--blue-50); } .dgc-identity-background-green:not(\[background\]) { background-color: var(--green-50); } /\* overrides the default link styling of headings \*/ .dgc-identity .devsite-landing-row-item h3 a, .dgc-identity .devsite-landing-row-item\[background="grey"\] h3 a { color: var(--text-color); } /\* Spacing \* custom padding for landing pages on /identity \*/ .dgc-identity .devsite-landing-row-inner { padding: 0 80px; } .dgc-identity .devsite-landing-row-group { padding-bottom: 16px; } /\* Hero \* Custom hero layout for landing pages on /identity with increased heading size. \*/ .dgc-identity .dgc-identity-landing-page-hero .devsite-landing-row-item-media { grid-column: 9 / span 5; } .dgc-identity .dgc-identity-landing-page-hero .devsite-landing-row-item-description { grid-column: 1 / span 8; } .dgc-identity .dgc-identity-landing-page-hero .devsite-landing-row-item-description h3 { font: var(--headline-font); } /\* Cards \* Custom styling for cards on landing pages on /identity. \*/ .dgc-identity .dgc-identity-promo-cards .devsite-landing-row-item-media img { max-width: 240px; } .dgc-identity .dgc-identity-promo-cards .devsite-landing-row-item-description { padding-left: 24px; } /\* Quick links \* Custom component inspired by go/dac-prod/design-system/items/quick-links \* Displays a list of links vertically. \*/ .dgc-identity .dgc-identity-quick-links .devsite-landing-row-inner { gap: 140px; } .dgc-identity .dgc-identity-quick-links .devsite-landing-row-group { display: flex; flex-direction: column; } .dgc-identity .dgc-identity-quick-links .devsite-landing-row-item-description { align-items: center; } .dgc-identity .dgc-identity-quick-links .devsite-landing-row-item-description h3 { margin: 0; span { float: right; } } .dgc-identity .dgc-identity-quick-links .devsite-landing-row-item-icon-container { margin: 8px 32px 8px 0; } /\* \*\* Guides \*\* \*/ .dgc-identity-guides .devsite-landing-row-description { max-width: none; } /\* prevent video form going ful width on guides pages but remain centered \*/ .dgc-identity-guides .dgc-identity-video-container-small { grid-column: 4 / span 6; } /\* Icon+Copy component for docs (html) \* \* Apply dgc-identity-icon-copy-list to the list element containing icons and \* copy to remove the default list bullets and fix its items layout. \* Also requires the devsite built-in \`attempt-left\` and \`clear\` classes on the \* icon to position it correctly. \* \* example: \* \* <ul class="dgc-identity-icon-copy-list"> \* <li> \* <span class="material-symbols-outlined attempt-left clear"> \* code \* </span> \* <strong>Authorization codes</strong><br>256 bytes \* </li> \* ... \* https://screenshot.googleplex.com/NChjYgppNDAKbVE.png \*/ .dgc-identity-icon-copy-list { list-style-type: none; } .dgc-identity-icon-copy-list li { min-height: 24px; position: relative; span, img { position: absolute; margin-inline-start: -40px; } } /\* Fully clickable cards \* \* dgc-identity-fully-clickable class on an item makes the entire item \* clickable. Requires a URL and an empty span element with the class "overlay" \* to be placed within the item's heading. Example: \* \* - classname: dgc-identity-fully-clickable \* heading: Heading <span class="overlay"></span> \* descripiton: ... \* path: / \*/ .dgc-identity-fully-clickable .overlay { position: absolute; inset: 0; } /\* \* dgc-identity-large-text to be used on guides pages built with yaml to match \* font between row descriptions and item descriptions. \*/ .dgc-identity-large-text { font: var(--overview-font); }
+Os Serviços de Identificação do Google estão migrando para as APIs FedCM. Siga o [guia de migração](https://developers.google.com/identity/gsi/web/guides/fedcm-migration?hl=pt-br) para analisar possíveis mudanças e evitar impactos negativos para o login do usuário no seu site.
+
+*   [Página inicial](https://developers.google.com/?hl=pt-br)
+*   [Produtos](https://developers.google.com/products?hl=pt-br)
+*   [Google Identity](https://developers.google.com/identity?hl=pt-br)
+*   [Authentication](https://developers.google.com/identity/authentication?hl=pt-br)
 
-*   [Home](https://developers.google.com/)
-*   [Products](https://developers.google.com/products)
-*   [Google Identity](https://developers.google.com/identity)
-*   [Authorization](https://developers.google.com/identity/authorization)
-*   [Google Account Authorization](https://developers.google.com/identity/protocols/oauth2)
+Isso foi útil?
 
-Send feedback
+Exibir o botão Fazer login com o Google Mantenha tudo organizado com as coleções Salve e categorize o conteúdo com base nas suas preferências.
+==============================================================================================================================================
 
-Using OAuth 2.0 to Access Google APIs Stay organized with collections Save and categorize content based on your preferences.
-============================================================================================================================
+*   Nesta página
+*   [Pré-requisitos](#prerequisites)
+*   [Renderização do botão](#button_rendering)
+    *   [Idioma do botão](#button_language)
+*   [Processamento de credenciais](#credential_handling)
+    *   [Modo pop-up](#popup_mode)
+    *   [Modo de redirecionamento](#redirect_mode)
+    *   [URI do endpoint de login](#your_login_endpoint_uri)
 
-![Spark icon](/_static/images/icons/spark.svg)
+Adicione um botão "Fazer login com o Google" ao seu site para permitir que os usuários se inscrevam ou façam login no seu app da Web. Use HTML ou JavaScript para renderizar o botão e os atributos para personalizar a forma, o tamanho, o texto e o tema do botão.
 
-Page Summary
-------------
+![Botão de login personalizado.](https://developers.google.com/static/identity/gsi/web/images/personalized-button-single.png?hl=pt-br)
 
-outlined\_flag
+Depois que um usuário seleciona uma Conta do Google e dá o consentimento, o Google compartilha o perfil do usuário usando um JSON Web Token (JWT). Para ter uma visão geral das etapas envolvidas durante o login e a experiência do usuário, consulte [Como funciona](https://developers.google.com/identity/gsi/web/guides/overview?hl=pt-br#how_it_works). [Entenda o botão personalizado](https://developers.google.com/identity/gsi/web/guides/personalized-button?hl=pt-br) analisa as diferentes condições e estados que afetam a exibição do botão para os usuários.
 
-*   Google APIs use the OAuth 2.0 protocol for authentication and authorization, supporting various application scenarios.
-    
-*   The basic steps for accessing a Google API using OAuth 2.0 involve obtaining credentials, getting an access token from the Google Authorization Server, examining granted scopes, sending the access token to the API, and refreshing the token if needed.
-    
-*   Different application types, such as web server, installed, client-side, limited-input device, and service accounts, have specific authorization flows.
-    
-*   Refresh tokens can expire for various reasons, including user actions or policy settings.
-    
-*   Client libraries are available to simplify the implementation of OAuth 2.0 with Google APIs.
-    
+Pré-requisitos
+--------------
 
-**Note:** Use of Google's implementation of OAuth 2.0 is governed by the [OAuth 2.0 Policies](/identity/protocols/oauth2/policies).
+Siga as etapas descritas em [Configuração](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid?hl=pt-br) para configurar a tela de consentimento OAuth, receber um ID do cliente e carregar a biblioteca de cliente.
 
-Google APIs use the [OAuth 2.0 protocol](https://tools.ietf.org/html/rfc6749) for authentication and authorization. Google supports common OAuth 2.0 scenarios such as those for web server, client-side, installed, and limited-input device applications.
+Renderização do botão
+---------------------
 
-To begin, obtain OAuth 2.0 client credentials from the [Google API Console](https://console.developers.google.com/). Then your client application requests an access token from the Google Authorization Server, extracts a token from the response, and sends the token to the Google API that you want to access. For an interactive demonstration of using OAuth 2.0 with Google (including the option to use your own client credentials), experiment with the [OAuth 2.0 Playground](https://developers.google.com/oauthplayground/).
+Para mostrar o botão "Fazer login com o Google", você pode escolher HTML ou JavaScript para renderizar o botão na página de login:
 
-This page gives an overview of the OAuth 2.0 authorization scenarios that Google supports, and provides links to more detailed content. For details about using OAuth 2.0 for authentication, see [OpenID Connect](/identity/protocols/oauth2/openid-connect).
+[HTML](#html)[JavaScript](#javascript)
 
-**Note:** Given the security implications of getting the implementation correct, we strongly encourage you to use OAuth 2.0 libraries when interacting with Google's OAuth 2.0 endpoints. It is a best practice to use well-debugged code provided by others, and it will help you protect yourself and your users. For more information, see [Client libraries](#libraries).
+Renderize o botão de login usando HTML, retornando o JWT para o endpoint de login da plataforma.
 
-Basic steps
------------
+<html>
+      <body>
+        <script src="https://accounts.google.com/gsi/client" async></script>
+        <div id="g_id_onload"
+            data-client_id="YOUR_GOOGLE_CLIENT_ID"
+            data-login_uri="https://your.domain/your_login_endpoint"
+            data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+            data-type="standard"
+            data-size="large"
+            data-theme="outline"
+            data-text="sign_in_with"
+            data-shape="rectangular"
+            data-logo_alignment="left">
+        </div>
+      <body>
+    </html>
 
-All applications follow a basic pattern when accessing a Google API using OAuth 2.0. At a high level, you follow five steps:
+Um elemento com uma classe `g_id_signin` é renderizado como um botão "Fazer login com o Google". O botão é personalizado pelos parâmetros fornecidos nos atributos de dados.
 
-### 1\. Obtain OAuth 2.0 credentials from the Google API Console.
+Para mostrar um botão "Fazer login com o Google" e o Google One Tap na mesma página, remova `data-auto_prompt="false"`. Isso é recomendado para reduzir o atrito e melhorar as taxas de login.
 
-Visit the [Google API Console](https://console.developers.google.com/) to obtain OAuth 2.0 credentials such as a client ID and client secret that are known to both Google and your application. The set of values varies based on what type of application you are building. For example, a JavaScript application does not require a secret, but a web server application does.
+Para conferir a lista completa de atributos de dados, consulte a página de [referência do `g_id_signin`](https://developers.google.com/identity/gsi/web/reference/html-reference?hl=pt-br#element_with_class_g_id_signin).
 
-**You must create an OAuth client appropriate for the platform on which your app will run, for example:**
+Renderize o botão de login usando JavaScript, retornando o JWT para o gerenciador de callback JavaScript do navegador.
 
-*   android For [Android apps](https://developer.android.com/identity/authorization), use the Android client type.
-*   ![](/static/identity/assets/images/ios.svg) For [iOS and macOS apps](/identity/protocols/oauth2/native-app#ios), use the iOS client type.
-*   code For [server-side](/identity/protocols/oauth2/web-server) or [JavaScript web apps](/identity/protocols/oauth2/javascript-implicit-flow) use the Web application client type. Don't use this client type for any other application, such as native or mobile apps.
-*   grid\_view For [Universal Windows Platform apps](/identity/protocols/oauth2/native-app#uwp), use the Universal Windows Platform (UWP) client type.
-*   chrome\_extension For [Chrome extensions](https://developer.chrome.com/docs/extensions/mv3/tut_oauth/), use the **Chrome Extension** client type.
-*   tv For [limited input devices](/identity/protocols/oauth2/limited-input-device#creatingcred), such as TV or embedded devices, use the TVs and Limited Input devices client type.
-*   host For [server-to-server interactions](/identity/protocols/oauth2/service-account#creatinganaccount), use service accounts. No OAuth Client ID is required.
+<html>
+      <body>
+        <script src="https://accounts.google.com/gsi/client" async></script>
+        <script>
+          function handleCredentialResponse(response) {
+            console.log("Encoded JWT ID token: " + response.credential);
+          }
+          window.onload = function () {
+            google.accounts.id.initialize({
+              client_id: "YOUR_GOOGLE_CLIENT_ID"
+              callback: handleCredentialResponse
+            });
+            google.accounts.id.renderButton(
+              document.getElementById("buttonDiv"),
+              { theme: "outline", size: "large" }  // customization attributes
+            );
+            google.accounts.id.prompt(); // also display the One Tap dialog
+          }
+        </script>
+        <div id="buttonDiv"></div>
+      </body>
+    </html>
 
-### 2\. Obtain an access token from the Google Authorization Server.
+O elemento especificado como o primeiro parâmetro para `renderButton` é exibido como um botão "Fazer login com o Google". Neste exemplo, `buttonDiv` é usado para renderizar o botão na página. O botão é personalizado usando os atributos especificados no segundo parâmetro para `renderButton`.
 
-Before your application can access private data using a Google API, it must obtain an access token that grants access to that API. A single access token can grant varying degrees of access to multiple APIs. A variable parameter called `scope` controls the set of resources and operations that an access token permits. During the access-token request, your application sends one or more values in the `scope` parameter.
+Para minimizar a fricção do usuário, `google.accounts.id.prompt()` é chamado para mostrar o recurso Um toque como uma segunda alternativa ao uso do botão para inscrição ou login.
 
-There are several ways to make this request, and they vary based on the type of application you are building. For example, a JavaScript application might request an access token using a browser redirect to Google, while an application installed on a device that has no browser uses web service requests. For more information on how to make the request, see [Scenarios](#scenarios) and the detailed implementation guides for each app type.
+A biblioteca GIS analisa o documento HTML em busca de elementos com um atributo ID definido como `g_id_onload` ou atributos de classe que contêm `g_id_signin`. Se um elemento correspondente for encontrado, o botão será renderizado usando HTML, mesmo que você também tenha renderizado o botão em JavaScript. Para evitar que o botão seja mostrado duas vezes, possivelmente com parâmetros conflitantes, não inclua elementos HTML que correspondam a esses nomes nas páginas HTML.
 
-Some requests require an authentication step where the user logs in with their Google account. After logging in, the user is asked whether they are willing to grant one or more permissions that your application is requesting. This process is called user consent.
+### Idioma do botão
 
-If the user grants at least one permission, the Google Authorization Server sends your application an access token (or an authorization code that your application can use to obtain an access token) and a list of scopes of access granted by that token. If the user does not grant the permission, the server returns an error.
+O idioma do botão é determinado automaticamente pelo idioma padrão do navegador ou pela preferência do usuário da sessão do Google. Também é possível escolher o idioma manualmente adicionando o parâmetro `hl` e o código de idioma à diretiva src ao carregar a biblioteca e adicionando o parâmetro opcional data-locale ou locale [data-locale](https://developers.google.com/identity/gsi/web/reference/html-reference?hl=pt-br#data-locale) em HTML ou [locale](https://developers.google.com/identity/gsi/web/reference/html-reference?hl=pt-br#data-locale) em JavaScript.
 
-It is generally a best practice to request scopes incrementally, at the time access is required, rather than up front. For example, an app that wants to support saving an event to a calendar should not request Google Calendar access until the user presses the "Add to Calendar" button; see [Incremental authorization](/identity/protocols/oauth2/web-server#incrementalAuth).
+[HTML](#html)[JavaScript](#javascript)
 
-### 3\. Examine scopes of access granted by the user.
+O snippet de código abaixo mostra como exibir o idioma do botão em francês adicionando o parâmetro `hl` ao URL da biblioteca de cliente e definindo o atributo `data-locale` como francês:
 
-Compare the scopes included in the access token response to the scopes required to access features and functionality of your application dependent upon access to a related Google API. Disable any features of your app unable to function without access to the related API.
+<script src="https://accounts.google.com/gsi/client?hl=fr" async></script>
+    <div class="g_id_signin" data-locale="fr">
+    </div>
 
-The scope included in your request may not match the scope included in your response, even if the user granted all requested scopes. Refer to the documentation for each Google API for the scopes required for access. An API may map multiple scope string values to a single scope of access, returning the same scope string for all values allowed in the request. Example: the Google People API may return a scope of `https://www.googleapis.com/auth/contacts` when an app requested a user authorize a scope of `https://www.google.com/m8/feeds/`; the Google People API method [`people.updateContact`](/people/api/rest/v1/people/updateContact) requires a granted scope of `https://www.googleapis.com/auth/contacts`.
+O snippet de código a seguir mostra como exibir o idioma do botão em francês adicionando o parâmetro `hl` ao URL da biblioteca de cliente e chamando o método `google.accounts.id.renderButton` com o parâmetro `locale` definido como francês:
 
-### 4\. Send the access token to an API.
+<script src="https://accounts.google.com/gsi/client?hl=fr" async></script>
+    <script>
+      google.accounts.id.renderButton(
+        document.getElementById("buttonDiv"),
+        { locale: "fr" }
+      );
+    </script>
 
-After an application obtains an access token, it sends the token to a Google API in an [HTTP Authorization request header](https://developer.mozilla.org/docs/Web/HTTP/Headers/Authorization). It is possible to send tokens as URI query-string parameters, but we don't recommend it, because URI parameters can end up in log files that are not completely secure. Also, it is good REST practice to avoid creating unnecessary URI parameter names.
+Processamento de credenciais
+----------------------------
 
-Access tokens are valid only for the set of operations and resources described in the `scope` of the token request. For example, if an access token is issued for the Google Calendar API, it does not grant access to the Google Contacts API. You can, however, send that access token to the Google Calendar API multiple times for similar operations.
+Depois que o usuário dá consentimento, o Google retorna uma credencial JSON Web Token (JWT), conhecida como um token de ID, para o navegador do usuário ou diretamente para um endpoint de login hospedado pela sua plataforma.
 
-### 5\. Refresh the access token, if necessary.
+O local escolhido para receber o JWT depende se você renderiza o botão usando HTML ou JavaScript e se o modo de UX de pop-up ou redirecionamento é usado.
 
-Access tokens have limited lifetimes. If your application needs access to a Google API beyond the lifetime of a single access token, it can obtain a refresh token. A refresh token allows your application to obtain new access tokens.
+### Modo pop-up
 
-**Note:** Save refresh tokens in secure long-term storage and continue to use them as long as they remain valid. Limits apply to the number of refresh tokens that are issued per client-user combination, and per user across all clients, and these limits are different. If your application requests enough refresh tokens to go over one of the limits, older refresh tokens stop working.
+O uso do modo de UX `popup` executa o fluxo de UX de login em uma janela pop-up. Essa é geralmente uma experiência menos intrusiva para os usuários e é o modo de UX padrão.
 
-Scenarios
----------
+Ao renderizar o botão usando:
 
-These scenarios describe how to use OAuth 2.0 to request authorization codes and obtain access and refresh tokens for different types of applications.
+[HTML](#html)[JavaScript](#javascript)
 
-### Web server applications
+É possível definir:
 
-The Google OAuth 2.0 endpoint supports web server applications that use languages and frameworks such as PHP, Java, Go, Python, Ruby, and ASP.NET.
+*   `data-callback` para retornar o JWT ao gerenciador de callback ou
+*   `data-login_uri` para que o Google envie o JWT diretamente para seu endpoint de login usando uma [solicitação POST](https://developers.google.com/identity/gsi/web/reference/html-reference?hl=pt-br#server-side).
 
-The authorization sequence begins when your application redirects a browser to a Google URL; the URL includes query parameters that indicate the type of access being requested. Google handles the user authentication, session selection, and user consent. The result is an authorization code, which the application can exchange for an access token and a refresh token.
+Se ambos os valores forem definidos, `data-callback` terá precedência sobre `data-login_uri`. Definir os dois valores pode ser útil ao usar um manipulador de callback para depuração.
 
-The application should store the refresh token for future use and use the access token to access a Google API. Once the access token expires, the application uses the refresh token to obtain a new one.
+É necessário especificar um `callback`. O modo pop-up não oferece suporte a redirecionamentos ao renderizar o botão em JavaScript. Se definido, `login_uri` será ignorado.
 
-![Your application sends a token request to the Google Authorization Server,
-receives an authorization code, exchanges the code for a token, and uses the token
-to call a Google API endpoint.](/static/identity/protocols/oauth2/images/flows/authorization-code.png)
+Consulte [Processar a resposta de credencial retornada](https://developers.google.com/identity/gsi/web/guides/handle-credential-responses-js-functions?hl=pt-br) para mais informações sobre como decodificar o JWT no seu manipulador de callback do JS.
 
-For details, see [Using OAuth 2.0 for Web Server Applications](/identity/protocols/oauth2/web-server).
+### Modo de redirecionamento
 
-### Installed applications
+O uso do modo de UX `redirect` executa o fluxo de UX de login usando o redirecionamento de página inteira do navegador do usuário, e o Google retorna o JWT diretamente para o endpoint de login usando uma [solicitação POST](https://developers.google.com/identity/gsi/web/reference/html-reference?hl=pt-br#server-side). Em geral, essa é uma experiência mais intrusiva para os usuários, mas é considerada o método de login mais seguro.
 
-The Google OAuth 2.0 endpoint supports applications that are installed on devices such as computers, mobile devices, and tablets. When you create a client ID through the [Google API Console](https://console.developers.google.com/), specify that this is an Installed application, then select Android, Chrome Extension, iOS, Universal Windows Platform (UWP), or Desktop app as the application type.
+Ao renderizar o botão usando:
 
-The process results in a client ID and, in some cases, a client secret, which you embed in the source code of your application. (In this context, the client secret is obviously not treated as a secret.)
+*   **HTML**: defina `data-login_uri` como o URI do endpoint de login (opcional).
+*   O **JavaScript** pode definir `login_uri` como o URI do endpoint de login.
 
-The authorization sequence begins when your application redirects a browser to a Google URL; the URL includes query parameters that indicate the type of access being requested. Google handles the user authentication, session selection, and user consent. The result is an authorization code, which the application can exchange for an access token. The application should validate the access token before including it in a Google API request. When the token expires, the application repeats the process.
+Se você não fornecer um valor, o Google vai retornar o JWT para o URI da página atual.
 
-Optionally, a backend server can exchange the authorization code for a refresh token, storing it in a secure location. Once the access token expires, the backend server uses the refresh token to obtain a new one for the application.
+### URI do endpoint de login
 
-![Your application sends a token request to the Google Authorization Server,
-receives an authorization code, exchanges the code for a token, and uses the token
-to call a Google API endpoint.](/static/identity/protocols/oauth2/images/flows/authorization-code.png)
+Use HTTPS e um URI absoluto ao definir `data-login_uri` ou `login_uri`. Por exemplo, `https://example.com/path`.
 
-For details, see [Authorize access to Google user data](https://developer.android.com/identity/authorization) for Android, and [OAuth 2.0 for iOS & Desktop Apps](/identity/protocols/oauth2/native-app).
+O HTTP só é permitido ao usar localhost durante o desenvolvimento: `http://localhost/path`.
 
-### Client-side (JavaScript) applications
+Consulte [Usar origens seguras do JavaScript e redirecionar URIs](https://developers.google.com/identity/protocols/oauth2/policies?hl=pt-br#secure-response-handling) para uma descrição completa dos requisitos e regras de validação do Google.
 
-The Google OAuth 2.0 endpoint supports JavaScript applications that run in a browser.
-
-The authorization sequence begins when your application redirects a browser to a Google URL; the URL includes query parameters that indicate the type of access being requested. Google handles the user authentication, session selection, and user consent.
-
-The result is an access token, which the client should validate before including it in a Google API request. When the token expires, the application repeats the process.
-
-![Your JS application sends a token request to the Google Authorization Server,
-receives a token, validates the token, and uses the token to call a Google API
-endpoint.](/static/identity/protocols/oauth2/images/flows/implicit.png)
-
-For details, see [Using OAuth 2.0 for Client-side Applications](/identity/protocols/oauth2/javascript-implicit-flow).
-
-### Applications on limited-input devices
-
-The Google OAuth 2.0 endpoint supports applications that run on limited-input devices such as game consoles, video cameras, and printers.
-
-The authorization sequence begins with the application making a web service request to a Google URL for an authorization code. The response contains several parameters, including a URL and a code that the application shows to the user.
-
-The user obtains the URL and code from the device, then switches to a separate device or computer with richer input capabilities. The user launches a browser, navigates to the specified URL, logs in, and enters the code.
-
-Meanwhile, the application polls a Google URL at a specified interval. After the user approves access, the response from the Google server contains an access token and refresh token. The application should store the refresh token for future use and use the access token to access a Google API. Once the access token expires, the application uses the refresh token to obtain a new one.
-
-![The user logs in on a separate device that has a browser](/static/identity/protocols/images/oauth2/device/flow.png)
-
-For details, see [Using OAuth 2.0 for Devices](/identity/protocols/oauth2/limited-input-device).
-
-### Service accounts
-
-Google APIs such as the Prediction API and Google Cloud Storage can act on behalf of your application without accessing user information. In these situations your application needs to prove its own identity to the API, but no user consent is necessary. Similarly, in enterprise scenarios, your application can request delegated access to some resources.
-
-For these types of server-to-server interactions you need a **service account**, which is an account that belongs to your application instead of to an individual end-user. Your application calls Google APIs on behalf of the service account, and user consent is not required. (In non-service-account scenarios, your application calls Google APIs on behalf of end-users, and user consent is sometimes required.)
-
-**Note:** These service-account scenarios require applications to create and cryptographically sign JSON Web Tokens (JWTs). We strongly encourage you to use a library to perform these tasks. If you write this code without using a library that abstracts token creation and signing, you might make errors that would have a severe impact on the security of your application. For a list of libraries that support this scenario, see the [service-account documentation](/identity/protocols/oauth2/service-account).
-
-A service account's credentials, which you obtain from the Google API Console, include a generated email address that is unique, a client ID, and at least one public/private key pair. You use the client ID and one private key to create a signed JWT and construct an access-token request in the appropriate format. Your application then sends the token request to the Google OAuth 2.0 Authorization Server, which returns an access token. The application uses the token to access a Google API. When the token expires, the application repeats the process.
-
-[![Your server application uses a JWT to request a token from the Google
-Authorization Server, then uses the token to call a Google API endpoint. No
-end-user is involved.](/static/identity/protocols/oauth2/images/flows/jwt.png)](/identity/protocols/oauth2/service-account)
-
-For details, see the [service-account documentation](/identity/protocols/oauth2/service-account).
-
-**Note:** Although you can use service accounts in applications that run from a Google Workspace domain, service accounts are not members of your Google Workspace account and aren't subject to domain policies set by Google Workspace administrators. For example, a policy set in the Google Workspace admin console to restrict the ability of Google Workspace end users to share documents outside of the domain would not apply to service accounts.
-
-Token size
-----------
-
-Tokens can vary in size, up to the following limits:
-
-*   code **Authorization codes**  
-    256 bytes
-*   contextual\_token **Access tokens**  
-    2048 bytes
-*   restore\_page **Refresh tokens**  
-    512 bytes
-
-Access tokens returned by Google Cloud's [Security Token Service API](https://cloud.google.com/iam/docs/reference/sts/rest) are structured similarly to Google API OAuth 2.0 access tokens but have different token size limits. For details, see the [API documentation](https://cloud.google.com/iam/docs/reference/sts/rest/v1/TopLevel/token#response-body).
-
-Google reserves the right to change token size within these limits, and your application must support variable token sizes accordingly.
-
-Refresh token expiration
-------------------------
-
-You must write your code to anticipate the possibility that a granted refresh token might no longer work. A refresh token might stop working for one of these reasons:
-
-*   shield\_locked The user has [revoked your app's access](https://support.google.com/accounts/answer/3466521#remove-access).
-*   The refresh token has not been used for six months.
-*   The user changed passwords and the refresh token contains Gmail scopes.
-*   The user account has exceeded a maximum number of granted (live) refresh tokens.
-*   The user granted [time-based access](/identity/protocols/oauth2/web-server#time-based-access) to your app and the access expired.
-*   If an admin [set any of the services requested in your app's scopes to Restricted](https://support.google.com/a/answer/7281227#restrictaccess) (the error is `admin_policy_enforced`).
-*   cloud\_lock For [Google Cloud Platform APIs](#gcp) - the session length set by the admin could have been exceeded.
-
-A Google Cloud Platform project with an OAuth consent screen configured for an external user type and a publishing status of "Testing" is issued a refresh token expiring in 7 days, unless the only OAuth scopes requested are a subset of name, email address, and user profile (through the `[userinfo.email, userinfo.profile, openid](/identity/protocols/oauth2/scopes#oauth2)` scopes, or their [OpenID Connect equivalents](/identity/protocols/oauth2/scopes#openid-connect)).
-
-There is currently a limit of 100 refresh tokens per Google Account per OAuth 2.0 client ID. If the limit is reached, creating a new refresh token automatically invalidates the oldest refresh token without warning. This limit does not apply to [service accounts](/identity/protocols/oauth2/service-account).
-
-There is also a larger limit on the total number of refresh tokens a user account or service account can have across all clients. Most normal users won't exceed this limit but a developer's account used to test an implementation might.
-
-If you need to authorize multiple programs, machines, or devices, one workaround is to limit the number of clients that you authorize per Google Account to 15 or 20. If you are a [Google Workspace admin](https://support.google.com/a/answer/172176), you can create additional users with administrative privileges and use them to authorize some of the clients.
-
-### Dealing with session control policies for Google Cloud Platform (GCP) organizations
-
-Administrators of GCP organizations might require frequent reauthentication of users while they access GCP resources, using the [Google Cloud session control feature](https://support.google.com/a/answer/9368756). This policy impacts access to Google Cloud Console, the [Google Cloud SDK](https://cloud.google.com/sdk/gcloud) (also known as the gcloud CLI), and any third party OAuth application that requires the Cloud Platform scope. If a user has a session control policy in place then on the expiry of the session duration, your API calls will error out similar to what would happen if the refresh token was revoked - the call will fail with an error type `invalid_grant`; the `error_subtype` field can be used to distinguish between a revoked token and a failure due to a session control policy (for example, `"error_subtype": "invalid_rapt"`). As session durations can be very limited (between 1 hour to 24 hours), this scenario must be handled gracefully by restarting an auth session.
-
-Equally, you must not use, or encourage the use of, user credentials for server-to-server deployment. If user credentials are deployed on a server for long running jobs or operations and a customer applies session control policies on such users, the server application will fail as there will be no way to re-authenticate the user when the session duration expires.
-
-For more information on how to help your customers deploy this feature, refer to this [admin-focused help article.](https://support.google.com/a/answer/9368756)
-
-Client libraries
-----------------
-
-The following client libraries integrate with popular frameworks, which makes implementing OAuth 2.0 simpler. More features will be added to the libraries over time.
-
-*   [Google Auth Library for Java](https://github.com/googleapis/google-auth-library-java)
-*   [Google API Client Library for Python](https://github.com/googleapis/google-api-python-client)
-*   [Google API Client Library for Dart](https://dart.dev/googleapis/)
-*   [Google API Client Library for Go](https://github.com/google/google-api-go-client)
-*   [Google API Client Library for .NET](/api-client-library/dotnet/guide/aaa_oauth)
-*   [Google API Client Library for Ruby](https://github.com/googleapis/google-api-ruby-client)
-*   [Google API Client Library for PHP](https://github.com/googleapis/google-api-php-client)
-*   [Google API Client Library for JavaScript](https://github.com/google/google-api-javascript-client)
-*   [GTMAppAuth - OAuth Client Library for Mac and iOS](https://github.com/google/GTMAppAuth)
-
-Send feedback
+Isso foi útil?
