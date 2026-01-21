@@ -46,6 +46,9 @@ interface WorkspaceContextType extends WorkspaceState {
     refreshFileTree: () => Promise<void>;
     cloneFromGitHub: (url: string, token?: string) => Promise<boolean>;
     disconnect: () => void;
+    // File actions
+    saveFile: (path: string, content: string) => Promise<boolean>;
+    readFileContent: (path: string) => Promise<string | null>;
     // Git actions
     gitPull: () => Promise<void>;
     gitPush: (token: string) => Promise<void>;
@@ -265,6 +268,61 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
         }));
     }, []);
 
+    // Save file to disk
+    const saveFile = useCallback(async (path: string, content: string): Promise<boolean> => {
+        if (!state.directoryHandle) return false;
+
+        try {
+            // Navigate to the file's parent directory and get the file handle
+            const pathParts = path.split('/').filter(Boolean);
+            const fileName = pathParts.pop();
+            if (!fileName) return false;
+
+            let currentHandle: FileSystemDirectoryHandle = state.directoryHandle;
+
+            // Navigate through directories
+            for (const part of pathParts) {
+                currentHandle = await currentHandle.getDirectoryHandle(part);
+            }
+
+            // Get file handle and write
+            const fileHandle = await currentHandle.getFileHandle(fileName);
+            const writable = await fileHandle.createWritable();
+            await writable.write(content);
+            await writable.close();
+
+            return true;
+        } catch (e) {
+            console.error('Failed to save file:', e);
+            setState(prev => ({ ...prev, error: `Save failed: ${(e as Error).message}` }));
+            return false;
+        }
+    }, [state.directoryHandle]);
+
+    // Read file content from disk
+    const readFileContent = useCallback(async (path: string): Promise<string | null> => {
+        if (!state.directoryHandle) return null;
+
+        try {
+            const pathParts = path.split('/').filter(Boolean);
+            const fileName = pathParts.pop();
+            if (!fileName) return null;
+
+            let currentHandle: FileSystemDirectoryHandle = state.directoryHandle;
+
+            for (const part of pathParts) {
+                currentHandle = await currentHandle.getDirectoryHandle(part);
+            }
+
+            const fileHandle = await currentHandle.getFileHandle(fileName);
+            const file = await fileHandle.getFile();
+            return await file.text();
+        } catch (e) {
+            console.error('Failed to read file:', e);
+            return null;
+        }
+    }, [state.directoryHandle]);
+
     // Git Pull
     const gitPull = useCallback(async () => {
         if (!state.fsAdapter) return;
@@ -342,6 +400,8 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
             refreshFileTree,
             cloneFromGitHub,
             disconnect,
+            saveFile,
+            readFileContent,
             gitPull,
             gitPush,
             gitCommit,

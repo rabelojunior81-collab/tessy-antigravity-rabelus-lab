@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { useLayout } from '../../hooks/useLayout';
+import { useWorkspace } from '../../contexts/WorkspaceContext';
 import MonacoWrapper from '../editor/MonacoWrapper';
-import { X, Copy, Check } from 'lucide-react';
+import { X, Copy, Check, Save, Loader2 } from 'lucide-react';
 import ProjectDetailsViewer from '../viewers/ProjectDetailsViewer';
 import LibraryDetailsViewer from '../viewers/LibraryDetailsViewer';
 import { useChat } from '../../contexts/ChatContext';
@@ -22,8 +23,11 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
     itemBibliotecaSelecionado: selectedLibraryItem,
     setItemBibliotecaSelecionado: setSelectedLibraryItem
   } = useLayout();
+  const { saveFile, directoryHandle } = useWorkspace();
   const { newConversation, setInputText } = useChat();
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isModified, setIsModified] = useState(false);
 
   const handleCopy = () => {
     if (arquivoSelecionado?.content) {
@@ -32,6 +36,28 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
       setTimeout(() => setCopied(false), 2000);
     }
   };
+
+  // Check if this is a local file (has directoryHandle)
+  const isLocalFile = !!directoryHandle;
+
+  const handleSave = useCallback(async () => {
+    if (!arquivoSelecionado || !isLocalFile) return;
+
+    setIsSaving(true);
+    const success = await saveFile(arquivoSelecionado.path, arquivoSelecionado.content);
+    setIsSaving(false);
+
+    if (success) {
+      setIsModified(false);
+    }
+  }, [arquivoSelecionado, saveFile, isLocalFile]);
+
+  const handleContentChange = useCallback((value: string | undefined) => {
+    if (value !== undefined && arquivoSelecionado) {
+      selecionarArquivo({ ...arquivoSelecionado, content: value });
+      setIsModified(true);
+    }
+  }, [arquivoSelecionado, selecionarArquivo]);
 
   const isImage = (lang: string) => ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(lang.toLowerCase());
 
@@ -47,15 +73,29 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
         <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in glass-panel border border-glass-border">
           <div className="px-2 py-0.5 glass-header flex items-center justify-between shrink-0">
             <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 bg-glass-muted/40"></div>
+              <div className={`w-1.5 h-1.5 rounded-full ${isModified ? 'bg-orange-500' : 'bg-glass-muted/40'}`}></div>
               <h2 className="text-[9px] uppercase font-bold text-glass tracking-widest opacity-80 truncate max-w-[300px]">
                 {arquivoSelecionado.path.split('/').pop()}
+                {isModified && <span className="text-orange-400 ml-1">•</span>}
               </h2>
               <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 bg-glass-accent/10 text-glass-accent border border-glass-accent/20 tracking-wide rounded-sm">
                 {arquivoSelecionado.language}
               </span>
+              {isLocalFile && (
+                <span className="text-[7px] text-glass-muted/60 uppercase">local</span>
+              )}
             </div>
             <div className="flex items-center gap-2">
+              {isLocalFile && !isImage(arquivoSelecionado.language) && (
+                <button
+                  onClick={handleSave}
+                  disabled={!isModified || isSaving}
+                  className={`p-0.5 transition-colors ${isModified ? 'text-glass-accent hover:text-white' : 'text-glass-muted/30 cursor-not-allowed'}`}
+                  title={isSaving ? 'Salvando...' : isModified ? 'Salvar (Ctrl+S)' : 'Nenhuma alteração'}
+                >
+                  {isSaving ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
+                </button>
+              )}
               {!isImage(arquivoSelecionado.language) && (
                 <button
                   onClick={handleCopy}
@@ -89,11 +129,7 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
                 language={arquivoSelecionado.language.toLowerCase()}
                 value={arquivoSelecionado.content}
                 className="h-full w-full"
-                onChange={(value) => {
-                  if (value !== undefined) {
-                    selecionarArquivo({ ...arquivoSelecionado, content: value });
-                  }
-                }}
+                onChange={handleContentChange}
               />
             )}
           </div>
