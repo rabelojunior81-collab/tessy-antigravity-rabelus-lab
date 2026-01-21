@@ -117,7 +117,7 @@ class ProjectDocService {
             readme += `## 📚 Templates\n\n`;
             readme += `This project includes ${templates.length} template(s):\n\n`;
             templates.forEach(t => {
-                readme += `- **${t.name}**`;
+                readme += `- **${t.label}**`;
                 if (t.description) readme += `: ${t.description}`;
                 readme += `\n`;
             });
@@ -180,11 +180,11 @@ class ProjectDocService {
             convs.forEach(conv => {
                 const title = conv.title || 'Untitled conversation';
                 changelog += `### ${title}\n\n`;
-                if (conv.messages && conv.messages.length > 0) {
-                    const firstUserMsg = conv.messages.find(m => m.role === 'user');
-                    if (firstUserMsg) {
-                        const preview = firstUserMsg.content.substring(0, 100);
-                        changelog += `- ${preview}${firstUserMsg.content.length > 100 ? '...' : ''}\n`;
+                if (conv.turns && conv.turns.length > 0) {
+                    const firstTurn = conv.turns[0];
+                    if (firstTurn && firstTurn.userMessage) {
+                        const preview = firstTurn.userMessage.substring(0, 100);
+                        changelog += `- ${preview}${firstTurn.userMessage.length > 100 ? '...' : ''}\n`;
                     }
                 }
                 changelog += `\n`;
@@ -199,13 +199,11 @@ class ProjectDocService {
     }
 
     /**
-     * Analyze a code file for documentation extraction
-     * (Placeholder - would need actual parser integration)
+     * Analyze a code file for documentation extraction with JSDoc/TSDoc support
      */
     async analyzeFile(filePath: string, content: string): Promise<FileAnalysis> {
         const language = this.detectLanguage(filePath);
 
-        // Basic analysis (would be enhanced with actual parsers)
         const analysis: FileAnalysis = {
             path: filePath,
             language,
@@ -215,35 +213,174 @@ class ProjectDocService {
             classes: []
         };
 
-        // Simple regex-based extraction (placeholder)
-        if (language === 'typescript' || language === 'javascript') {
-            // Extract function declarations
-            const funcRegex = /(?:export\s+)?(?:async\s+)?function\s+(\w+)\s*\((.*?)\)/g;
-            let match;
-            while ((match = funcRegex.exec(content)) !== null) {
-                analysis.functions.push({
-                    name: match[1],
-                    params: this.parseParams(match[2]),
-                    returns: 'unknown',
-                    description: '',
-                    line: content.substring(0, match.index).split('\n').length
-                });
+        if (language !== 'typescript' && language !== 'javascript') {
+            return analysis; // Only support TS/JS for now
+        }
+
+        const lines = content.split('\n');
+
+        // Extract imports
+        const importRegex = /^import\s+(?:{([^}]+)}|(\w+))\s+from\s+['"]([^'"]+)['"]/;
+        lines.forEach((line, idx) => {
+            const match = line.match(importRegex);
+            if (match) {
+                const imports = match[1] ? match[1].split(',').map(i => i.trim()) : [match[2]];
+                analysis.imports.push(...imports);
+            }
+        });
+
+        // Extract exports
+        const exportRegex = /^export\s+(default\s+)?(class|function|interface|type|const)\s+(\w+)/;
+        lines.forEach((line, idx) => {
+            const match = line.match(exportRegex);
+            if (match) {
+                analysis.exports.push(match[3]);
+            }
+        });
+
+        // Parse JSDoc comments and associate with code
+        let currentComment = '';
+        let commentStartLine = 0;
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+
+            // Start of JSDoc comment
+            if (line.startsWith('/**')) {
+                currentComment = line;
+                commentStartLine = i;
+                continue;
             }
 
-            // Extract class declarations
-            const classRegex = /(?:export\s+)?class\s+(\w+)/g;
-            while ((match = classRegex.exec(content)) !== null) {
-                analysis.classes.push({
-                    name: match[1],
-                    methods: [],
-                    properties: [],
-                    description: '',
-                    line: content.substring(0, match.index).split('\n').length
-                });
+            // Continuation of JSDoc comment
+            if (currentComment && line.startsWith('*')) {
+                currentComment += '\n' + line;
+                continue;
+            }
+
+            // End of JSDoc comment
+            if (currentComment && line.startsWith('*/')) {
+                currentComment += '\n' + line;
+
+                // Parse the next non-empty line for code definition
+                let codeLineIdx = i + 1;
+                while (codeLineIdx < lines.length && !lines[codeLineIdx].trim()) {
+                    codeLineIdx++;
+                }
+
+                if (codeLineIdx < lines.length) {
+                    const codeLine = lines[codeLineIdx].trim();
+                    this.parseCodeWithComment(currentComment, codeLine, codeLineIdx + 1, analysis);
+                }
+
+                currentComment = '';
+                continue;
             }
         }
 
         return analysis;
+    }
+
+    /**
+     * Parse a code line with its associated JSDoc comment
+     */
+    private parseCodeWithComment(
+        comment: string,
+        codeLine: string,
+        lineNumber: number,
+        analysis: FileAnalysis
+    ): void {
+        const description = this.extractDescription(comment);
+        const params = this.extractJSDocParams(comment);
+        const returns = this.extractReturns(comment);
+
+        // Function declaration
+        if (codeLine.match(/^(export\s+)?(async\s+)?function\s+(\w+)/)) {
+            const match = codeLine.match(/function\s+(\w+)\s*\((.*?)\)/);
+            if (match) {
+                analysis.functions.push({
+                    name: match[1],
+                    description,
+                    params: params.length > 0 ? params : this.parseParams(match[2]),
+                    returns,
+                    line: lineNumber,
+                });
+            }
+        }
+
+        // Arrow function (const/let/var)
+        else if (codeLine.match(/^(export\s+)?(const|let|var)\s+(\w+)\s*=\s*(async\s*)?\(/)) {
+            const match = codeLine.match(/(const|let|var)\s+(\w+)/);
+            if (match) {
+                analysis.functions.push({
+                    name: match[2],
+                    description,
+                    params,
+                    returns,
+                    line: lineNumber,
+                });
+            }
+        }
+
+        // Class declaration
+        else if (codeLine.match(/^(export\s+)?(default\s+)?class\s+(\w+)/)) {
+            const match = codeLine.match(/class\s+(\w+)/);
+            if (match) {
+                analysis.classes.push({
+                    name: match[1],
+                    description,
+                    methods: [],
+                    properties: [],
+                    line: lineNumber,
+                });
+            }
+        }
+    }
+
+    /**
+     * Extract description from JSDoc comment
+     */
+    private extractDescription(comment: string): string {
+        const lines = comment.split('\n');
+        const descLines: string[] = [];
+
+        for (const line of lines) {
+            const cleaned = line.replace(/^\s*\*\s?/, '').trim();
+            if (cleaned && !cleaned.startsWith('@') && !cleaned.startsWith('/**') && !cleaned.startsWith('*/')) {
+                descLines.push(cleaned);
+            } else if (cleaned.startsWith('@')) {
+                break; // Stop at first tag
+            }
+        }
+
+        return descLines.join(' ');
+    }
+
+    /**
+     * Extract @param tags from JSDoc comment
+     */
+    private extractJSDocParams(comment: string): ParamDoc[] {
+        const params: ParamDoc[] = [];
+        const paramRegex = /@param\s+{([^}]+)}\s+(\[?(\w+)\]?)\s*-?\s*(.*)/g;
+        let match;
+
+        while ((match = paramRegex.exec(comment)) !== null) {
+            params.push({
+                name: match[3],
+                type: match[1],
+                description: match[4],
+            });
+        }
+
+        return params;
+    }
+
+    /**
+     * Extract @returns tag from JSDoc comment
+     */
+    private extractReturns(comment: string): string {
+        const match = comment.match(/@returns?\s+{([^}]+)}\s*(.*)/);
+        return match ? `${match[1]} - ${match[2]}` : 'void';
     }
 
     /**
@@ -267,25 +404,51 @@ class ProjectDocService {
     }
 
     /**
-     * Save generated documentation to project
+     * Save generated documentation to project using File System Access API
      */
     async saveDocumentation(projectId: string, type: 'readme' | 'changelog' | 'api', content: string): Promise<void> {
-        // In a real implementation, this would use File System Access API
-        // For now, we'll store in IndexedDB as a template
         const fileName = type === 'readme' ? 'README.md' :
             type === 'changelog' ? 'CHANGELOG.md' :
                 'API.md';
 
-        await db.templates.add({
-            id: `${projectId}-${type}-${Date.now()}`,
-            projectId,
-            name: fileName,
-            description: `Auto-generated ${type} documentation`,
-            content,
-            language: 'markdown',
-            createdAt: new Date(),
-            updatedAt: new Date()
-        });
+        try {
+            // Try to use File System Access API
+            if ('showSaveFilePicker' in window) {
+                const handle = await (window as any).showSaveFilePicker({
+                    suggestedName: fileName,
+                    types: [{
+                        description: 'Markdown Files',
+                        accept: { 'text/markdown': ['.md'] }
+                    }]
+                });
+
+                const writable = await handle.createWritable();
+                await writable.write(content);
+                await writable.close();
+
+                console.log(`✅ ${fileName} saved successfully via File System Access API`);
+            } else {
+                // Fallback: Save to IndexedDB as template
+                await db.templates.add({
+                    id: `${projectId}-${type}-${Date.now()}`,
+                    category: 'Personalizado',
+                    label: fileName,
+                    description: `Auto-generated ${type} documentation`,
+                    content,
+                    isCustom: true,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                });
+
+                console.log(`⚠️ ${fileName} saved to IndexedDB (File System Access API not available)`);
+            }
+        } catch (error) {
+            // User cancelled or error occurred
+            if ((error as Error).name !== 'AbortError') {
+                console.error('Error saving documentation:', error);
+                throw error;
+            }
+        }
     }
 
     // Helper methods

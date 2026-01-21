@@ -21,9 +21,10 @@ import GeminiTokenModal from './components/modals/GeminiTokenModal';
 import PendingActionsModal from './components/modals/PendingActionsModal';
 import VisualSettingsModal from './components/modals/VisualSettingsModal';
 import AuthPanel from './components/modals/AuthPanel';
-import { Menu, Moon, Sun, X, Settings, Palette, BookOpen, Key } from 'lucide-react';
+import { Menu, Moon, Sun, X, Settings, Palette, BookOpen, Key, FileText } from 'lucide-react';
 import { VisualProvider, useVisual } from './contexts/VisualContext';
 import AutoDocModal from './components/modals/AutoDocModal';
+import { ProjectDocModal } from './components/modals/ProjectDocModal';
 
 const TessyLogo = React.memo(() => (
   <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
@@ -50,6 +51,7 @@ const AppContent: React.FC = () => {
   const { setIsVisualModalOpen } = useVisual();
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
   const [isAutoDocModalOpen, setIsAutoDocModalOpen] = useState(false);
+  const [isProjectDocModalOpen, setIsProjectDocModalOpen] = useState(false);
   const [isAuthPanelOpen, setIsAuthPanelOpen] = useState(false);
 
   const {
@@ -174,9 +176,17 @@ const AppContent: React.FC = () => {
           <button
             onClick={() => setIsAutoDocModalOpen(true)}
             className="w-8 h-8 flex items-center justify-center glass-button text-glass-accent"
-            title="Auto-Documentation"
+            title="Auto-Documentation (Ecosystem)"
           >
             <BookOpen size={16} />
+          </button>
+
+          <button
+            onClick={() => setIsProjectDocModalOpen(true)}
+            className="w-8 h-8 flex items-center justify-center glass-button text-glass-accent"
+            title="Project Documentation Generator"
+          >
+            <FileText size={16} />
           </button>
 
           <button
@@ -229,6 +239,10 @@ const AppContent: React.FC = () => {
       <AutoDocModal
         isOpen={isAutoDocModalOpen}
         onClose={() => setIsAutoDocModalOpen(false)}
+      />
+      <ProjectDocModal
+        isOpen={isProjectDocModalOpen}
+        onClose={() => setIsProjectDocModalOpen(false)}
       />
       <AuthPanel
         isOpen={isAuthPanelOpen}
