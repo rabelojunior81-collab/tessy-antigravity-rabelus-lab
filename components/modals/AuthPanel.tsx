@@ -95,21 +95,22 @@ const AuthPanel: React.FC<AuthPanelProps> = ({ isOpen, onClose, onProviderUpdate
             onClick={handleClose}
         >
             <div
-                className={`w-full max-w-md glass-modal flex flex-col ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
+                className={`w-full max-w-xs glass-modal bg-[#0a0a0f]/95 flex flex-col ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
                 onClick={e => e.stopPropagation()}
             >
-                {/* Header */}
-                <div className="px-4 py-3 glass-header flex items-center justify-between shrink-0">
-                    <h2 className="text-[11px] font-bold tracking-widest text-glass uppercase">
-                        🔐 Central de Autenticação
-                    </h2>
-                    <button onClick={handleClose} className="p-1 text-glass-muted hover:text-glass transition-all">
+                {/* Standard Glass Header */}
+                <div className="px-3 py-2 glass-header border-b border-glass-border flex items-center justify-between shrink-0">
+                    <div className="flex items-center gap-1.5 overflow-hidden">
+                        <div className="w-1.5 h-1.5 bg-glass-muted/40" />
+                        <h2 className="text-[10px] font-bold uppercase tracking-widest text-glass opacity-90">Central de Autenticação</h2>
+                    </div>
+                    <button onClick={handleClose} className="p-0.5 text-glass-muted hover:text-glass transition-all active:scale-95">
                         <X size={14} />
                     </button>
                 </div>
 
-                {/* Tab Bar */}
-                <div className="flex border-b border-white/5">
+                {/* Tab Bar - Compact */}
+                <div className="flex border-b border-glass-border">
                     {AUTH_PROVIDERS.map(provider => {
                         const Icon = provider.icon;
                         const isConnected = connectedProviders.includes(provider.id);
@@ -119,87 +120,87 @@ const AuthPanel: React.FC<AuthPanelProps> = ({ isOpen, onClose, onProviderUpdate
                             <button
                                 key={provider.id}
                                 onClick={() => setActiveTab(provider.id)}
-                                className={`flex-1 py-2.5 px-2 flex flex-col items-center gap-1 transition-all relative
+                                className={`flex-1 py-2 px-1 flex flex-col items-center gap-1 transition-all relative
                                     ${isActive ? 'bg-white/5' : 'hover:bg-white/3'}
                                 `}
-                                style={{
-                                    borderBottom: isActive ? `2px solid ${provider.color}` : '2px solid transparent'
-                                }}
                             >
                                 <div className="relative">
                                     <Icon
-                                        size={16}
+                                        size={14}
                                         style={{ color: isActive ? provider.color : 'var(--glass-muted)' }}
                                     />
                                     {isConnected && (
                                         <div
-                                            className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-green-500"
+                                            className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.5)]"
                                             title="Conectado"
                                         />
                                     )}
                                 </div>
-                                <span className={`text-[8px] font-semibold uppercase tracking-wider
+                                <span className={`text-[8px] font-bold uppercase tracking-wider
                                     ${isActive ? 'text-glass' : 'text-glass-muted'}
                                 `}>
                                     {provider.name}
                                 </span>
+                                {isActive && <div className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ backgroundColor: provider.color }}></div>}
                             </button>
                         );
                     })}
                 </div>
 
                 {/* Tab Content */}
-                <form onSubmit={handleSave} className="p-4 space-y-4">
-                    <div className="text-center space-y-1">
-                        <p className="text-[10px] text-glass-muted">
+                <form onSubmit={handleSave} className="p-3 space-y-3">
+                    <div className="space-y-1">
+                        <div className="flex items-center justify-between px-1">
+                            <span className="text-[9px] font-bold text-glass-muted uppercase tracking-widest">Token de Acesso</span>
+                            <a
+                                href={activeProvider.helpUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[8px] font-bold uppercase hover:underline"
+                                style={{ color: activeProvider.color }}
+                            >
+                                <ExternalLink size={8} /> Obter Chave
+                            </a>
+                        </div>
+
+                        <input
+                            type="password"
+                            value={tokenInput}
+                            onChange={(e) => setTokenInput(e.target.value)}
+                            placeholder={activeProvider.placeholder}
+                            className="w-full glass-input p-2 text-[10px] font-mono text-center text-glass focus:border-glass-accent outline-none placeholder:text-glass-muted/30"
+                            style={{
+                                borderColor: tokenInput && !tokenInput.includes('•')
+                                    ? (activeProvider.validator(tokenInput) ? '#22c55e' : '#ef4444')
+                                    : undefined
+                            }}
+                        />
+                        <p className="text-[9px] text-glass-muted text-center px-2 opacity-70">
                             {activeProvider.helpText}
                         </p>
-                        <a
-                            href={activeProvider.helpUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[9px] font-medium opacity-70 hover:opacity-100 transition-opacity"
-                            style={{ color: activeProvider.color }}
-                        >
-                            <ExternalLink size={10} />
-                            Obter chave
-                        </a>
                     </div>
 
-                    <input
-                        type="password"
-                        value={tokenInput}
-                        onChange={(e) => setTokenInput(e.target.value)}
-                        placeholder={activeProvider.placeholder}
-                        className="w-full glass-input py-2.5 px-3 text-[11px] font-mono text-glass text-center focus:border-glass-accent outline-none placeholder:text-glass-muted/40"
-                        style={{
-                            borderColor: tokenInput && !tokenInput.includes('•')
-                                ? (activeProvider.validator(tokenInput) ? '#22c55e' : '#ef4444')
-                                : undefined
-                        }}
-                    />
-
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 pt-1">
                         <button
                             type="submit"
                             disabled={!tokenInput.trim() || tokenInput.includes('•') || saveStatus === 'saving'}
+                            className="flex-1 py-2 glass-button hover:bg-white/10 text-white font-bold uppercase tracking-widest text-[9px] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-95"
                             style={{
-                                backgroundColor: activeProvider.color,
-                                opacity: !tokenInput.trim() || tokenInput.includes('•') ? 0.5 : 1
+                                borderColor: activeProvider.color,
+                                color: activeProvider.color
                             }}
-                            className="flex-1 py-2.5 text-white font-bold uppercase tracking-widest text-[9px] transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed"
                         >
-                            {saveStatus === 'saving' && <span className="animate-spin">⏳</span>}
+                            {saveStatus === 'saving' && <span className="animate-spin text-[10px]">⏳</span>}
                             {saveStatus === 'success' && <Check size={12} />}
                             {saveStatus === 'error' && <AlertCircle size={12} />}
-                            {saveStatus === 'idle' ? 'Salvar' : saveStatus === 'success' ? 'Salvo!' : saveStatus === 'error' ? 'Erro' : 'Salvando...'}
+                            {saveStatus === 'idle' ? 'SALVAR' : saveStatus === 'success' ? 'SALVO' : saveStatus === 'error' ? 'ERRO' : '...'}
                         </button>
 
                         {connectedProviders.includes(activeTab) && (
                             <button
                                 type="button"
                                 onClick={handleClear}
-                                className="px-4 py-2.5 bg-red-500/20 text-red-400 font-bold uppercase tracking-widest text-[9px] hover:bg-red-500/30 transition-all"
+                                className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-bold uppercase tracking-widest text-[9px] transition-all rounded-sm"
                             >
                                 Remover
                             </button>
@@ -208,10 +209,10 @@ const AuthPanel: React.FC<AuthPanelProps> = ({ isOpen, onClose, onProviderUpdate
                 </form>
 
                 {/* Status Bar */}
-                <div className="px-4 py-2 border-t border-white/5 bg-white/3">
+                <div className="px-3 py-2 border-t border-glass-border bg-black/20">
                     <div className="flex items-center justify-between">
-                        <span className="text-[8px] text-glass-muted uppercase tracking-widest">
-                            Conectados:
+                        <span className="text-[8px] font-bold text-glass-muted uppercase tracking-widest">
+                            Estado:
                         </span>
                         <div className="flex gap-1.5">
                             {AUTH_PROVIDERS.map(provider => {
@@ -221,11 +222,7 @@ const AuthPanel: React.FC<AuthPanelProps> = ({ isOpen, onClose, onProviderUpdate
                                     <div
                                         key={provider.id}
                                         title={`${provider.name}: ${isConnected ? 'Conectado' : 'Não conectado'}`}
-                                        className="p-1 rounded"
-                                        style={{
-                                            backgroundColor: isConnected ? `${provider.color}20` : 'transparent',
-                                            opacity: isConnected ? 1 : 0.3
-                                        }}
+                                        className={`p-1 rounded-sm transition-all ${isConnected ? 'bg-white/10 ring-1 ring-inset ring-white/20' : 'opacity-30 grayscale'}`}
                                     >
                                         <Icon
                                             size={10}

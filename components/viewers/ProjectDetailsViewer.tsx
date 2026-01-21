@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../services/dbService';
 import { Project } from '../../types';
-import { X, Folder, Layout, Database, Github, ChevronRight, Activity, FileText, ChevronDown } from 'lucide-react';
+import { X, Layout, Database, Github, Activity, FileText, Play, Library } from 'lucide-react';
 import { projectDocService } from '../../services/projectDocService';
 
 interface ProjectDetailsViewerProps {
@@ -41,25 +41,16 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
   const handleGenerateDoc = async (type: 'readme' | 'changelog') => {
     setIsGenerating(true);
     setShowDocMenu(false);
-
     try {
-      let content = '';
-      if (type === 'readme') {
-        content = await projectDocService.generateReadme(projectId, 'standard');
-      } else {
-        content = await projectDocService.generateChangelog(projectId);
-      }
-
+      const content = type === 'readme'
+        ? await projectDocService.generateReadme(projectId, 'standard')
+        : await projectDocService.generateChangelog(projectId);
       await projectDocService.saveDocumentation(projectId, type, content);
-
-      // Show success feedback
-      alert(`${type === 'readme' ? 'README' : 'CHANGELOG'}.md gerado com sucesso!\nSalvo na biblioteca do projeto.`);
-
-      // Reload stats
+      alert(`${type.toUpperCase()} gerado com sucesso!`);
       await loadData();
     } catch (error) {
-      console.error('Error generating documentation:', error);
-      alert('Erro ao gerar documentação');
+      console.error(error);
+      alert('Erro ao gerar docs.');
     } finally {
       setIsGenerating(false);
     }
@@ -68,141 +59,107 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
   if (!project) return null;
 
   return (
-    <div className="h-full flex flex-col glass-panel animate-fade-in overflow-hidden">
-      {/* Header - Compact py-0.5, icon 16 */}
-      <div className="px-4 py-2 border-b border-glass-border glass-header flex items-center justify-between shrink-0 relative">
-        <div className="flex items-center gap-2">
-          <Folder size={16} className="text-glass-accent" />
-          <h2 className="text-xs font-medium tracking-normal text-glass">Detalhes do Protocolo</h2>
+    <div className="h-full flex flex-col glass-panel animate-fade-in relative overflow-hidden group">
+      {/* Standard Header - Matching CoPilot/Sidebar */}
+      <div className="flex items-center justify-between px-2 py-0.5 glass-header shrink-0">
+        <div className="flex items-center gap-1.5">
+          <div className="w-1.5 h-1.5 bg-glass-muted/40"></div>
+          <h2 className="text-[9px] uppercase font-bold text-glass tracking-widest opacity-80">Detalhes do Projeto</h2>
         </div>
+        <button
+          onClick={onClose}
+          className="p-0.5 text-glass-muted hover:text-glass-accent transition-all active:scale-95"
+          title="Fechar"
+        >
+          <X size={12} />
+        </button>
+      </div>
 
-        <div className="flex items-center gap-1">
-          {/* Documentation Menu Trigger - Compact */}
-          <div className="relative">
-            <button
-              onClick={() => setShowDocMenu(!showDocMenu)}
-              disabled={isGenerating}
-              className={`p-1 transition-all ${isGenerating ? 'text-accent-primary animate-pulse' : 'text-glass-muted hover:text-glass hover:bg-white/5'} rounded-md`}
-              title="Gerar Documentação"
-            >
-              <FileText size={16} />
-            </button>
+      {/* Content - Top Aligned (No justify-center) */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
+        <div className="flex flex-col items-center justify-start text-center space-y-3">
 
-            {showDocMenu && (
-              <div className="absolute top-full right-0 mt-1 w-40 glass-card border border-glass-border shadow-xl overflow-hidden z-50">
-                <button
-                  onClick={() => handleGenerateDoc('readme')}
-                  className="w-full px-3 py-2 text-left text-[10px] font-bold uppercase text-glass hover:bg-white/10 transition-colors flex items-center gap-2"
-                >
-                  <FileText size={12} />
-                  README.md
-                </button>
-                <button
-                  onClick={() => handleGenerateDoc('changelog')}
-                  className="w-full px-3 py-2 text-left text-[10px] font-bold uppercase text-glass hover:bg-white/10 transition-colors flex items-center gap-2 border-t border-glass-border"
-                >
-                  <Activity size={12} />
-                  CHANGELOG.md
-                </button>
+          {/* Central Identity */}
+          <div className="flex flex-col items-center mt-1">
+            <div className="mb-3 relative">
+              <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-glass-accent opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-glass-accent"></span>
+              </span>
+              <div className="w-12 h-12 flex items-center justify-center bg-glass-accent/10 border border-glass-accent/30 text-glass-accent shadow-[0_0_15px_rgba(var(--accent-rgb),0.2)]">
+                <Activity size={24} />
               </div>
+            </div>
+
+            <h1 className="text-2xl font-bold text-glass tracking-tight mb-1">{project.name}</h1>
+            <p className="text-[10px] text-glass-muted/60 uppercase tracking-widest font-mono">REF: {project.id.substring(0, 8)}</p>
+          </div>
+
+          {/* Dense Stats Row */}
+          <div className="flex items-center gap-4 text-[10px] text-glass-secondary font-mono border-t border-b border-glass-border/30 py-2 px-6 bg-black/10">
+            <div className="flex items-center gap-1.5" title="Sessões">
+              <Layout size={10} className="text-glass-accent" />
+              <span className="font-bold">{stats.conversations}</span>
+            </div>
+            <div className="w-px h-3 bg-glass-border/30"></div>
+            <div className="flex items-center gap-1.5" title="Biblioteca">
+              <Database size={10} className="text-glass-accent" />
+              <span className="font-bold">{stats.library}</span>
+            </div>
+            {project.githubRepo && (
+              <>
+                <div className="w-px h-3 bg-glass-border/30"></div>
+                <a href={project.githubRepo.startsWith('http') ? project.githubRepo : `https://github.com/${project.githubRepo}`}
+                  target="_blank" rel="noreferrer"
+                  className="flex items-center gap-1.5 hover:text-glass-accent transition-colors truncate max-w-[120px]">
+                  <Github size={10} />
+                  <span className="truncate">{project.githubRepo.split('/').pop()}</span>
+                </a>
+              </>
             )}
           </div>
 
-          <button onClick={onClose} className="p-1 text-glass-muted hover:text-glass transition-all active:scale-90">
-            <X size={16} />
-          </button>
-        </div>
-      </div>
+          {/* Description */}
+          <p className="text-xs text-glass-muted max-w-sm line-clamp-4 leading-relaxed">
+            {project.description || 'Nenhuma diretriz definida.'}
+          </p>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
-        {/* Active Project Card */}
-        <div className="mb-6 p-3 glass-card relative overflow-hidden group shadow-md">
-          <div className="flex justify-between items-start relative z-10">
-            <div className="flex-1 min-w-0 pr-4">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-glass-accent opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-glass-accent"></span>
-                </span>
-                <span className="text-xs font-medium text-glass-accent uppercase tracking-wide glow-accent">Protocolo Ativo</span>
-              </div>
-
-              <h1 className="text-3xl font-medium text-glass tracking-normal mb-4 truncate">
-                {project.name}
-              </h1>
-
-              <p className="text-base text-glass-secondary leading-relaxed font-normal mb-6">
-                {project.description || 'Nenhuma diretriz definida para este protocolo.'}
-              </p>
-
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <div className="w-1.5 h-3 bg-glass-accent"></div>
-                  <div className="w-1.5 h-3 bg-glass-accent/60"></div>
-                  <div className="w-1.5 h-3 bg-glass-accent/30"></div>
-                </div>
-                <span className="text-xs font-mono font-normal text-glass-muted uppercase tracking-wide">REF: {project.id.substring(0, 8)}</span>
-              </div>
-            </div>
-
-            <div className="w-12 h-12 flex items-center justify-center bg-glass-accent/10 border border-glass-accent/30 text-glass-accent shrink-0">
-              <Activity size={24} />
-            </div>
-          </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-4 mb-10">
-          <div className="p-3 glass-card flex flex-col items-start shadow-sm hover:bg-white/5 transition-colors">
-            <div className="flex items-center gap-2 mb-2">
-              <Layout size={14} className="text-glass-accent/60" />
-              <span className="text-xs font-medium uppercase text-glass-muted tracking-wide">Sessões</span>
-            </div>
-            <span className="text-4xl font-normal text-glass">{stats.conversations}</span>
-          </div>
-          <div className="p-3 glass-card flex flex-col items-start shadow-sm hover:bg-white/5 transition-colors">
-            <div className="flex items-center gap-2 mb-2">
-              <Database size={14} className="text-glass-accent/60" />
-              <span className="text-xs font-medium uppercase text-glass-muted tracking-wide">Biblioteca</span>
-            </div>
-            <span className="text-4xl font-normal text-glass">{stats.library}</span>
-          </div>
-        </div>
-
-        {/* GitHub Integration */}
-        {project.githubRepo && (
-          <div className="mb-10">
-            <h4 className="text-xs font-medium text-glass-muted uppercase tracking-wide mb-4 border-b border-glass-border pb-2 flex items-center gap-2">
-              Integração GitHub
-            </h4>
-            <a
-              href={project.githubRepo.startsWith('http') ? project.githubRepo : `https://github.com/${project.githubRepo}`}
-              target="_blank" rel="noopener noreferrer"
-              className="flex items-center justify-between p-3 glass-card hover:border-glass-accent/40 transition-all group"
+          {/* Compact Action Toolbar */}
+          <div className="flex items-center gap-2 pt-1">
+            <button
+              onClick={onNewConversation}
+              className="flex items-center gap-2 px-3 py-1.5 bg-glass-accent hover:brightness-110 text-white text-[10px] font-bold uppercase tracking-widest shadow-sm rounded-sm transition-all hover:scale-105 active:scale-95"
             >
-              <div className="flex items-center gap-3">
-                <Github size={18} className="text-glass-secondary group-hover:text-glass-accent transition-colors" />
-                <span className="text-sm font-mono text-glass-secondary group-hover:text-glass font-normal">{project.githubRepo}</span>
-              </div>
-              <ChevronRight size={16} className="text-glass-muted" />
-            </a>
-          </div>
-        )}
+              <Play size={10} fill="currentColor" />
+              Iniciar
+            </button>
 
-        {/* Action Buttons */}
-        <div className="space-y-3 pt-4 border-t border-glass-border">
-          <button
-            onClick={onNewConversation}
-            className="w-full py-2.5 bg-glass-accent hover:brightness-110 text-white font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3 shadow-lg"
-          >
-            Iniciar Nova Sessão
-          </button>
-          <button
-            onClick={onOpenLibrary}
-            className="w-full py-2.5 glass-button text-glass hover:bg-white/10 font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3"
-          >
-            Acessar Biblioteca
-          </button>
+            <button
+              onClick={onOpenLibrary}
+              className="flex items-center gap-2 px-3 py-1.5 glass-button hover:bg-white/5 text-glass text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all hover:scale-105 active:scale-95"
+            >
+              <Library size={10} />
+              Lib
+            </button>
+
+            <div className="relative">
+              <button
+                onClick={() => setShowDocMenu(!showDocMenu)}
+                disabled={isGenerating}
+                className="flex items-center justify-center w-7 h-7 glass-button hover:bg-white/5 text-glass-muted hover:text-glass rounded-sm transition-all active:scale-90"
+                title="Gerar Docs"
+              >
+                <FileText size={12} className={isGenerating ? 'animate-pulse text-glass-accent' : ''} />
+              </button>
+              {showDocMenu && (
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-24 glass-card border border-glass-border shadow-xl z-50 py-1">
+                  <button onClick={() => handleGenerateDoc('readme')} className="w-full px-2 py-1 text-[8px] font-bold uppercase text-glass hover:bg-white/10 text-left">README</button>
+                  <button onClick={() => handleGenerateDoc('changelog')} className="w-full px-2 py-1 text-[8px] font-bold uppercase text-glass hover:bg-white/10 text-left">CHANGELOG</button>
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

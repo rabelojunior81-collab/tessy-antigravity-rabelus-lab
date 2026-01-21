@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLayout } from '../../hooks/useLayout';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow as prismTheme } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import MonacoWrapper from '../editor/MonacoWrapper';
 import { X, Copy, Check } from 'lucide-react';
 import ProjectDetailsViewer from '../viewers/ProjectDetailsViewer';
 import LibraryDetailsViewer from '../viewers/LibraryDetailsViewer';
@@ -44,30 +43,34 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
 
   if (arquivoSelecionado) {
     return (
-      <div className="flex-1 overflow-hidden flex flex-col relative p-2">
+      <div className="flex-1 overflow-hidden flex flex-col relative p-0">
         <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in glass-panel border border-glass-border">
-          <div className="px-3 py-1.5 glass-header flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-glass-accent tracking-tighter truncate max-w-[300px]">{arquivoSelecionado.path}</span>
-              <span className="text-[9px] font-bold uppercase px-2 py-0.5 bg-glass-accent/20 text-glass-accent border border-glass-accent/20 tracking-wide">
+          <div className="px-2 py-0.5 glass-header flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 bg-glass-muted/40"></div>
+              <h2 className="text-[9px] uppercase font-bold text-glass tracking-widest opacity-80 truncate max-w-[300px]">
+                {arquivoSelecionado.path.split('/').pop()}
+              </h2>
+              <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 bg-glass-accent/10 text-glass-accent border border-glass-accent/20 tracking-wide rounded-sm">
                 {arquivoSelecionado.language}
               </span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               {!isImage(arquivoSelecionado.language) && (
                 <button
                   onClick={handleCopy}
-                  className="text-glass-muted hover:text-glass transition-colors flex items-center gap-2"
+                  className="p-0.5 text-glass-muted hover:text-glass transition-colors"
+                  title={copied ? 'Copiado' : 'Copiar'}
                 >
-                  {copied ? <Check size={14} className="text-glass-accent" /> : <Copy size={14} />}
-                  <span className="text-[10px] font-medium uppercase tracking-wide">{copied ? 'OK' : 'Copiar'}</span>
+                  {copied ? <Check size={12} className="text-glass-accent" /> : <Copy size={12} />}
                 </button>
               )}
               <button
                 onClick={() => selecionarArquivo(null)}
-                className="p-1 text-glass-muted hover:text-red-400 transition-colors"
+                className="p-0.5 text-glass-muted hover:text-red-400 transition-colors"
+                title="Fechar"
               >
-                <X size={16} />
+                <X size={12} />
               </button>
             </div>
           </div>
@@ -82,21 +85,16 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
                 />
               </div>
             ) : (
-              <SyntaxHighlighter
+              <MonacoWrapper
                 language={arquivoSelecionado.language.toLowerCase()}
-                style={prismTheme as any}
-                showLineNumbers={true}
-                customStyle={{
-                  margin: 0,
-                  padding: '16px',
-                  backgroundColor: 'transparent',
-                  fontSize: '12px',
-                  fontFamily: '"JetBrains Mono", monospace'
+                value={arquivoSelecionado.content}
+                className="h-full w-full"
+                onChange={(value) => {
+                  if (value !== undefined) {
+                    selecionarArquivo({ ...arquivoSelecionado, content: value });
+                  }
                 }}
-                lineNumberStyle={{ color: '#3a5a7f', minWidth: '3em', paddingRight: '1em' }}
-              >
-                {arquivoSelecionado.content}
-              </SyntaxHighlighter>
+              />
             )}
           </div>
         </div>
@@ -107,7 +105,7 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
   if (selectedLibraryItem || (selectedLibraryItem as any)?.isCreating) {
     const isCreating = (selectedLibraryItem as any)?.isCreating || false;
     return (
-      <div className="flex-1 overflow-hidden flex flex-col relative p-2">
+      <div className="flex-1 overflow-hidden flex flex-col relative p-0">
         <LibraryDetailsViewer
           item={isCreating ? null : selectedLibraryItem as any}
           isCreating={isCreating}
@@ -131,8 +129,8 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
 
   if (selectedProjectId) {
     return (
-      <div className="flex-1 overflow-hidden flex flex-col relative p-2">
-        <div className="flex-1 glass-panel overflow-hidden">
+      <div className="flex-1 overflow-hidden flex flex-col relative p-0">
+        <div className="flex-1 overflow-hidden">
           <ProjectDetailsViewer
             projectId={selectedProjectId}
             onClose={() => setSelectedProjectId(null)}

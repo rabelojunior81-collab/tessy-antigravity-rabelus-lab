@@ -115,10 +115,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
               {/* Viewer Resize Handle */}
               <motion.div
                 onMouseDown={handleViewerResize}
-                className="w-1.5 bg-transparent hover:bg-accent-primary/30 cursor-col-resize transition-all duration-200 relative group shrink-0 z-[70]"
+                className="w-[1px] bg-glass-border hover:bg-accent-primary/50 cursor-col-resize transition-all duration-200 relative group shrink-0 z-[70]"
                 title="Redimensionar painel"
               >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gradient-to-r from-transparent via-accent-primary/20 to-transparent" />
+                <div className="absolute inset-y-0 -left-1 -right-1 z-10 cursor-col-resize"></div>
               </motion.div>
             </>
           )}
@@ -134,10 +134,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           {/* Terminal Resize Handle */}
           <div
             onMouseDown={handleTerminalResize}
-            className="h-1.5 bg-transparent hover:bg-accent-primary/30 cursor-row-resize transition-all duration-200 relative group shrink-0 z-[70]"
+            className="h-[1px] bg-glass-border hover:bg-accent-primary/50 cursor-row-resize transition-all duration-200 relative group shrink-0 z-[70]"
             title="Redimensionar terminal"
           >
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gradient-to-b from-transparent via-accent-primary/20 to-transparent" />
+            <div className="absolute inset-x-0 -top-1 -bottom-1 z-10 cursor-row-resize"></div>
           </div>
 
           <div style={{ height: `${alturaTerminal}px` }} className="shrink-0 flex flex-col">
@@ -148,10 +148,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         {/* CoPilot Resize Handle - Invisible Layout Overlay */}
         <div
           onMouseDown={handleCoPilotResize}
-          className="w-2 bg-transparent hover:bg-accent-primary/30 cursor-col-resize transition-all duration-200 relative z-[70] shrink-0 -mr-2 group"
+          className="w-[1px] bg-glass-border hover:bg-accent-primary/50 cursor-col-resize transition-all duration-200 relative z-[70] shrink-0 group"
           title="Redimensionar CoPilot"
         >
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gradient-to-l from-transparent via-accent-primary/20 to-transparent" />
+          <div className="absolute inset-y-0 -left-1 -right-1 z-10 cursor-col-resize"></div>
         </div>
 
         {/* CoPilot with dynamic width */}

@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
 import type { Table } from 'dexie';
-import { Conversation, Project, RepositoryItem, Template, Factor, SharedConversation } from '../types';
+import { Conversation, Project, RepositoryItem, Template, Factor, SharedConversation, Workspace } from '../types';
 
 export class TessyDatabase extends Dexie {
   projects!: Table<Project>;
@@ -11,6 +11,7 @@ export class TessyDatabase extends Dexie {
   files!: Table<{ id: string; projectId: string; name: string; type: string; blob: Blob; createdAt: number }>;
   secrets!: Table<{ id: string; key: string; value: string }>;
   shared_conversations!: Table<SharedConversation>;
+  workspaces!: Table<Workspace>;
 
   constructor() {
     super('TessyDB');
@@ -31,6 +32,11 @@ export class TessyDatabase extends Dexie {
 
     (this as any).version(3).stores({
       library: 'id, projectId, title, timestamp'
+    });
+
+    // Version 4: Add workspaces table for file system synchronization
+    (this as any).version(4).stores({
+      workspaces: 'id, projectId, name, status, createdAt, updatedAt'
     });
   }
 }

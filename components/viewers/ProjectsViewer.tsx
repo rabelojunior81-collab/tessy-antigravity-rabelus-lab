@@ -118,14 +118,14 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
                 }}
                 className={`p-1.5 glass-card transition-all cursor-pointer group relative ${isActive ? '' : 'hover:border-glass-accent/30'} ${isConfirming ? 'border-red-400/50 bg-red-400/5' : ''}`}
               >
-                <div className="flex justify-between items-start gap-2 mb-1">
+                <div className="flex justify-between items-start gap-2 mb-0.5">
                   <div className="flex items-center gap-2 overflow-hidden flex-1">
                     {!isConfirming && (
                       <div className="w-1.5 h-1.5 shrink-0" style={{ backgroundColor: 'var(--glass-accent)' }}></div>
                     )}
                     <h4
                       style={{ color: !isConfirming && isActive ? 'var(--glass-accent)' : undefined }}
-                      className={`text-sm font-normal truncate tracking-normal transition-colors ${isConfirming ? 'text-red-400' : (isActive ? '' : 'text-glass-secondary group-hover:text-glass')}`}
+                      className={`text-xs font-bold uppercase truncate tracking-wide transition-colors ${isConfirming ? 'text-red-400' : (isActive ? '' : 'text-glass-secondary group-hover:text-glass')}`}
                     >
                       {isConfirming ? 'EXCLUIR PROJETO?' : project.name}
                     </h4>
@@ -136,35 +136,35 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
                       <>
                         <button
                           onClick={(e) => handleConfirmDelete(e, project.id)}
-                          className="p-1 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                          className="p-0.5 text-red-500 hover:bg-red-500 hover:text-white transition-all rounded-sm"
                           title="Confirmar"
                         >
-                          <Check size={14} strokeWidth={3} />
+                          <Check size={12} strokeWidth={3} />
                         </button>
                         <button
                           onClick={handleCancelDelete}
-                          className="p-1 text-glass-muted hover:bg-surface-elevated transition-all"
+                          className="p-0.5 text-glass-muted hover:bg-surface-elevated transition-all rounded-sm"
                           title="Cancelar"
                         >
-                          <X size={14} strokeWidth={3} />
+                          <X size={12} strokeWidth={3} />
                         </button>
                       </>
                     ) : (
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
                         <button
                           onClick={(e) => { e.stopPropagation(); onEditProject(project.id); }}
-                          className="p-1 text-glass-muted hover:text-glass"
+                          className="p-0.5 text-glass-muted hover:text-glass"
                           title="Editar"
                         >
-                          <Edit3 size={14} />
+                          <Edit3 size={12} />
                         </button>
                         {project.id !== 'default-project' && (
                           <button
                             onClick={(e) => handleStartDelete(e, project.id)}
-                            className="p-1 text-glass-muted hover:text-red-400"
+                            className="p-0.5 text-glass-muted hover:text-red-400"
                             title="Remover"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={12} />
                           </button>
                         )}
                       </div>
@@ -172,11 +172,11 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
                   </div>
                 </div>
 
-                <p className="text-[11px] text-glass-muted line-clamp-1 mb-2 font-normal italic">
+                <p className="text-[10px] text-glass-muted line-clamp-1 mb-1 font-normal leading-tight">
                   {project.description || 'Sem diretriz definida.'}
                 </p>
 
-                <div className="flex items-center justify-between pt-1 border-t border-glass/10 text-[9px] font-medium text-glass-muted uppercase tracking-wide">
+                <div className="flex items-center justify-between pt-1 border-t border-glass/5 text-[8px] font-bold text-glass-muted uppercase tracking-widest">
                   <span>{new Date(project.updatedAt).toLocaleDateString()}</span>
                   <div className="flex items-center gap-2">
                     {isActive && <span style={{ color: 'var(--glass-accent)' }}>ATIVO</span>}
@@ -187,7 +187,7 @@ const ProjectsViewer: React.FC<ProjectsViewerProps> = ({
                         color: isActive ? 'white' : 'var(--glass-accent)',
                         borderColor: isActive ? 'var(--glass-accent)' : 'rgba(var(--accent-rgb), 0.3)'
                       }}
-                      className="px-1 py-0.5 border text-[8px] transition-all hover:brightness-110 active:scale-95 font-bold tracking-widest"
+                      className="px-1 py-px border transition-all hover:brightness-110 active:scale-95 tracking-widest rounded-sm"
                     >
                       {isActive ? 'SEL' : 'USAR'}
                     </button>

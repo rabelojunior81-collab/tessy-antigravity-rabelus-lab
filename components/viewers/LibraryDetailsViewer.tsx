@@ -97,37 +97,37 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
   const title = formData.label || (isCreating ? 'Novo Protocolo' : 'Detalhes');
 
   return (
-    <div className="flex-1 glass-panel overflow-hidden flex flex-col p-2 animate-fade-in h-full">
-      <div className="flex-1 flex flex-col h-full overflow-hidden border border-glass-border bg-glass-base/40 backdrop-blur-lg shadow-2xl">
+    <div className="flex-1 glass-panel overflow-hidden flex flex-col h-full animate-fade-in group">
+      <div className="flex-1 flex flex-col h-full overflow-hidden">
 
-        {/* Header */}
-        <div className="px-4 py-2 border-b border-glass-border glass-header flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-4 overflow-hidden">
-            <span className="px-2 py-0.5 bg-glass-accent/10 text-glass-accent text-[9px] font-bold uppercase border border-glass-accent/30 shrink-0 tracking-widest">
-              {isEditing ? 'EDITOR' : category}
-            </span>
-            <h2 className="text-xl font-light text-glass truncate tracking-tight uppercase">
+        {/* Header - Standardized */}
+        <div className="px-2 py-0.5 border-b border-glass-border glass-header flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-1.5 overflow-hidden">
+            <div className="w-1.5 h-1.5 bg-glass-muted/40" />
+            <h2 className="text-[9px] font-bold text-glass tracking-widest uppercase opacity-80 truncate">
               {title}
             </h2>
+            <span className="px-1.5 py-0.5 bg-glass-accent/10 text-glass-accent text-[8px] font-bold uppercase border border-glass-accent/20 shrink-0 tracking-wide rounded-sm">
+              {isEditing ? 'EDITOR' : category}
+            </span>
           </div>
 
-          <div className="flex items-center gap-4 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {!isEditing && (formData as any).isCustom !== false && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="p-2 text-glass-muted hover:text-glass-accent transition-all active:scale-95"
+                className="p-0.5 text-glass-muted hover:text-glass-accent transition-all active:scale-95"
                 title="Editar"
               >
-                <Edit3 size={16} />
+                <Edit3 size={12} />
               </button>
             )}
-            <div className="h-4 w-px bg-glass-border mx-2"></div>
             <button
               onClick={onClose}
-              className="p-1.5 text-glass-muted hover:text-red-400 transition-all active:scale-90"
+              className="p-0.5 text-glass-muted hover:text-red-400 transition-all active:scale-90"
               title="Fechar"
             >
-              <X size={18} />
+              <X size={12} />
             </button>
           </div>
         </div>
@@ -188,19 +188,19 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
             </div>
 
             {/* Footer Form */}
-            <div className="px-6 py-4 glass-header border-t border-glass-border flex items-center justify-end gap-4 shrink-0">
+            <div className="px-3 py-2 glass-header border-t border-glass-border flex items-center justify-end gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => isCreating ? onClose() : setIsEditing(false)}
-                className="px-5 py-2 glass-button text-glass-muted text-[10px] font-bold uppercase tracking-widest hover:text-glass transition-all"
+                className="px-3 py-1.5 glass-button text-glass-muted text-[10px] font-bold uppercase tracking-widest hover:text-glass transition-all"
               >
                 Abortar
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 bg-glass-accent hover:brightness-110 text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-xl"
+                className="px-3 py-1.5 bg-glass-accent hover:brightness-110 text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-sm"
               >
-                <Save size={14} /> Sincronizar
+                <Save size={12} /> Sincronizar
               </button>
             </div>
           </form>
@@ -228,19 +228,19 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
             </div>
 
             {/* Footer Actions */}
-            <div className="px-6 py-4 glass-header border-t border-glass-border flex items-center justify-between shrink-0">
+            <div className="px-3 py-2 glass-header border-t border-glass-border flex items-center justify-between shrink-0">
               <button
                 onClick={onClose}
-                className="px-5 py-2 glass-button text-glass-muted text-[10px] font-bold uppercase tracking-widest hover:text-glass transition-all"
+                className="px-3 py-1.5 glass-button text-glass-muted text-[10px] font-bold uppercase tracking-widest hover:text-glass transition-all"
               >
-                <Undo2 size={14} className="mr-2 inline" /> Voltar
+                <Undo2 size={12} className="mr-2 inline" /> Voltar
               </button>
 
               <button
                 onClick={() => onSelect(formData.content || '')}
-                className="px-5 py-2 bg-glass-accent hover:brightness-110 text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-3 shadow-xl active:scale-95 group"
+                className="px-3 py-1.5 bg-glass-accent hover:brightness-110 text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-sm active:scale-95 group"
               >
-                <ChevronRight size={16} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
+                <ChevronRight size={14} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
                 Carregar no Núcleo
               </button>
             </div>

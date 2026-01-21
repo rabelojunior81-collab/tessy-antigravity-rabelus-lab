@@ -9,6 +9,7 @@ import { autoDocScheduler } from './services/autoDocScheduler';
 // Layout & Context Imports
 import { LayoutProvider, useLayoutContext } from './contexts/LayoutContext';
 import { GitHubProvider } from './contexts/GitHubContext';
+import { WorkspaceProvider } from './contexts/WorkspaceContext';
 import { ChatProvider, useChat } from './contexts/ChatContext';
 import MainLayout from './components/layout/MainLayout';
 import { useLayout } from './hooks/useLayout';
@@ -274,9 +275,11 @@ const App: React.FC = () => {
     <VisualProvider>
       <LayoutProvider>
         <GitHubProvider>
-          <ChatProvider currentProjectId={initialProjectId}>
-            <AppContent />
-          </ChatProvider>
+          <WorkspaceProvider>
+            <ChatProvider currentProjectId={initialProjectId}>
+              <AppContent />
+            </ChatProvider>
+          </WorkspaceProvider>
         </GitHubProvider>
       </LayoutProvider>
     </VisualProvider>

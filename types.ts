@@ -54,7 +54,24 @@ export interface Project {
   name: string;
   description?: string;
   githubRepo?: string;
+  workspaceId?: string;  // Referência ao workspace vinculado
   color?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+// Workspace Status enum
+export type WorkspaceStatus = 'connected' | 'disconnected' | 'syncing' | 'error';
+
+// Workspace interface para sincronização de file system
+export interface Workspace {
+  id: string;
+  projectId: string;
+  name: string;
+  localPath: string;  // Caminho informativo (ex: "C:/Dev/my-project")
+  githubCloneUrl?: string;  // URL do repositório clonado (se aplicável)
+  lastSyncAt: number;
+  status: WorkspaceStatus;
   createdAt: number;
   updatedAt: number;
 }
