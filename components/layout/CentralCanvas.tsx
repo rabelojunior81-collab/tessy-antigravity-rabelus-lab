@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useLayout } from '../../hooks/useLayout';
 import { useWorkspace } from '../../contexts/WorkspaceContext';
+import { useDebouncedCallback } from '../../hooks/useDebounce';
 import MonacoWrapper from '../editor/MonacoWrapper';
 import { X, Copy, Check, Save, Loader2 } from 'lucide-react';
 import ProjectDetailsViewer from '../viewers/ProjectDetailsViewer';
@@ -29,6 +30,10 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [isModified, setIsModified] = useState(false);
 
+  // Auto-save configuration
+  const AUTO_SAVE_DELAY = 2000; // 2 seconds
+  const pendingContentRef = useRef<{ path: string; content: string } | null>(null);
+
   const handleCopy = () => {
     if (arquivoSelecionado?.content) {
       navigator.clipboard.writeText(arquivoSelecionado.content);
@@ -52,12 +57,47 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
     }
   }, [arquivoSelecionado, saveFile, isLocalFile]);
 
+  // Auto-save with debounce
+  const debouncedAutoSave = useDebouncedCallback(async () => {
+    if (pendingContentRef.current && isLocalFile) {
+      setIsSaving(true);
+      const { path, content } = pendingContentRef.current;
+      const success = await saveFile(path, content);
+      setIsSaving(false);
+      if (success) {
+        setIsModified(false);
+        pendingContentRef.current = null;
+      }
+    }
+  }, AUTO_SAVE_DELAY);
+
   const handleContentChange = useCallback((value: string | undefined) => {
     if (value !== undefined && arquivoSelecionado) {
       selecionarArquivo({ ...arquivoSelecionado, content: value });
       setIsModified(true);
+
+      // Queue for auto-save (only local files)
+      if (isLocalFile) {
+        pendingContentRef.current = { path: arquivoSelecionado.path, content: value };
+        debouncedAutoSave();
+      }
     }
-  }, [arquivoSelecionado, selecionarArquivo]);
+  }, [arquivoSelecionado, selecionarArquivo, isLocalFile, debouncedAutoSave]);
+
+  // Keyboard shortcut: Ctrl+S to save
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (isLocalFile && isModified && arquivoSelecionado) {
+          handleSave();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLocalFile, isModified, arquivoSelecionado, handleSave]);
 
   const isImage = (lang: string) => ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(lang.toLowerCase());
 
