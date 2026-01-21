@@ -41,44 +41,62 @@ const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, conversation }
     setTimeout(() => {
       setIsClosing(false);
       onClose();
-    }, 100);
+    }, 150);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
-      <div className={`w-full max-w-sm bg-bg-secondary/95 backdrop-blur-xl border border-border-visible flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Share2 className="text-accent-primary" size={16} />
-            <h2 className="text-xs font-medium tracking-normal text-text-primary">Partilhar</h2>
+    <div
+      className={`modal-overlay ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+      onClick={handleClose}
+    >
+      <div
+        className={`w-full max-w-xs glass-modal flex flex-col ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-2 py-1 glass-header flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-1.5">
+            <Share2 style={{ color: 'var(--glass-accent)' }} size={10} />
+            <h2 className="text-[9px] font-bold tracking-widest text-glass uppercase">Partilhar</h2>
           </div>
-          <button onClick={handleClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={16} /></button>
+          <button onClick={handleClose} className="p-0.5 text-glass-muted hover:text-glass transition-all">
+            <X size={10} />
+          </button>
         </div>
 
-        <div className="p-12 flex flex-col items-center text-center space-y-8">
+        {/* Content */}
+        <div className="p-3 flex flex-col items-center text-center space-y-3">
           {isGenerating ? (
-            <div className="py-10 flex flex-col items-center gap-4 opacity-50">
-              <Loader2 className="text-accent-primary animate-spin" size={40} />
-              <p className="text-xs font-bold uppercase tracking-widest">Gerando Protocolo...</p>
+            <div className="py-4 flex flex-col items-center gap-2 opacity-60">
+              <Loader2 style={{ color: 'var(--glass-accent)' }} className="animate-spin" size={20} />
+              <p className="text-[8px] font-bold uppercase tracking-widest text-glass-muted">Gerando...</p>
             </div>
           ) : error ? (
-            <div className="py-10 text-red-400 flex flex-col items-center gap-4">
-              <AlertCircle size={40} />
-              <p className="text-xs font-bold uppercase">{error}</p>
+            <div className="py-4 text-red-400 flex flex-col items-center gap-2">
+              <AlertCircle size={20} />
+              <p className="text-[8px] font-bold uppercase">{error}</p>
             </div>
           ) : code ? (
-            <div className="w-full space-y-8 animate-fade-in">
-              <p className="text-xs text-text-tertiary font-bold uppercase tracking-widest">Código de Sincronização:</p>
-              <div className="py-4 bg-bg-primary border border-accent-primary/30 shadow-inner">
-                <span className="text-4xl font-bold text-text-primary font-mono tracking-[0.3em] uppercase">{code}</span>
+            <div className="w-full space-y-3 animate-fade-in">
+              <p className="text-[8px] text-glass-muted font-bold uppercase tracking-widest">Código:</p>
+              <div className="py-2 glass-card border-glass/10 bg-white/5 relative group overflow-hidden">
+                <div className="absolute inset-0 bg-glass-accent/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                <span className="text-lg font-bold text-glass font-mono tracking-[0.2em] uppercase relative z-10">{code}</span>
               </div>
               <button
                 onClick={() => { navigator.clipboard.writeText(code); setIsCopied(true); setTimeout(() => setIsCopied(false), 2000); }}
-                className={`w-full py-0.5 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-4 shadow-lg ${isCopied ? 'bg-accent-subtle/40 text-accent-primary border border-accent-primary' : 'bg-accent-primary hover:bg-accent-secondary text-white'}`}
+                style={{
+                  backgroundColor: isCopied ? 'transparent' : 'var(--glass-accent)',
+                  borderColor: isCopied ? 'var(--glass-accent)' : 'transparent',
+                  color: isCopied ? 'var(--glass-accent)' : 'white',
+                  boxShadow: isCopied ? 'none' : '0 4px 12px rgba(var(--accent-rgb), 0.3)'
+                }}
+                className={`w-full py-1.5 font-bold uppercase tracking-widest text-[8px] transition-all flex items-center justify-center gap-2 active:scale-95 ${isCopied ? 'border' : ''}`}
               >
-                {isCopied ? <Check size={20} strokeWidth={3} /> : <Copy size={20} />} {isCopied ? 'COPIADO' : 'COPIAR CÓDIGO'}
+                {isCopied ? <Check size={10} strokeWidth={3} /> : <Copy size={10} />}
+                {isCopied ? 'COPIADO' : 'COPIAR'}
               </button>
             </div>
           ) : null}

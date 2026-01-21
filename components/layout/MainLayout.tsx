@@ -28,7 +28,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     switch (viewerAberto) {
       case 'history': return 'Histórico';
       case 'library': return 'Biblioteca';
-      case 'projects': return 'Protocolos';
+      case 'projects': return 'Projetos';
       case 'github': return 'GitHub Sync';
       default: return '';
     }
@@ -93,11 +93,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   };
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-bg-primary">
+    <div className="flex h-full w-full overflow-hidden">
       <Sidebar />
 
-      <main className="flex-1 flex flex-row min-w-0 relative overflow-hidden bg-bg-secondary">
-        {/* Viewer Panel */}
+      <main className="flex-1 flex flex-row min-w-0 relative overflow-hidden">
         {/* Viewer Panel */}
         <AnimatePresence>
           {viewerAberto && (
@@ -115,19 +114,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({
               </motion.div>
               {/* Viewer Resize Handle */}
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
                 onMouseDown={handleViewerResize}
-                className="w-0.5 bg-border-visible hover:bg-accent-primary cursor-col-resize transition-colors relative group shrink-0 z-50"
+                className="w-1.5 bg-transparent hover:bg-accent-primary/30 cursor-col-resize transition-all duration-200 relative group shrink-0 z-[70]"
+                title="Redimensionar painel"
               >
-                <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-accent-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gradient-to-r from-transparent via-accent-primary/20 to-transparent" />
               </motion.div>
             </>
           )}
         </AnimatePresence>
 
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-bg-secondary">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
           <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
             <CentralCanvas
               currentProjectId={currentProjectId}
@@ -137,9 +134,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           {/* Terminal Resize Handle */}
           <div
             onMouseDown={handleTerminalResize}
-            className="h-0.5 bg-border-visible hover:bg-accent-primary cursor-row-resize transition-colors relative group shrink-0 z-50"
+            className="h-1.5 bg-transparent hover:bg-accent-primary/30 cursor-row-resize transition-all duration-200 relative group shrink-0 z-[70]"
+            title="Redimensionar terminal"
           >
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-accent-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gradient-to-b from-transparent via-accent-primary/20 to-transparent" />
           </div>
 
           <div style={{ height: `${alturaTerminal}px` }} className="shrink-0 flex flex-col">
@@ -147,16 +145,17 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           </div>
         </div>
 
-        {/* CoPilot Resize Handle */}
+        {/* CoPilot Resize Handle - Invisible Layout Overlay */}
         <div
           onMouseDown={handleCoPilotResize}
-          className="w-0.5 bg-border-visible hover:bg-accent-primary cursor-col-resize transition-colors relative group shrink-0 z-50"
+          className="w-2 bg-transparent hover:bg-accent-primary/30 cursor-col-resize transition-all duration-200 relative z-[70] shrink-0 -mr-2 group"
+          title="Redimensionar CoPilot"
         >
-          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-accent-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gradient-to-l from-transparent via-accent-primary/20 to-transparent" />
         </div>
 
         {/* CoPilot with dynamic width */}
-        <div style={{ width: `${larguraCoPilot}px` }} className="ml-auto h-full shrink-0 flex flex-col">
+        <div style={{ width: `${larguraCoPilot}px` }} className="h-full shrink-0 flex flex-col pointer-events-none z-[60]">
           <CoPilot />
         </div>
       </main>

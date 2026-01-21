@@ -10,8 +10,8 @@ interface ProjectDetailsViewerProps {
   onOpenLibrary: () => void;
 }
 
-const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({ 
-  projectId, 
+const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
+  projectId,
   onClose,
   onNewConversation,
   onOpenLibrary
@@ -38,50 +38,50 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
   if (!project) return null;
 
   return (
-    <div className="h-full flex flex-col bg-bg-secondary animate-fade-in overflow-hidden">
+    <div className="h-full flex flex-col glass-panel animate-fade-in overflow-hidden">
       {/* Header - Compact py-0.5, icon 16 */}
-      <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+      <div className="px-4 py-2 border-b border-glass-border glass-header flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
-          <Folder size={16} className="text-accent-primary" />
-          <h2 className="text-xs font-medium tracking-normal text-text-primary">Detalhes do Protocolo</h2>
+          <Folder size={16} className="text-glass-accent" />
+          <h2 className="text-xs font-medium tracking-normal text-glass">Detalhes do Protocolo</h2>
         </div>
-        <button onClick={onClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90">
+        <button onClick={onClose} className="p-1 text-glass-muted hover:text-glass transition-all active:scale-90">
           <X size={16} />
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
         {/* Active Project Card */}
-        <div className="mb-10 p-2 bg-bg-tertiary/80 border border-border-visible relative overflow-hidden group shadow-md">
+        <div className="mb-6 p-3 glass-card relative overflow-hidden group shadow-md">
           <div className="flex justify-between items-start relative z-10">
             <div className="flex-1 min-w-0 pr-4">
               <div className="flex items-center gap-2 mb-4">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-primary"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-glass-accent opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-glass-accent"></span>
                 </span>
-                <span className="text-xs font-medium text-accent-primary uppercase tracking-wide glow-text-blue">Protocolo Ativo</span>
+                <span className="text-xs font-medium text-glass-accent uppercase tracking-wide glow-accent">Protocolo Ativo</span>
               </div>
 
-              <h1 className="text-3xl font-medium text-text-primary tracking-normal mb-4 truncate">
+              <h1 className="text-3xl font-medium text-glass tracking-normal mb-4 truncate">
                 {project.name}
               </h1>
 
-              <p className="text-base text-text-secondary leading-relaxed font-normal mb-6">
+              <p className="text-base text-glass-secondary leading-relaxed font-normal mb-6">
                 {project.description || 'Nenhuma diretriz definida para este protocolo.'}
               </p>
 
               <div className="flex items-center gap-4">
-                 <div className="flex items-center gap-1">
-                   <div className="w-1.5 h-3 bg-accent-primary"></div>
-                   <div className="w-1.5 h-3 bg-accent-primary/60"></div>
-                   <div className="w-1.5 h-3 bg-accent-primary/30"></div>
-                 </div>
-                 <span className="text-xs font-mono font-normal text-text-tertiary uppercase tracking-wide">REF: {project.id.substring(0, 8)}</span>
+                <div className="flex items-center gap-1">
+                  <div className="w-1.5 h-3 bg-glass-accent"></div>
+                  <div className="w-1.5 h-3 bg-glass-accent/60"></div>
+                  <div className="w-1.5 h-3 bg-glass-accent/30"></div>
+                </div>
+                <span className="text-xs font-mono font-normal text-glass-muted uppercase tracking-wide">REF: {project.id.substring(0, 8)}</span>
               </div>
             </div>
 
-            <div className="w-12 h-12 flex items-center justify-center bg-accent-subtle/30 border border-accent-primary/20 text-accent-primary shrink-0">
+            <div className="w-12 h-12 flex items-center justify-center bg-glass-accent/10 border border-glass-accent/30 text-glass-accent shrink-0">
               <Activity size={24} />
             </div>
           </div>
@@ -89,53 +89,53 @@ const ProjectDetailsViewer: React.FC<ProjectDetailsViewerProps> = ({
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-4 mb-10">
-          <div className="p-2 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
+          <div className="p-3 glass-card flex flex-col items-start shadow-sm hover:bg-white/5 transition-colors">
             <div className="flex items-center gap-2 mb-2">
-              <Layout size={14} className="text-accent-primary/60" />
-              <span className="text-xs font-medium uppercase text-text-tertiary tracking-wide">Sessões</span>
+              <Layout size={14} className="text-glass-accent/60" />
+              <span className="text-xs font-medium uppercase text-glass-muted tracking-wide">Sessões</span>
             </div>
-            <span className="text-4xl font-normal text-text-primary">{stats.conversations}</span>
+            <span className="text-4xl font-normal text-glass">{stats.conversations}</span>
           </div>
-          <div className="p-2 bg-bg-tertiary/80 border border-border-visible flex flex-col items-start shadow-sm">
+          <div className="p-3 glass-card flex flex-col items-start shadow-sm hover:bg-white/5 transition-colors">
             <div className="flex items-center gap-2 mb-2">
-              <Database size={14} className="text-accent-primary/60" />
-              <span className="text-xs font-medium uppercase text-text-tertiary tracking-wide">Biblioteca</span>
+              <Database size={14} className="text-glass-accent/60" />
+              <span className="text-xs font-medium uppercase text-glass-muted tracking-wide">Biblioteca</span>
             </div>
-            <span className="text-4xl font-normal text-text-primary">{stats.library}</span>
+            <span className="text-4xl font-normal text-glass">{stats.library}</span>
           </div>
         </div>
 
         {/* GitHub Integration */}
         {project.githubRepo && (
           <div className="mb-10">
-            <h4 className="text-xs font-medium text-text-tertiary uppercase tracking-wide mb-4 border-b border-border-visible pb-2 flex items-center gap-2">
+            <h4 className="text-xs font-medium text-glass-muted uppercase tracking-wide mb-4 border-b border-glass-border pb-2 flex items-center gap-2">
               Integração GitHub
             </h4>
-            <a 
+            <a
               href={project.githubRepo.startsWith('http') ? project.githubRepo : `https://github.com/${project.githubRepo}`}
               target="_blank" rel="noopener noreferrer"
-              className="flex items-center justify-between p-4 bg-bg-tertiary/80 border border-border-visible hover:border-accent-primary/40 transition-all group"
+              className="flex items-center justify-between p-3 glass-card hover:border-glass-accent/40 transition-all group"
             >
               <div className="flex items-center gap-3">
-                <Github size={18} className="text-text-secondary group-hover:text-accent-primary transition-colors" />
-                <span className="text-sm font-mono text-text-secondary group-hover:text-text-primary font-normal">{project.githubRepo}</span>
+                <Github size={18} className="text-glass-secondary group-hover:text-glass-accent transition-colors" />
+                <span className="text-sm font-mono text-glass-secondary group-hover:text-glass font-normal">{project.githubRepo}</span>
               </div>
-              <ChevronRight size={16} className="text-text-tertiary" />
+              <ChevronRight size={16} className="text-glass-muted" />
             </a>
           </div>
         )}
 
         {/* Action Buttons */}
-        <div className="space-y-4 pt-4 border-t border-border-visible">
-          <button 
+        <div className="space-y-3 pt-4 border-t border-glass-border">
+          <button
             onClick={onNewConversation}
-            className="w-full py-0.5 bg-accent-primary hover:bg-accent-secondary text-white font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3 shadow-lg"
+            className="w-full py-2.5 bg-glass-accent hover:brightness-110 text-white font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3 shadow-lg"
           >
             Iniciar Nova Sessão
           </button>
-          <button 
+          <button
             onClick={onOpenLibrary}
-            className="w-full py-0.5 bg-bg-tertiary border border-border-visible text-text-primary hover:bg-bg-elevated font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3"
+            className="w-full py-2.5 glass-button text-glass hover:bg-white/10 font-medium text-sm tracking-normal transition-all flex items-center justify-center gap-3"
           >
             Acessar Biblioteca
           </button>

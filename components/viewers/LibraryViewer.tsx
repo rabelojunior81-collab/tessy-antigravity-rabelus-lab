@@ -93,31 +93,36 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
   };
 
   return (
-    <div className="flex flex-col h-full bg-bg-secondary animate-fade-in">
-      <div className="p-4 border-b border-border-visible space-y-4 bg-bg-primary/80 backdrop-blur-md">
-        <button
-          onClick={() => onSelectItem({ isCreating: true } as any)}
-          className="w-full flex items-center justify-center gap-2 py-2.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-md"
-        >
-          <Plus size={14} strokeWidth={3} />
-          Criar Protocolo
-        </button>
-
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={14} />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="FILTRAR..."
-            className="w-full bg-bg-primary border border-border-visible py-2 pl-9 pr-4 text-[10px] font-normal text-text-primary focus:border-accent-primary outline-none uppercase tracking-widest"
-          />
+    <div className="flex flex-col h-full bg-transparent">
+      <div className="px-2 py-1 space-y-1 glass-header glass-header-compact">
+        <div className="flex items-center gap-1">
+          <div className="flex-1 relative">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-glass-muted" size={12} />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="FILTRAR..."
+              className="w-full glass-input py-1 pl-7 pr-2 text-[10px] font-normal text-glass focus:border-glass-accent outline-none uppercase tracking-wide placeholder:text-glass-muted/40"
+            />
+          </div>
+          <button
+            onClick={() => onSelectItem({ isCreating: true } as any)}
+            className="p-1 text-glass-muted hover:text-glass-accent transition-all shrink-0 active:scale-90"
+            title="Novo Protocolo"
+          >
+            <Plus size={14} strokeWidth={2.5} />
+          </button>
         </div>
         <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-1">
           <button
             onClick={() => toggleTag('todos')}
-            className={`px-2 py-1 text-[9px] font-medium uppercase tracking-wider border transition-all whitespace-nowrap ${selectedTags.length === 0 ? 'bg-accent-subtle/40 border-accent-primary text-accent-primary' : 'bg-bg-tertiary/80 text-text-tertiary border-border-visible hover:text-text-primary'
-              }`}
+            style={{
+              backgroundColor: selectedTags.length === 0 ? 'rgba(var(--accent-rgb), 0.15)' : undefined,
+              borderColor: selectedTags.length === 0 ? 'rgba(var(--accent-rgb), 0.3)' : undefined,
+              color: selectedTags.length === 0 ? 'var(--glass-accent)' : undefined
+            }}
+            className={`px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide border transition-all whitespace-nowrap ${selectedTags.length === 0 ? '' : 'bg-white/5 text-glass-muted border-white/5 hover:text-glass'}`}
           >
             Todos
           </button>
@@ -127,8 +132,12 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className={`px-2 py-1 text-[9px] font-medium uppercase tracking-wider border transition-all whitespace-nowrap flex items-center gap-1.5 ${isActive ? 'bg-accent-subtle/40 border-accent-primary text-accent-primary' : 'bg-bg-tertiary/80 text-text-tertiary border-border-visible hover:text-text-primary'
-                  }`}
+                style={{
+                  backgroundColor: isActive ? 'rgba(var(--accent-rgb), 0.15)' : undefined,
+                  borderColor: isActive ? 'rgba(var(--accent-rgb), 0.3)' : undefined,
+                  color: isActive ? 'var(--glass-accent)' : undefined
+                }}
+                className={`px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide border transition-all whitespace-nowrap flex items-center gap-1 ${isActive ? '' : 'bg-white/5 text-glass-muted border-white/5 hover:text-glass'}`}
               >
                 {isActive && <Check size={10} />}
                 {tag}
@@ -138,7 +147,7 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
+      <div className="flex-1 overflow-y-auto custom-scrollbar px-2 py-1 space-y-1">
         {isLoading ? (
           <div className="flex justify-center p-8"><div className="w-4 h-4 border border-accent-primary border-t-transparent animate-spin"></div></div>
         ) : filteredItems.length === 0 ? (
@@ -156,12 +165,14 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
                 key={item.id}
                 onClick={() => onSelectItem(item as any)}
                 style={animationStyle}
-                className={`p-3 bg-bg-tertiary/40 border border-border-visible hover:border-accent-primary/40 transition-all cursor-pointer group shadow-sm ${index < 20 ? 'opacity-0 animate-slide-in-right' : 'opacity-100'}`}
+                className={`p-2 glass-card hover:border-glass-accent/40 transition-all cursor-pointer group shadow-sm ${index < 20 ? 'opacity-0 animate-slide-in-right' : 'opacity-100'}`}
               >
                 <div className="flex justify-between items-start gap-2 mb-1.5">
                   <div className="flex items-center gap-2 overflow-hidden">
                     {isSystem ? <Bookmark size={10} className="text-accent-primary/60 shrink-0" /> : <Hash size={10} className="text-text-tertiary opacity-40 shrink-0" />}
-                    <h4 className="text-[11px] font-medium text-text-secondary group-hover:text-accent-primary transition-colors truncate uppercase tracking-tight">
+                    <h4
+                      className="text-[11px] font-medium text-glass-secondary transition-colors truncate uppercase tracking-tight group-hover:text-glass-accent"
+                    >
                       {(item as any).title}
                     </h4>
                   </div>
@@ -182,11 +193,11 @@ const LibraryViewer: React.FC<LibraryViewerProps> = ({ currentProjectId, onSelec
                   </div>
                 </div>
                 <p className="text-[10px] text-text-tertiary line-clamp-1 leading-relaxed mb-1.5 italic font-normal opacity-60">
-                  {item.description || 'Sem descrição.'}
+                  {item.description || 'Diretrizes não especificadas.'}
                 </p>
                 <div className="flex flex-wrap gap-1">
                   {item.tags?.slice(0, 3).map(tag => (
-                    <span key={tag} className="px-1 py-0.5 bg-bg-primary/50 text-text-tertiary border border-border-visible text-[8px] font-medium uppercase tracking-wide">
+                    <span key={tag} className="px-1 py-0.5 bg-white/5 text-glass-muted border border-white/5 text-[8px] font-medium uppercase tracking-wide">
                       {tag}
                     </span>
                   ))}

@@ -17,7 +17,7 @@ const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm,
     setTimeout(() => {
       setIsClosing(false);
       onClose();
-    }, 100);
+    }, 150);
   };
 
   const handleConfirm = () => {
@@ -28,31 +28,57 @@ const RestartModal: React.FC<RestartModalProps> = ({ isOpen, onClose, onConfirm,
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
-      <div className={`w-full max-sm bg-bg-secondary/95 backdrop-blur-xl border border-red-900/40 flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="px-4 py-0.5 border-b border-red-900/20 bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ShieldAlert className="text-red-500" size={16} />
-            <h2 className="text-[10px] font-medium tracking-wide text-red-400">Alerta Crítico</h2>
+    <div
+      className={`modal-overlay ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+      onClick={handleClose}
+    >
+      <div
+        className={`w-full max-w-xs glass-modal flex flex-col border-red-500/30 ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-2 py-1 glass-header flex items-center justify-between shrink-0 border-b-red-500/20">
+          <div className="flex items-center gap-1.5">
+            <ShieldAlert className="text-red-500" size={10} />
+            <h2 className="text-[9px] font-bold tracking-widest text-red-400 uppercase">Alerta</h2>
           </div>
-          <button onClick={handleClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={16} /></button>
+          <button onClick={handleClose} className="p-0.5 text-glass-muted hover:text-glass transition-all">
+            <X size={10} />
+          </button>
         </div>
 
-        <div className="p-12 flex flex-col items-center text-center space-y-6">
-          <AlertTriangle className="text-red-500/40" size={48} />
-          <div className="space-y-4">
-            <h3 className="text-xl font-normal text-text-primary tracking-normal">Purgar Sessão Atual?</h3>
-            <p className="text-xs font-normal text-text-tertiary uppercase leading-relaxed tracking-wide opacity-80">
-              Toda a memória volátil deste protocolo será destruída permanentemente.
+        {/* Content */}
+        <div className="p-3 flex flex-col items-center text-center space-y-2">
+          <AlertTriangle className="text-red-500/50" size={24} />
+          <div className="space-y-1">
+            <h3 className="text-sm font-normal text-glass tracking-normal">Purgar Sessão?</h3>
+            <p className="text-[8px] font-normal text-glass-muted uppercase leading-relaxed tracking-wide">
+              Memória volátil será destruída permanentemente.
             </p>
           </div>
         </div>
 
-        <div className="p-4 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex flex-wrap gap-3 shrink-0">
-          <button onClick={handleClose} className="flex-1 min-w-[100px] py-0.5 bg-bg-tertiary hover:bg-bg-elevated text-text-tertiary font-medium uppercase tracking-wide text-xs transition-all">Cancelar</button>
-          <button onClick={onSave} className="flex-1 min-w-[100px] py-0.5 bg-accent-primary/20 hover:bg-accent-primary/30 border border-accent-primary/40 text-accent-primary font-medium uppercase tracking-wide text-xs transition-all">Arquivar</button>
-          <button onClick={handleConfirm} disabled={isRestarting} className="flex-1 min-w-[100px] py-0.5 bg-red-600 hover:bg-red-500 text-white font-medium uppercase tracking-wide text-xs transition-all shadow-lg">
-            {isRestarting ? 'PURGANDO...' : 'PURGAR'}
+        {/* Footer */}
+        <div className="p-2 glass-header glass-header-compact flex gap-2 shrink-0">
+          <button
+            onClick={handleClose}
+            className="flex-1 py-1.5 glass-card border-glass/10 text-glass-muted font-bold uppercase tracking-widest text-[8px] hover:text-glass transition-all active:scale-95"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={onSave}
+            style={{ borderColor: 'rgba(var(--accent-rgb), 0.3)', color: 'var(--glass-accent)' }}
+            className="flex-1 py-1.5 bg-white/5 border font-bold uppercase tracking-widest text-[8px] transition-all hover:bg-white/10 active:scale-95"
+          >
+            Arquivar
+          </button>
+          <button
+            onClick={handleConfirm}
+            disabled={isRestarting}
+            className="flex-1 py-1.5 bg-red-600/80 hover:bg-red-500 text-white font-bold uppercase tracking-widest text-[8px] transition-all disabled:opacity-50 active:scale-95 shadow-[0_4px_12px_rgba(220,38,38,0.2)]"
+          >
+            {isRestarting ? '...' : 'Purgar'}
           </button>
         </div>
       </div>

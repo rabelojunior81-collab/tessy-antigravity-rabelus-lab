@@ -14,7 +14,7 @@ export class TessyDatabase extends Dexie {
 
   constructor() {
     super('TessyDB');
-    
+
     (this as any).version(1).stores({
       projects: 'id, name, createdAt, updatedAt',
       conversations: 'id, projectId, title, createdAt, updatedAt',
@@ -28,6 +28,10 @@ export class TessyDatabase extends Dexie {
     (this as any).version(2).stores({
       shared_conversations: 'code, createdAt, expiresAt'
     });
+
+    (this as any).version(3).stores({
+      library: 'id, projectId, title, timestamp'
+    });
   }
 }
 
@@ -39,7 +43,7 @@ export async function migrateToIndexedDB(): Promise<void> {
     if (isMigrated?.value === true) return;
 
     const defaultProjectId = 'default-project';
-    
+
     // Fix: Explicitly cast to any to resolve property 'transaction' not found error in this environment
     await (db as any).transaction('rw', ['projects', 'settings'], async () => {
       const exists = await db.projects.get(defaultProjectId);

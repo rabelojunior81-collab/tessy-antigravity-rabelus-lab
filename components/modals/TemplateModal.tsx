@@ -15,6 +15,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const [formData, setFormData] = useState<Partial<Template>>({
     label: '',
     description: '',
@@ -27,6 +28,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
       loadTemplates();
       setIsFormOpen(false);
       setSelectedId(null);
+      setIsClosing(false);
     }
   }, [isOpen]);
 
@@ -85,158 +87,174 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ isOpen, onClose, onSelect
     setSelectedId(null);
   };
 
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, 150);
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose}>
-      <div className="w-full max-w-5xl h-[85vh] bg-bg-secondary/95 backdrop-blur-xl border border-border-visible flex flex-col shadow-2xl animate-zoom-in overflow-hidden" onClick={e => e.stopPropagation()}>
-
-        {/* Header - Compacted py-0.5, icon 16 */}
-        <div className="flex items-center justify-between px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
-          <div className="flex items-center gap-2">
-            <Bookmark className="text-accent-primary" size={16} />
-            <h2 className="text-xs font-medium tracking-normal text-text-primary">Biblioteca de Protocolos</h2>
+    <div
+      className={`modal-overlay ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+      onClick={handleClose}
+    >
+      <div
+        className={`w-full max-w-md h-[75vh] glass-modal flex flex-col ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-2 py-1 glass-header flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-1.5">
+            <Bookmark style={{ color: 'var(--glass-accent)' }} size={10} />
+            <h2 className="text-[9px] font-bold tracking-widest text-glass uppercase">Protocolos</h2>
           </div>
-          <button onClick={onClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-95"><X size={16} /></button>
+          <button
+            onClick={handleClose}
+            className="p-0.5 text-glass-muted hover:text-glass transition-all"
+          >
+            <X size={10} />
+          </button>
         </div>
 
-        <div className="flex-1 flex flex-row overflow-hidden">
-
-          {/* Sidebar - Narrower 280px */}
-          <div className="w-[280px] flex flex-col border-r border-border-visible bg-bg-primary/40 shrink-0">
-            <div className="px-3 py-0.5 border-b border-border-visible">
-              <div className="relative">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-tertiary" size={12} />
+        <div className="flex-1 flex flex-row overflow-hidden relative z-10 bg-transparent">
+          {/* Sidebar */}
+          <div className="w-[140px] flex flex-col border-r border-glass shrink-0 bg-transparent">
+            <div className="p-2 border-b border-glass/10 flex items-center gap-1">
+              <div className="flex-1 relative">
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-glass-muted" size={10} />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   placeholder="FILTRAR..."
-                  className="w-full bg-bg-primary border border-border-visible py-1.5 pl-8 pr-3 text-[11px] font-normal text-text-primary focus:border-accent-primary outline-none tracking-normal"
+                  className="w-full glass-input py-1 pl-6 pr-1 text-[9px] font-medium text-glass placeholder:text-glass-muted/40 focus:border-glass-accent outline-none transition-all"
                 />
               </div>
+              <button
+                onClick={() => { setFormData({ label: '', description: '', content: '', category: 'Personalizado' }); setIsFormOpen(true); }}
+                className="p-1 text-glass-muted hover:text-glass-accent transition-all shrink-0 active:scale-90"
+                title="NOVO PROTOCOLO"
+              >
+                <Plus size={12} strokeWidth={2.5} />
+              </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-1.5 space-y-4">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-1.5 space-y-3">
               {(Object.entries(groupedTemplates) as [string, Template[]][]).map(([category, items]) => (
                 <div key={category} className="space-y-0.5">
-                  <div className="px-2 py-1 flex items-center justify-between">
-                    <span className="text-[9px] font-medium text-text-tertiary uppercase tracking-wide opacity-50">{category}</span>
-                    <span className="text-[9px] font-mono text-text-tertiary opacity-40">{items.length}</span>
+                  <div className="px-2 py-0.5 flex items-center justify-between opacity-50">
+                    <span className="text-[8px] font-bold text-glass-muted uppercase tracking-widest">{category}</span>
+                    <span className="text-[7px] font-mono text-glass-muted">{items.length}</span>
                   </div>
                   <div className="space-y-0.5">
                     {items.map(t => (
                       <div
                         key={t.id}
                         onClick={() => { setSelectedId(t.id); setIsFormOpen(false); }}
-                        className={`group px-2 py-2 border transition-all cursor-pointer flex items-center justify-between ${selectedId === t.id
-                            ? 'bg-accent-subtle/40 border-accent-primary'
-                            : 'bg-bg-primary/30 border-transparent hover:border-accent-primary/20'
+                        className={`group px-2 py-1.5 transition-all cursor-pointer flex items-center gap-2 border-l-2 ${selectedId === t.id
+                          ? 'border-glass-accent bg-glass-accent/10 text-glass'
+                          : 'border-transparent hover:bg-white/[0.02] text-glass-muted hover:text-glass-secondary'
                           }`}
                       >
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <Hash size={10} className={selectedId === t.id ? 'text-accent-primary' : 'text-text-tertiary opacity-40'} />
-                          <h4 className={`text-xs font-normal truncate tracking-normal ${selectedId === t.id ? 'text-accent-primary' : 'text-text-secondary group-hover:text-text-primary'}`}>
-                            {t.label}
-                          </h4>
-                        </div>
+                        <Hash size={10} className={selectedId === t.id ? 'text-glass-accent' : 'opacity-20'} />
+                        <h4 className="text-[10px] font-medium truncate leading-none">
+                          {t.label}
+                        </h4>
                       </div>
                     ))}
                   </div>
                 </div>
               ))}
             </div>
-
-            <div className="p-3 bg-bg-primary/60 border-t border-border-visible">
-              <button
-                onClick={() => { setFormData({ label: '', description: '', content: '', category: 'Personalizado' }); setIsFormOpen(true); }}
-                className="w-full flex items-center justify-center gap-2 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-medium tracking-normal transition-all active:scale-95 shadow-lg"
-              >
-                <Plus size={14} strokeWidth={2} />
-                Criar Protocolo
-              </button>
-            </div>
           </div>
 
           {/* Main Area */}
-          <div className="flex-1 flex flex-col bg-bg-secondary overflow-hidden">
+          <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
             {isFormOpen ? (
-              <form onSubmit={handleSave} className="flex-1 flex flex-col p-2 space-y-3 animate-fade-in">
+              <form onSubmit={handleSave} className="flex-1 flex flex-col p-4 space-y-3 animate-fade-in h-full">
                 <div className="space-y-3">
-                  <div className="flex gap-4">
+                  <div className="flex gap-2">
                     <div className="flex-1 space-y-1">
-                      <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Nome do Protocolo</label>
-                      <input type="text" required value={formData.label} onChange={e => setFormData({ ...formData, label: e.target.value })} className="w-full bg-bg-tertiary border border-border-visible p-2 text-xs font-normal text-text-primary focus:border-accent-primary outline-none" />
+                      <label className="text-[8px] font-bold text-glass-muted uppercase tracking-widest">Protocolo</label>
+                      <input type="text" required value={formData.label} onChange={e => setFormData({ ...formData, label: e.target.value })}
+                        className="w-full glass-input p-2 text-[10px] font-medium text-glass focus:border-glass-accent outline-none transition-colors placeholder:text-glass-muted/40" />
                     </div>
-                    <div className="w-[180px] space-y-1">
-                      <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Categoria</label>
-                      <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value as any })} className="w-full bg-bg-tertiary border border-border-visible p-2 text-xs font-normal text-text-primary focus:border-accent-primary outline-none">
-                        <option value="Código">Código</option>
-                        <option value="Escrita">Escrita</option>
-                        <option value="Análise">Análise</option>
-                        <option value="Ensino">Ensino</option>
-                        <option value="Criativo">Criativo</option>
-                        <option value="Personalizado">Personalizado</option>
+                    <div className="w-[100px] space-y-1">
+                      <label className="text-[8px] font-bold text-glass-muted uppercase tracking-widest">Categoria</label>
+                      <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value as any })}
+                        className="w-full glass-input p-2 text-[10px] font-medium text-glass focus:border-glass-accent outline-none appearance-none cursor-pointer">
+                        <option value="Código" className="bg-bg-primary">CÓDIGO</option>
+                        <option value="Escrita" className="bg-bg-primary">ESCRITA</option>
+                        <option value="Análise" className="bg-bg-primary">ANÁLISE</option>
+                        <option value="Ensino" className="bg-bg-primary">ENSINO</option>
+                        <option value="Criativo" className="bg-bg-primary">CRIATIVO</option>
+                        <option value="Personalizado" className="bg-bg-primary">PESSOAL</option>
                       </select>
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Descrição</label>
-                    <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full h-16 bg-bg-tertiary border border-border-visible p-2 text-xs font-normal text-text-secondary outline-none focus:border-accent-primary resize-none custom-scrollbar" />
+                    <label className="text-[8px] font-bold text-glass-muted uppercase tracking-widest">Descrição</label>
+                    <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })}
+                      className="w-full h-12 glass-input p-2 text-[10px] font-medium text-glass-secondary resize-none custom-scrollbar focus:border-glass-accent outline-none transition-colors placeholder:text-glass-muted/40" />
                   </div>
                 </div>
                 <div className="flex-1 flex flex-col space-y-1">
-                  <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Núcleo do Prompt</label>
-                  <textarea required value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })} className="flex-1 w-full bg-bg-tertiary border border-border-visible p-3 text-xs font-mono font-normal text-text-primary focus:border-accent-primary outline-none resize-none custom-scrollbar" />
+                  <label className="text-[8px] font-bold text-glass-muted uppercase tracking-widest">Núcleo do Prompt</label>
+                  <textarea required value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })}
+                    className="flex-1 w-full glass-input p-2 text-[10px] font-mono text-glass-secondary resize-none custom-scrollbar focus:border-glass-accent outline-none transition-colors leading-relaxed" />
                 </div>
-                <div className="flex gap-3">
-                  <button type="button" onClick={() => setIsFormOpen(false)} className="flex-1 py-0.5 bg-bg-tertiary text-text-tertiary font-medium uppercase tracking-wide text-[10px]">Cancelar</button>
-                  <button type="submit" className="flex-1 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white font-medium uppercase tracking-wide text-[10px] transition-all">Sincronizar</button>
+                <div className="flex gap-2 pt-1 pb-1">
+                  <button type="button" onClick={() => setIsFormOpen(false)} className="flex-1 py-1.5 glass-card border-glass/10 text-glass-muted hover:text-glass font-bold uppercase tracking-widest text-[8px] transition-all active:scale-95">Cancelar</button>
+                  <button type="submit" style={{ boxShadow: '0 4px 12px rgba(var(--accent-rgb), 0.3)' }} className="flex-1 py-1.5 bg-glass-accent text-white hover:brightness-110 font-bold uppercase tracking-widest text-[8px] transition-all active:scale-95 border-transparent">Salvar</button>
                 </div>
               </form>
             ) : selectedTemplate ? (
-              <div className="flex-1 flex flex-col overflow-hidden animate-fade-in">
-                {/* Compact Template Header */}
-                <div className="flex items-center justify-between px-4 py-0.5 border-b border-border-visible bg-bg-primary/20 shrink-0">
+              <div className="flex-1 flex flex-col overflow-hidden animate-fade-in h-full">
+                {/* Template Header */}
+                <div className="flex items-center justify-between px-4 py-2 border-b border-surface-subtle shrink-0 bg-white/5">
                   <div className="flex items-center overflow-hidden">
-                    <span className="px-2 py-0.5 bg-accent-subtle/40 border border-accent-primary/30 text-accent-primary text-[9px] font-medium uppercase tracking-wide shrink-0">
+                    <span className="px-1.5 py-0.5 bg-glass-accent/10 border border-glass-accent/20 text-glass-accent text-[8px] font-bold uppercase tracking-widest shrink-0">
                       {selectedTemplate.category}
                     </span>
-                    <h3 className="text-lg font-medium text-text-primary ml-3 truncate tracking-normal">
+                    <h3 className="text-[11px] font-medium text-glass ml-3 truncate">
                       {selectedTemplate.label}
                     </h3>
                   </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1 shrink-0">
                     {selectedTemplate.isCustom && (
                       <>
-                        <button onClick={() => { setFormData(selectedTemplate); setIsFormOpen(true); }} className="p-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-accent-primary transition-all"><Edit3 size={14} /></button>
-                        <button onClick={handleDelete} className="p-1.5 bg-bg-primary/50 border border-border-visible text-text-tertiary hover:text-red-400 transition-all"><Trash2 size={14} /></button>
+                        <button onClick={() => { setFormData(selectedTemplate); setIsFormOpen(true); }} className="p-1.5 text-glass-muted hover:text-glass transition-all"><Edit3 size={12} /></button>
+                        <button onClick={handleDelete} className="p-1.5 text-glass-muted hover:text-red-400 transition-all"><Trash2 size={12} /></button>
                       </>
                     )}
                   </div>
                 </div>
 
-                {/* Maximized Preview Area */}
-                <div className="flex-1 bg-bg-primary/30 border-b border-border-visible p-2 overflow-y-auto custom-scrollbar relative">
-                  <pre className="text-xs text-text-secondary font-mono font-normal whitespace-pre-wrap leading-relaxed">{selectedTemplate.content}</pre>
+                {/* Preview */}
+                <div className="flex-1 p-3 overflow-y-auto custom-scrollbar bg-transparent">
+                  <pre className="text-[10px] text-glass-secondary font-mono font-normal whitespace-pre-wrap leading-relaxed p-3 glass-card border-glass/10 bg-black/20">{selectedTemplate.content}</pre>
                 </div>
 
-                {/* Fixed Footer with Button */}
-                <div className="shrink-0 px-4 py-2 bg-bg-primary/60 border-t border-border-visible">
+                {/* Footer */}
+                <div className="shrink-0 px-4 py-3 border-t border-glass/10 bg-transparent flex justify-end">
                   <button
-                    onClick={() => { onSelect(selectedTemplate.content); onClose(); }}
-                    className="w-full py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-xs font-medium tracking-normal transition-all active:scale-95 shadow-xl flex items-center justify-center gap-2"
+                    onClick={() => { onSelect(selectedTemplate.content); handleClose(); }}
+                    style={{ boxShadow: '0 4px 12px rgba(var(--accent-rgb), 0.3)' }}
+                    className="w-full py-2 bg-glass-accent text-white hover:brightness-110 text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all active:scale-95"
                   >
-                    <ChevronRight size={16} strokeWidth={3} />
+                    <ChevronRight size={14} strokeWidth={3} />
                     Carregar no Núcleo
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center opacity-10 animate-pulse">
-                <Bookmark size={80} strokeWidth={1} />
-                <p className="mt-4 text-[10px] font-medium uppercase tracking-widest">Tessy Protocol Library</p>
+              <div className="flex-1 flex flex-col items-center justify-center opacity-20">
+                <Bookmark size={48} strokeWidth={1} className="text-glass-accent mb-4" />
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Selecione um Protocolo</p>
               </div>
             )}
           </div>

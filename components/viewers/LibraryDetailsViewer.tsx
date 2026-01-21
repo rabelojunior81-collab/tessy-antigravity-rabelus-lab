@@ -12,11 +12,11 @@ interface LibraryDetailsViewerProps {
   onSaveSuccess?: () => void;
 }
 
-const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({ 
-  item, 
+const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
+  item,
   isCreating = false,
   currentProjectId,
-  onClose, 
+  onClose,
   onSelect,
   onSaveSuccess
 }) => {
@@ -58,7 +58,7 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
 
     try {
       const id = formData.id || generateUUID();
-      
+
       // If we have a project ID, save to 'library' table as a RepositoryItem
       if (currentProjectId) {
         const repoItem: RepositoryItem = {
@@ -85,7 +85,7 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
         };
         await db.templates.put(template);
       }
-      
+
       setIsEditing(false);
       if (onSaveSuccess) onSaveSuccess();
     } catch (err) {
@@ -97,34 +97,34 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
   const title = formData.label || (isCreating ? 'Novo Protocolo' : 'Detalhes');
 
   return (
-    <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col p-2 animate-fade-in h-full">
-      <div className="flex-1 flex flex-col h-full overflow-hidden border border-border-visible bg-bg-tertiary/40 backdrop-blur-lg shadow-2xl">
-        
+    <div className="flex-1 glass-panel overflow-hidden flex flex-col p-2 animate-fade-in h-full">
+      <div className="flex-1 flex flex-col h-full overflow-hidden border border-glass-border bg-glass-base/40 backdrop-blur-lg shadow-2xl">
+
         {/* Header */}
-        <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        <div className="px-4 py-2 border-b border-glass-border glass-header flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4 overflow-hidden">
-            <span className="px-2 py-0.5 bg-accent-subtle/40 text-accent-primary text-[9px] font-bold uppercase border border-accent-primary/30 shrink-0 tracking-widest">
+            <span className="px-2 py-0.5 bg-glass-accent/10 text-glass-accent text-[9px] font-bold uppercase border border-glass-accent/30 shrink-0 tracking-widest">
               {isEditing ? 'EDITOR' : category}
             </span>
-            <h2 className="text-xl font-light text-text-primary truncate tracking-tight uppercase">
+            <h2 className="text-xl font-light text-glass truncate tracking-tight uppercase">
               {title}
             </h2>
           </div>
-          
+
           <div className="flex items-center gap-4 shrink-0">
             {!isEditing && (formData as any).isCustom !== false && (
-              <button 
+              <button
                 onClick={() => setIsEditing(true)}
-                className="p-2 text-text-tertiary hover:text-accent-primary transition-all active:scale-95"
+                className="p-2 text-glass-muted hover:text-glass-accent transition-all active:scale-95"
                 title="Editar"
               >
                 <Edit3 size={16} />
               </button>
             )}
-            <div className="h-4 w-px bg-border-visible mx-2"></div>
-            <button 
+            <div className="h-4 w-px bg-glass-border mx-2"></div>
+            <button
               onClick={onClose}
-              className="p-1.5 text-text-tertiary hover:text-red-400 transition-all active:scale-90"
+              className="p-1.5 text-glass-muted hover:text-red-400 transition-all active:scale-90"
               title="Fechar"
             >
               <X size={18} />
@@ -138,67 +138,67 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
             <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Nome do Protocolo</label>
-                  <input 
-                    type="text" 
-                    required 
-                    value={formData.label} 
-                    onChange={e => setFormData({ ...formData, label: e.target.value })} 
+                  <label className="text-[10px] font-bold text-glass-muted uppercase tracking-widest">Nome do Protocolo</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.label}
+                    onChange={e => setFormData({ ...formData, label: e.target.value })}
                     placeholder="TITULO..."
-                    className="w-full bg-bg-primary border border-border-visible p-3 text-xs font-normal text-text-primary focus:border-accent-primary outline-none uppercase" 
+                    className="w-full glass-input p-2.5 text-xs font-normal text-glass uppercase focus:border-glass-accent outline-none"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Categoria</label>
-                  <select 
-                    value={formData.category} 
-                    onChange={e => setFormData({ ...formData, category: e.target.value as any })} 
-                    className="w-full bg-bg-primary border border-border-visible p-3 text-xs font-normal text-text-primary focus:border-accent-primary outline-none uppercase"
+                  <label className="text-[10px] font-bold text-glass-muted uppercase tracking-widest">Categoria</label>
+                  <select
+                    value={formData.category}
+                    onChange={e => setFormData({ ...formData, category: e.target.value as any })}
+                    className="w-full glass-input p-2.5 text-xs font-normal text-glass uppercase focus:border-glass-accent outline-none"
                   >
-                    <option value="Código">Código</option>
-                    <option value="Escrita">Escrita</option>
-                    <option value="Análise">Análise</option>
-                    <option value="Ensino">Ensino</option>
-                    <option value="Criativo">Criativo</option>
-                    <option value="Personalizado">Personalizado</option>
+                    <option value="Código" className="bg-black">Código</option>
+                    <option value="Escrita" className="bg-black">Escrita</option>
+                    <option value="Análise" className="bg-black">Análise</option>
+                    <option value="Ensino" className="bg-black">Ensino</option>
+                    <option value="Criativo" className="bg-black">Criativo</option>
+                    <option value="Personalizado" className="bg-black">Personalizado</option>
                   </select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Diretrizes / Descrição</label>
-                <textarea 
-                  value={formData.description} 
-                  onChange={e => setFormData({ ...formData, description: e.target.value })} 
+                <label className="text-[10px] font-bold text-glass-muted uppercase tracking-widest">Diretrizes / Descrição</label>
+                <textarea
+                  value={formData.description}
+                  onChange={e => setFormData({ ...formData, description: e.target.value })}
                   placeholder="OBJETIVO DESTE PROTOCOLO..."
-                  className="w-full h-20 bg-bg-primary border border-border-visible p-3 text-xs font-normal text-text-secondary outline-none focus:border-accent-primary resize-none custom-scrollbar" 
+                  className="w-full h-20 glass-input p-2.5 text-xs font-normal text-glass-secondary outline-none focus:border-glass-accent resize-none custom-scrollbar"
                 />
               </div>
 
               <div className="flex-1 flex flex-col space-y-2 min-h-[300px]">
-                <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Núcleo do Prompt (Conteúdo)</label>
-                <textarea 
-                  required 
-                  value={formData.content} 
-                  onChange={e => setFormData({ ...formData, content: e.target.value })} 
+                <label className="text-[10px] font-bold text-glass-muted uppercase tracking-widest">Núcleo do Prompt (Conteúdo)</label>
+                <textarea
+                  required
+                  value={formData.content}
+                  onChange={e => setFormData({ ...formData, content: e.target.value })}
                   placeholder="CONTEÚDO DO PROMPT..."
-                  className="flex-1 w-full bg-bg-primary border border-border-visible p-4 text-sm font-mono font-normal text-text-primary focus:border-accent-primary outline-none resize-none custom-scrollbar" 
+                  className="flex-1 w-full glass-input p-3 text-sm font-mono font-normal text-glass focus:border-glass-accent outline-none resize-none custom-scrollbar"
                 />
               </div>
             </div>
 
             {/* Footer Form */}
-            <div className="px-8 py-5 bg-bg-primary/60 border-t border-border-visible flex items-center justify-end gap-4 shrink-0">
-              <button 
-                type="button" 
-                onClick={() => isCreating ? onClose() : setIsEditing(false)} 
-                className="px-6 py-0.5 bg-bg-tertiary border border-border-visible text-text-tertiary text-[10px] font-bold uppercase tracking-widest hover:text-text-primary transition-all"
+            <div className="px-6 py-4 glass-header border-t border-glass-border flex items-center justify-end gap-4 shrink-0">
+              <button
+                type="button"
+                onClick={() => isCreating ? onClose() : setIsEditing(false)}
+                className="px-5 py-2 glass-button text-glass-muted text-[10px] font-bold uppercase tracking-widest hover:text-glass transition-all"
               >
                 Abortar
               </button>
-              <button 
-                type="submit" 
-                className="px-6 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-xl"
+              <button
+                type="submit"
+                className="px-5 py-2 bg-glass-accent hover:brightness-110 text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-xl"
               >
                 <Save size={14} /> Sincronizar
               </button>
@@ -208,8 +208,8 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
           /* PREVIEW VIEW */
           <div className="flex-1 flex flex-col overflow-hidden">
             {formData.description && (
-              <div className="px-4 py-0.5 bg-bg-tertiary/30 border-b border-border-visible/50 shrink-0">
-                <p className="text-sm text-text-secondary leading-relaxed italic font-normal">
+              <div className="px-4 py-2 bg-glass-base/30 border-b border-glass-border shrink-0">
+                <p className="text-sm text-glass-secondary leading-relaxed italic font-normal">
                   {formData.description}
                 </p>
               </div>
@@ -217,28 +217,28 @@ const LibraryDetailsViewer: React.FC<LibraryDetailsViewerProps> = ({
 
             <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
               <div className="flex items-center gap-2 mb-4">
-                 <Code size={12} className="text-accent-primary opacity-50" />
-                 <h4 className="text-[10px] font-bold text-text-tertiary uppercase tracking-[0.2em]">Núcleo do Protocolo</h4>
+                <Code size={12} className="text-glass-accent opacity-50" />
+                <h4 className="text-[10px] font-bold text-glass-muted uppercase tracking-[0.2em]">Núcleo do Protocolo</h4>
               </div>
-              <div className="bg-bg-primary/40 border border-border-visible p-2 shadow-inner group relative">
-                <pre className="text-sm text-text-secondary font-mono font-normal whitespace-pre-wrap leading-relaxed select-all">
+              <div className="glass-card p-3 shadow-inner group relative">
+                <pre className="text-sm text-glass-secondary font-mono font-normal whitespace-pre-wrap leading-relaxed select-all">
                   {formData.content}
                 </pre>
               </div>
             </div>
 
             {/* Footer Actions */}
-            <div className="px-8 py-5 bg-bg-primary/60 border-t border-border-visible flex items-center justify-between shrink-0">
-              <button 
+            <div className="px-6 py-4 glass-header border-t border-glass-border flex items-center justify-between shrink-0">
+              <button
                 onClick={onClose}
-                className="px-6 py-0.5 bg-bg-tertiary border border-border-visible text-text-tertiary text-[10px] font-bold uppercase tracking-widest hover:text-text-primary transition-all"
+                className="px-5 py-2 glass-button text-glass-muted text-[10px] font-bold uppercase tracking-widest hover:text-glass transition-all"
               >
                 <Undo2 size={14} className="mr-2 inline" /> Voltar
               </button>
-              
-              <button 
+
+              <button
                 onClick={() => onSelect(formData.content || '')}
-                className="px-6 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-3 shadow-xl active:scale-95 group"
+                className="px-5 py-2 bg-glass-accent hover:brightness-110 text-white text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-3 shadow-xl active:scale-95 group"
               >
                 <ChevronRight size={16} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
                 Carregar no Núcleo

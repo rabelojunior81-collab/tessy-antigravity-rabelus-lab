@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Settings2, Sparkles, RotateCcw } from 'lucide-react';
+import { X, Settings2, Sparkles, RotateCcw, ChevronDown } from 'lucide-react';
 import { useChat } from '../../contexts/ChatContext';
 
 interface ControllersModalProps {
@@ -19,115 +19,138 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
     setTimeout(() => {
       setIsClosing(false);
       onClose();
-    }, 100);
+    }, 150);
   };
 
   return (
-    <div className={`fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
-      <div className={`w-full max-w-lg bg-bg-secondary/95 backdrop-blur-2xl border border-border-visible flex flex-col shadow-2xl relative ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-
-        {/* Header - Minimalist */}
-        <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <Settings2 className="text-accent-primary" size={14} />
-            <h2 className="text-[10px] font-medium tracking-[0.2em] text-text-primary uppercase">Parâmetros Nucleares</h2>
+    <div
+      className={`modal-overlay ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+      onClick={handleClose}
+    >
+      <div
+        className={`w-full max-w-sm glass-modal flex flex-col ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header - Compact */}
+        <div className="px-3 py-2 glass-header flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2">
+            <Settings2 className="text-glass-accent" size={12} />
+            <h2 className="text-[10px] font-bold tracking-widest text-glass uppercase">Parâmetros</h2>
           </div>
-          <button onClick={handleClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90">
-            <X size={16} />
+          <button onClick={handleClose} className="p-0.5 text-glass-muted hover:text-glass transition-all">
+            <X size={12} />
           </button>
         </div>
 
         {/* Tabs - Compact */}
-        <div className="flex border-b border-border-visible bg-bg-primary/40">
-          <button onClick={() => setActiveTab('settings')} className={`flex-1 py-2 text-[10px] font-medium tracking-wide transition-all relative uppercase ${activeTab === 'settings' ? 'text-accent-primary bg-accent-subtle/10' : 'text-text-tertiary hover:text-text-secondary'}`}>
-            Configuração
-            {activeTab === 'settings' && <div className="absolute bottom-0 left-0 w-full h-[2px] bg-accent-primary"></div>}
+        <div className="flex border-b border-glass shrink-0">
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`flex-1 py-1.5 text-[9px] font-bold tracking-widest transition-all relative uppercase ${activeTab === 'settings'
+              ? 'text-glass-accent bg-white/5'
+              : 'text-glass-muted hover:text-glass'
+              }`}
+          >
+            Config
+            {activeTab === 'settings' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-glass-accent" />}
           </button>
-          <button onClick={() => setActiveTab('shortcuts')} className={`flex-1 py-2 text-[10px] font-medium tracking-wide transition-all relative uppercase ${activeTab === 'shortcuts' ? 'text-accent-primary bg-accent-subtle/10' : 'text-text-tertiary hover:text-text-secondary'}`}>
+          <button
+            onClick={() => setActiveTab('shortcuts')}
+            className={`flex-1 py-1.5 text-[9px] font-bold tracking-widest transition-all relative uppercase ${activeTab === 'shortcuts'
+              ? 'text-glass-accent bg-white/5'
+              : 'text-glass-muted hover:text-glass'
+              }`}
+          >
             Atalhos
-            {activeTab === 'shortcuts' && <div className="absolute bottom-0 left-0 w-full h-[2px] bg-accent-primary"></div>}
+            {activeTab === 'shortcuts' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-glass-accent" />}
           </button>
         </div>
 
-        {/* Content - Compacted spacing */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-2 min-h-[380px] space-y-3">
+        {/* Content - Compact spacing */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-3 py-2 space-y-2 max-h-[50vh]">
           {activeTab === 'settings' ? (
-            <div className="space-y-6">
+            <div className="space-y-2">
               {factors.map(factor => (
-                <div key={factor.id} className="space-y-2">
+                <div key={factor.id} className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-medium text-text-secondary/80 uppercase tracking-widest block">{factor.label}</label>
+                    <label className="text-[8px] font-bold text-glass-muted uppercase tracking-widest">{factor.label}</label>
                     {factor.type === 'toggle' && (
                       <button
                         onClick={() => updateFactor(factor.id)}
-                        className={`w-10 h-5 border transition-all flex items-center px-0.5 relative cursor-pointer ${factor.enabled ? 'bg-accent-primary/20 border-accent-primary' : 'bg-bg-primary border-border-visible'
+                        className={`w-7 h-3.5 transition-all flex items-center px-0.5 ${factor.enabled
+                          ? 'bg-glass-accent justify-end'
+                          : 'bg-white/10 justify-start'
                           }`}
                       >
-                        <div className={`w-3.5 h-3.5 bg-white transition-transform shadow-sm ${factor.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                        <div className="w-2.5 h-2.5 bg-white" />
                       </button>
                     )}
                   </div>
 
                   {factor.type === 'dropdown' && (
-                    <div className="relative group">
+                    <div className="relative">
                       <select
                         value={factor.value}
                         onChange={(e) => updateFactor(factor.id, e.target.value)}
-                        className="w-full bg-bg-primary/60 border border-border-visible/40 p-2 text-xs font-normal text-text-primary outline-none focus:border-accent-primary/60 transition-all appearance-none uppercase"
+                        className="w-full glass-input py-1.5 px-2 text-[10px] font-medium uppercase appearance-none cursor-pointer text-glass hover:bg-white/5 transition-colors focus:border-glass-accent focus:outline-none"
                       >
-                        {factor.options?.map(opt => <option key={opt} value={opt} className="bg-bg-secondary">{opt.toUpperCase()}</option>)}
+                        {factor.options?.map(opt => (
+                          <option key={opt} value={opt} className="bg-bg-primary">{opt.toUpperCase()}</option>
+                        ))}
                       </select>
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity">
-                        <Sparkles size={12} />
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <ChevronDown size={10} className="text-glass-muted" />
                       </div>
                     </div>
                   )}
 
                   {factor.type === 'slider' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 glass-card border-glass/10 py-1.5 px-2">
                       <input
                         type="range"
                         min={factor.min}
                         max={factor.max}
                         value={factor.value}
                         onChange={(e) => updateFactor(factor.id, parseInt(e.target.value))}
-                        className="flex-1 h-1 bg-border-subtle appearance-none cursor-pointer accent-accent-primary"
+                        className="flex-1 h-0.5 appearance-none cursor-pointer bg-surface-elevated"
+                        style={{
+                          background: `linear-gradient(to right, var(--glass-accent) ${((factor.value as number) - (factor.min || 0)) / ((factor.max || 100) - (factor.min || 0)) * 100}%, rgba(var(--surface-rgb), 0.1) ${((factor.value as number) - (factor.min || 0)) / ((factor.max || 100) - (factor.min || 0)) * 100}%)`,
+                        }}
                       />
-                      <span className="text-xs font-mono font-medium text-accent-primary w-6 text-right">{factor.value}</span>
+                      <span className="text-[9px] font-mono font-bold text-glass-accent w-4 text-right">{factor.value}</span>
                     </div>
                   )}
 
                   {factor.type === 'text' && (
                     <textarea
                       value={factor.value}
-                      // Fixed: missing arrow function syntax and updateFactor call
                       onChange={(e) => updateFactor(factor.id, e.target.value)}
-                      placeholder="Diretrizes de contexto..."
-                      className="w-full h-20 bg-bg-primary/60 border border-border-visible/40 p-2 text-xs font-normal text-text-primary placeholder:text-text-tertiary/40 focus:border-accent-primary/60 transition-all resize-none custom-scrollbar"
+                      placeholder="Contexto..."
+                      className="w-full h-16 glass-input py-1.5 px-2 text-[10px] text-glass resize-none custom-scrollbar focus:border-glass-accent focus:outline-none transition-colors placeholder:text-glass-muted/40"
                     />
                   )}
                 </div>
               ))}
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-10 py-10">
-              <Sparkles size={48} className="text-accent-primary mb-4" />
-              <p className="text-[9px] font-medium uppercase tracking-[0.4em]">Shortcuts Offline</p>
+            <div className="h-32 flex flex-col items-center justify-center text-center opacity-20">
+              <Sparkles size={24} className="text-glass-accent mb-2" />
+              <p className="text-[8px] font-bold uppercase tracking-widest text-glass-muted">Offline</p>
             </div>
           )}
         </div>
 
-        {/* Footer - Minimalist */}
-        <div className="px-4 py-3 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+        {/* Footer - Compact */}
+        <div className="px-3 py-2 glass-header flex items-center justify-between shrink-0">
           <button
-            onClick={() => confirm('Resetar parâmetros?') && resetFactors()}
-            className="flex items-center gap-2 text-text-tertiary/60 hover:text-red-400 text-[9px] font-normal uppercase tracking-wider transition-all"
+            onClick={() => confirm('Resetar?') && resetFactors()}
+            className="flex items-center gap-1 text-glass-muted hover:text-red-400 text-[8px] font-bold uppercase tracking-wide transition-all"
           >
-            <RotateCcw size={12} /> Resetar
+            <RotateCcw size={10} /> Reset
           </button>
           <button
             onClick={handleClose}
-            className="px-6 py-0.5 bg-accent-primary hover:bg-accent-secondary text-white text-[10px] font-bold uppercase tracking-widest transition-all active:scale-95 shadow-lg"
+            className="px-3 py-1 text-[9px] font-bold uppercase tracking-widest bg-glass-accent text-white hover:brightness-110 transition-all active:scale-95 shadow-[0_4px_12px_rgba(var(--accent-rgb),0.3)]"
           >
             Aplicar
           </button>
@@ -138,3 +161,4 @@ const ControllersModal: React.FC<ControllersModalProps> = ({ isOpen, onClose }) 
 };
 
 export default ControllersModal;
+

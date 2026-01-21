@@ -44,12 +44,12 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
 
   if (arquivoSelecionado) {
     return (
-      <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col relative p-6">
-        <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in border border-border-visible bg-bg-tertiary/40 backdrop-blur-lg shadow-xl">
-          <div className="px-4 py-2 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+      <div className="flex-1 overflow-hidden flex flex-col relative p-2">
+        <div className="flex-1 flex flex-col h-full overflow-hidden animate-fade-in glass-panel border border-glass-border">
+          <div className="px-3 py-1.5 glass-header flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-accent-primary tracking-tighter truncate max-w-[300px] shadow-sutil">{arquivoSelecionado.path}</span>
-              <span className="text-[10px] font-medium uppercase px-2 py-0.5 bg-accent-subtle text-accent-primary border border-accent-primary/20 tracking-wide shadow-sutil">
+              <span className="text-xs font-mono text-glass-accent tracking-tighter truncate max-w-[300px]">{arquivoSelecionado.path}</span>
+              <span className="text-[9px] font-bold uppercase px-2 py-0.5 bg-glass-accent/20 text-glass-accent border border-glass-accent/20 tracking-wide">
                 {arquivoSelecionado.language}
               </span>
             </div>
@@ -57,28 +57,28 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
               {!isImage(arquivoSelecionado.language) && (
                 <button
                   onClick={handleCopy}
-                  className="text-text-tertiary hover:text-text-primary transition-colors flex items-center gap-2"
+                  className="text-glass-muted hover:text-glass transition-colors flex items-center gap-2"
                 >
-                  {copied ? <Check size={14} className="text-accent-primary" /> : <Copy size={14} />}
+                  {copied ? <Check size={14} className="text-glass-accent" /> : <Copy size={14} />}
                   <span className="text-[10px] font-medium uppercase tracking-wide">{copied ? 'OK' : 'Copiar'}</span>
                 </button>
               )}
               <button
                 onClick={() => selecionarArquivo(null)}
-                className="p-1 text-text-tertiary hover:text-red-400 transition-colors"
+                className="p-1 text-glass-muted hover:text-red-400 transition-colors"
               >
                 <X size={16} />
               </button>
             </div>
           </div>
 
-          <div className="flex-1 overflow-auto custom-scrollbar relative">
+          <div className="flex-1 overflow-auto custom-scrollbar relative bg-black/20">
             {isImage(arquivoSelecionado.language) ? (
               <div className="w-full h-full flex items-center justify-center p-8">
                 <img
                   src={`data:image/${arquivoSelecionado.language};base64,${arquivoSelecionado.content}`}
                   alt={arquivoSelecionado.path}
-                  className="max-w-full max-h-full object-contain border border-border-visible shadow-2xl"
+                  className="max-w-full max-h-full object-contain border border-glass shadow-2xl"
                 />
               </div>
             ) : (
@@ -88,9 +88,9 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
                 showLineNumbers={true}
                 customStyle={{
                   margin: 0,
-                  padding: '24px',
+                  padding: '16px',
                   backgroundColor: 'transparent',
-                  fontSize: '13px',
+                  fontSize: '12px',
                   fontFamily: '"JetBrains Mono", monospace'
                 }}
                 lineNumberStyle={{ color: '#3a5a7f', minWidth: '3em', paddingRight: '1em' }}
@@ -107,7 +107,7 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
   if (selectedLibraryItem || (selectedLibraryItem as any)?.isCreating) {
     const isCreating = (selectedLibraryItem as any)?.isCreating || false;
     return (
-      <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col relative p-6">
+      <div className="flex-1 overflow-hidden flex flex-col relative p-2">
         <LibraryDetailsViewer
           item={isCreating ? null : selectedLibraryItem as any}
           isCreating={isCreating}
@@ -131,8 +131,8 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
 
   if (selectedProjectId) {
     return (
-      <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col relative p-6">
-        <div className="flex-1 border border-border-visible overflow-hidden shadow-xl">
+      <div className="flex-1 overflow-hidden flex flex-col relative p-2">
+        <div className="flex-1 glass-panel overflow-hidden">
           <ProjectDetailsViewer
             projectId={selectedProjectId}
             onClose={() => setSelectedProjectId(null)}
@@ -144,19 +144,74 @@ const CentralCanvas: React.FC<CentralCanvasProps> = ({
     );
   }
 
+  // Empty State - Tessy Logo with identity
   return (
-    <div className="flex-1 bg-bg-secondary overflow-hidden flex flex-col items-center justify-center p-6">
-      <div className="flex flex-col items-center justify-center text-center animate-fade-in">
-        <div className="w-20 h-20 flex items-center justify-center mb-8 opacity-10">
-          <svg viewBox="0 0 100 100" className="w-full h-full filter drop-shadow-[0_0_15px_rgba(74,158,255,0.3)]">
-            <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#4a9eff" strokeWidth="6" />
-            <path d="M35 60 H65" fill="none" stroke="#4a9eff" strokeWidth="6" />
+    <div className="flex-1 overflow-hidden flex flex-col items-center justify-center p-2 relative">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 bg-gradient-radial from-glass-accent/15 to-transparent opacity-80 pointer-events-none" />
+
+      <div className="flex flex-col items-center justify-center text-center animate-fade-in relative z-10">
+        <div className="w-32 h-32 flex items-center justify-center mb-8 relative">
+          {/* Logo Glow Effects */}
+          <div className="absolute inset-0 bg-glass-accent/40 blur-[50px] rounded-full animate-pulse-slow"></div>
+
+          <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-[0_0_15px_rgba(var(--accent-rgb),0.5)]">
+            <defs>
+              <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="var(--glass-accent)" stopOpacity="1" />
+                <stop offset="100%" stopColor="var(--glass-text)" stopOpacity="0.8" />
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            {/* Main Delta Shape */}
+            <path
+              d="M50 15 L85 80 L15 80 Z"
+              fill="none"
+              stroke="url(#logoGradient)"
+              strokeWidth="3"
+              strokeLinecap="square"
+              filter="url(#glow)"
+              className="animate-[dash_60s_linear_infinite]"
+              strokeDasharray="200"
+              strokeDashoffset="0"
+            />
+
+            {/* Inner detail */}
+            <path
+              d="M50 28 L72 72 L28 72 Z"
+              fill="var(--glass-accent)"
+              fillOpacity="0.1"
+              stroke="var(--glass-accent)"
+              strokeWidth="0.5"
+            />
+
+            {/* Center Core */}
+            <circle cx="50" cy="55" r="4" fill="var(--glass-accent)" className="animate-pulse" />
           </svg>
         </div>
-        <h3 className="text-2xl font-light tracking-[0.2em] text-text-primary opacity-20 shadow-suave">TESSY</h3>
-        <p className="mt-2 text-[10px] font-medium text-text-tertiary opacity-20 uppercase tracking-[0.4em] shadow-sutil">
-          Rabelus Lab Nucleus
-        </p>
+
+        <h1 className="text-5xl font-black tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50"
+          style={{
+            WebkitTextStroke: '1px rgba(255,255,255,0.1)',
+            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'
+          }}>
+          TESSY
+        </h1>
+
+        <div className="mt-4 flex items-center gap-3">
+          <div className="h-[1px] w-12 bg-glass-accent/50"></div>
+          <p className="text-[10px] font-bold text-glass-accent uppercase tracking-[0.5em] shadow-black drop-shadow-sm">
+            RABELUS LAB
+          </p>
+          <div className="h-[1px] w-12 bg-glass-accent/50"></div>
+        </div>
       </div>
     </div>
   );

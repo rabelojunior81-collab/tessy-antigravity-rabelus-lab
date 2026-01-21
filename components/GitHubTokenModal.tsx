@@ -37,8 +37,8 @@ const GitHubTokenModal: React.FC<GitHubTokenModalProps> = ({ isOpen, onClose, on
 
   return (
     <div className={`fixed inset-0 z-modal flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
-      <div className={`w-full max-w-sm bg-bg-secondary border border-border-visible flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="px-6 py-4 border-b border-border-subtle bg-bg-primary flex items-center justify-between">
+      <div className={`w-full max-w-sm glass-panel  flex flex-col ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
+        <div className="px-5 py-3 border-b border-white/5 bg-white/5 rounded-t-[8px] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Key className="text-accent-primary" size={16} />
             <h2 className="text-[11px] font-bold uppercase tracking-[0.3em] text-text-primary">Autenticação</h2>
@@ -46,13 +46,13 @@ const GitHubTokenModal: React.FC<GitHubTokenModalProps> = ({ isOpen, onClose, on
           <button onClick={handleClose} className="p-1.5 text-text-tertiary hover:text-text-primary transition-all"><X size={20} /></button>
         </div>
 
-        <form onSubmit={handleSave} className="p-8 space-y-6">
+        <form onSubmit={handleSave} className="p-5 space-y-5">
           <p className="text-[10px] font-semibold text-text-tertiary uppercase leading-relaxed tracking-widest text-center">
             Insira seu PAT com escopo 'repo'.
           </p>
-          <input autoFocus type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="GHP_XXXXXXXXXXXXXXXX" className="w-full bg-bg-tertiary border border-border-subtle p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase text-center" />
+          <input autoFocus type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="GHP_XXXXXXXXXXXXXXXX" className="w-full bg-white/5 border border-white/10  p-2.5 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase text-center" />
           <div className="flex flex-col gap-4">
-            <button type="submit" className="w-full py-4 bg-accent-primary hover:bg-accent-secondary text-white font-bold uppercase tracking-widest text-[10px] transition-all">Salvar Credenciais</button>
+            <button type="submit" className="w-full py-3 bg-accent-primary hover:bg-accent-secondary  text-white font-bold uppercase tracking-widest text-[10px] transition-all">Salvar Credenciais</button>
             <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold text-accent-primary uppercase underline text-center opacity-60">Gerar Token</a>
           </div>
         </form>

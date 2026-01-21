@@ -36,31 +36,31 @@ const MarkdownShareModal: React.FC<MarkdownShareModalProps> = ({ isOpen, content
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-bg-secondary border border-border-visible w-[90%] max-w-3xl max-h-[80vh] flex flex-col shadow-2xl animate-zoom-in">
-        <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between shrink-0">
+      <div className="glass-panel  w-[90%] max-w-3xl max-h-[80vh] flex flex-col animate-zoom-in">
+        <div className="px-4 py-2 glass-header flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <button
               onClick={copyMarkdown}
-              className="p-1.5 text-text-tertiary hover:text-accent-primary transition-all"
+              className="p-1.5 text-glass-muted hover:text-glass-accent transition-all"
               title="Copiar Markdown"
             >
-              {isCopied ? <Check size={16} className="text-accent-primary" /> : <Copy size={16} />}
+              {isCopied ? <Check size={16} className="text-glass-accent" /> : <Copy size={16} />}
             </button>
             <button
               onClick={downloadMarkdown}
-              className="p-1.5 text-text-tertiary hover:text-accent-primary transition-all"
+              className="p-1.5 text-glass-muted hover:text-glass-accent transition-all"
               title="Baixar como .md"
             >
               <Download size={16} />
             </button>
           </div>
-          <button onClick={onClose} className="p-1 text-text-tertiary hover:text-red-400 transition-colors">
+          <button onClick={onClose} className="p-1 text-glass-muted hover:text-red-400 transition-colors">
             <X size={16} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 bg-bg-tertiary/20">
-          <pre className="text-sm text-text-primary font-mono whitespace-pre-wrap break-words leading-relaxed">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 bg-white/5 border-t border-glass/10">
+          <pre className="text-sm text-glass font-mono whitespace-pre-wrap break-words leading-relaxed">
             {content}
           </pre>
         </div>

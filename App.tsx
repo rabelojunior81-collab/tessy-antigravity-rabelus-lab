@@ -18,13 +18,15 @@ import { useViewerRouter } from './hooks/useViewerRouter';
 import GitHubTokenModal from './components/GitHubTokenModal';
 import GeminiTokenModal from './components/modals/GeminiTokenModal';
 import PendingActionsModal from './components/modals/PendingActionsModal';
-import { Menu, Moon, Sun, X, Settings } from 'lucide-react';
+import VisualSettingsModal from './components/modals/VisualSettingsModal';
+import { Menu, Moon, Sun, X, Settings, Palette } from 'lucide-react';
+import { VisualProvider, useVisual } from './contexts/VisualContext';
 
 const TessyLogo = React.memo(() => (
   <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
-    <svg viewBox="0 0 100 100" className="w-full h-full filter drop-shadow-[0_0_8px_rgba(74,158,255,0.5)]">
-      <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#4a9eff" strokeWidth="8" />
-      <path d="M35 60 H65" fill="none" stroke="#4a9eff" strokeWidth="8" />
+    <svg viewBox="0 0 100 100" className="w-full h-full" style={{ filter: 'drop-shadow(0 0 8px var(--glass-accent))' }}>
+      <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="var(--glass-accent)" strokeWidth="8" />
+      <path d="M35 60 H65" fill="none" stroke="var(--glass-accent)" strokeWidth="8" />
     </svg>
   </div>
 ));
@@ -42,6 +44,7 @@ const AppContent: React.FC = () => {
   } = useLayoutContext();
   const { selecionarArquivo } = useLayout();
   const { newConversation, factors } = useChat();
+  const { setIsVisualModalOpen } = useVisual();
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
 
   const {
@@ -106,7 +109,7 @@ const AppContent: React.FC = () => {
       <div className="h-screen w-full flex flex-col items-center justify-center bg-bg-primary">
         <div className="w-12 h-12 flex items-center justify-center animate-pulse">
           <svg viewBox="0 0 100 100" className="w-full h-full">
-            <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="#4a9eff" strokeWidth="8" />
+            <path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="var(--glass-accent)" strokeWidth="8" />
           </svg>
         </div>
         <p className="mt-6 font-medium uppercase tracking-widest text-[10px] text-accent-primary animate-pulse-soft">Initializing Nucleus Core...</p>
@@ -115,22 +118,26 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden font-sans selection:bg-accent-primary/30 bg-bg-primary text-text-primary">
-      <header className="h-11 flex items-center justify-between pl-0 pr-6 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md z-sticky shrink-0">
+    <div className="h-screen w-full flex flex-col overflow-hidden font-sans relative">
+      {/* Wallpaper Background Layer */}
+      <div className="wallpaper-layer" />
+
+      {/* Header - Glass Shell Level */}
+      <header className="h-11 flex items-center justify-between pl-0 pr-6 border-b glass-shell z-sticky shrink-0 relative">
         <div className="flex items-center space-x-2 min-w-0">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-text-tertiary hover:text-accent-primary transition-colors border border-border-visible bg-bg-secondary/40"
+            className="md:hidden p-2 text-glass-muted hover:text-glass-accent transition-colors glass-button"
           >
             {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
           <div className="flex items-center gap-1.5 ml-4 md:ml-6">
             <TessyLogo />
             <div className="flex flex-col">
-              <h1 className="text-xl font-bold tracking-tight leading-none text-text-primary">
+              <h1 className="text-xl font-bold tracking-tight leading-none text-glass">
                 tessy
               </h1>
-              <span className="text-[9px] font-medium text-text-tertiary uppercase tracking-widest opacity-60">Rabelus Lab</span>
+              <span className="text-[9px] font-medium text-glass-muted uppercase tracking-widest opacity-60">Rabelus Lab</span>
             </div>
           </div>
         </div>
@@ -139,10 +146,18 @@ const AppContent: React.FC = () => {
           <DateAnchor groundingEnabled={groundingStatus} />
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setIsVisualModalOpen(true)}
+            className="w-8 h-8 flex items-center justify-center glass-button text-glass-accent"
+            title="Configuração Visual"
+          >
+            <Palette size={16} />
+          </button>
+
           <button
             onClick={toggleTheme}
-            className="w-8 h-8 flex items-center justify-center bg-bg-secondary border border-border-visible text-accent-primary hover:border-accent-primary transition-all"
+            className="w-8 h-8 flex items-center justify-center glass-button text-glass-accent"
             title="Alternar Tema"
           >
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
@@ -150,7 +165,7 @@ const AppContent: React.FC = () => {
 
           <button
             onClick={() => setIsGeminiModalOpen(true)}
-            className="w-8 h-8 flex items-center justify-center bg-bg-secondary border border-border-visible text-accent-secondary hover:border-accent-secondary transition-all"
+            className="w-8 h-8 flex items-center justify-center glass-button text-glass-secondary"
             title="Configurar Gemini"
           >
             <Settings size={16} />
@@ -171,8 +186,8 @@ const AppContent: React.FC = () => {
         <span className="opacity-40 uppercase">© 2025 Rabelus Lab System</span>
         <div className="flex items-center space-x-6">
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-accent-primary animate-pulse"></div>
-            <span className="uppercase text-accent-primary hidden xs:inline">Stable Build v3.2.1</span>
+            <div style={{ backgroundColor: 'var(--glass-accent)' }} className="w-1.5 h-1.5 animate-pulse"></div>
+            <span style={{ color: 'var(--glass-accent)' }} className="uppercase hidden xs:inline">Stable Build v3.2.1</span>
           </div>
         </div>
       </footer>
@@ -194,7 +209,8 @@ const AppContent: React.FC = () => {
         onSuccess={() => setIsGeminiModalOpen(false)}
       />
       <PendingActionsModal />
-    </div>
+      <VisualSettingsModal />
+    </div >
   );
 };
 
@@ -217,13 +233,15 @@ const App: React.FC = () => {
   if (!isReady) return null;
 
   return (
-    <LayoutProvider>
-      <GitHubProvider>
-        <ChatProvider currentProjectId={initialProjectId}>
-          <AppContent />
-        </ChatProvider>
-      </GitHubProvider>
-    </LayoutProvider>
+    <VisualProvider>
+      <LayoutProvider>
+        <GitHubProvider>
+          <ChatProvider currentProjectId={initialProjectId}>
+            <AppContent />
+          </ChatProvider>
+        </GitHubProvider>
+      </LayoutProvider>
+    </VisualProvider>
   );
 };
 

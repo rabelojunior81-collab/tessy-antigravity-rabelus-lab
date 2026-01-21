@@ -15,7 +15,7 @@ const Terminal: React.FC = () => {
   ]);
   const [cmdHistory, setCmdHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  
+
   const outputEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -99,60 +99,62 @@ const Terminal: React.FC = () => {
   };
 
   return (
-    <div 
-      className="h-full bg-bg-secondary/80 backdrop-blur-xl border-t border-border-visible flex flex-col shrink-0 relative select-none"
+    <div
+      className="h-full glass-panel flex flex-col shrink-0 relative select-none"
       onClick={() => inputRef.current?.focus()}
     >
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
+      {/* Terminal Header */}
+      <div className="flex items-center justify-between px-4 py-2 glass-header shrink-0">
         <div className="flex items-center gap-3">
-          <TerminalIcon size={14} className="text-accent-primary opacity-60" />
-          <span className="text-xs font-medium tracking-normal text-text-primary">System Shell v3.2</span>
+          <TerminalIcon size={14} className="text-glass-accent opacity-60" />
+          <span className="text-xs font-medium tracking-normal text-glass">System Shell v3.2</span>
         </div>
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={(e) => { e.stopPropagation(); setHistory([]); }}
-            className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-2"
+            className="text-glass-muted hover:text-red-400 transition-colors flex items-center gap-2"
           >
             <Trash2 size={12} />
             <span className="text-[10px] font-normal tracking-normal">Clear</span>
           </button>
-          <div className="h-4 w-px bg-border-subtle"></div>
-          <div className="flex items-center gap-2 text-[9px] font-medium text-text-tertiary uppercase tracking-wide">
-             <ShieldCheck size={12} className="text-accent-primary/50" />
-             Encrypted
+          <div className="h-4 w-px bg-glass-border"></div>
+          <div className="flex items-center gap-2 text-[9px] font-medium text-glass-muted uppercase tracking-wide">
+            <ShieldCheck size={12} className="text-glass-accent/50" />
+            Encrypted
           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-5 font-mono text-[12px] leading-relaxed cursor-text bg-bg-secondary/40">
+      {/* Terminal Content */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-5 font-mono text-[12px] leading-relaxed cursor-text">
         {history.map((line, idx) => (
           <div key={idx} className="mb-1.5 animate-fade-in">
             {line.type === 'input' ? (
               <div className="flex gap-2">
-                <span className="text-accent-primary font-bold opacity-60">λ</span>
-                <span className="text-text-primary">{line.content}</span>
+                <span className="text-glass-accent font-bold opacity-60">λ</span>
+                <span className="text-glass">{line.content}</span>
               </div>
             ) : (
-              <div className={`whitespace-pre-wrap ${
-                line.type === 'error' ? 'text-red-400' : 
-                line.type === 'system' ? 'text-accent-primary/60' : 
-                'text-text-secondary opacity-70'
-              }`}>
+              <div className={`whitespace-pre-wrap ${line.type === 'error' ? 'text-red-400' :
+                  line.type === 'system' ? 'text-glass-accent/60' :
+                    'text-glass-secondary opacity-70'
+                }`}>
                 {line.content}
               </div>
             )}
           </div>
         ))}
-        
+
         <div className="flex items-center gap-2">
-          <span className="text-accent-primary font-bold opacity-60">λ</span>
+          <span className="text-glass-accent font-bold opacity-60">λ</span>
           <input
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent border-none outline-none text-text-primary font-mono text-[12px] caret-accent-primary"
+            className="flex-1 bg-transparent border-none outline-none text-glass font-mono text-[12px] caret-glass-accent"
+            style={{ caretColor: 'var(--glass-accent)' }}
             spellCheck={false}
             autoComplete="off"
           />

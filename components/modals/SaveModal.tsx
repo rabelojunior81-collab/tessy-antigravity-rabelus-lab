@@ -29,7 +29,7 @@ const SaveModal: React.FC<SaveModalProps> = ({ isOpen, onClose, conversation, on
     setTimeout(() => {
       setIsClosing(false);
       onClose();
-    }, 100);
+    }, 150);
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -52,29 +52,77 @@ const SaveModal: React.FC<SaveModalProps> = ({ isOpen, onClose, conversation, on
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} onClick={handleClose}>
-      <div className={`w-full max-w-lg bg-bg-secondary/95 backdrop-blur-xl border border-border-visible flex flex-col shadow-2xl ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`} onClick={e => e.stopPropagation()}>
-        <div className="px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Save className="text-accent-primary" size={16} />
-            <h2 className="text-xs font-medium tracking-normal text-text-primary">Arquivar Protocolo</h2>
+    <div
+      className={`modal-overlay ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}
+      onClick={handleClose}
+    >
+      <div
+        className={`w-full max-w-xs glass-modal flex flex-col ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-2 py-1 glass-header flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-1.5">
+            <Save style={{ color: 'var(--glass-accent)' }} size={10} />
+            <h2 className="text-[9px] font-bold tracking-widest text-glass uppercase">Arquivar</h2>
           </div>
-          <button onClick={handleClose} className="p-1 text-text-tertiary hover:text-text-primary transition-all active:scale-90"><X size={16} /></button>
+          <button onClick={handleClose} className="p-0.5 text-glass-muted hover:text-glass transition-all">
+            <X size={10} />
+          </button>
         </div>
 
-        <form onSubmit={handleSave} className="p-2 space-y-3">
-          {error && <div className="text-[11px] font-medium uppercase text-red-400 flex items-center gap-2"><AlertCircle size={16} /> {error}</div>}
-          <div className="space-y-2">
-            <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Identificação da Sessão</label>
-            <input autoFocus type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="NOME..." className="w-full bg-bg-tertiary border border-border-visible p-3 text-sm font-normal text-text-primary focus:border-accent-primary outline-none" />
+        {/* Form */}
+        <form onSubmit={handleSave} className="p-2 space-y-2">
+          {error && (
+            <div className="text-[9px] font-medium text-red-100 flex items-center gap-1.5 bg-red-500/20 glass-header-compact p-1.5 border border-red-500/20">
+              <AlertCircle size={10} className="text-red-400" /> {error}
+            </div>
+          )}
+
+          <div className="space-y-1">
+            <label className="text-[8px] font-bold text-glass-muted uppercase tracking-widest">ID Sessão</label>
+            <input
+              autoFocus
+              type="text"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              placeholder="Nome..."
+              className="w-full glass-input py-1.5 px-2 text-[10px] text-glass focus:border-glass-accent outline-none placeholder:text-glass-muted/40"
+            />
           </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide">Resumo de Metadados</label>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="DIRETRIZ..." className="w-full h-24 bg-bg-tertiary border border-border-visible p-3 text-sm font-normal text-text-secondary outline-none focus:border-accent-primary resize-none custom-scrollbar" />
+
+          <div className="space-y-1">
+            <label className="text-[8px] font-bold text-glass-muted uppercase tracking-widest">Resumo</label>
+            <textarea
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              placeholder="Diretriz..."
+              className="w-full h-14 glass-input py-1.5 px-2 text-[10px] text-glass resize-none focus:border-glass-accent outline-none placeholder:text-glass-muted/40 custom-scrollbar"
+            />
           </div>
-          <div className="flex gap-4 pt-4">
-            <button type="button" onClick={handleClose} className="flex-1 py-0.5 bg-bg-tertiary hover:bg-bg-elevated text-text-tertiary font-medium uppercase tracking-wide text-xs transition-all">Cancelar</button>
-            <button type="submit" disabled={!title.trim()} className={`flex-1 py-0.5 font-medium tracking-normal text-xs transition-all shadow-lg ${!title.trim() ? 'bg-bg-secondary text-text-tertiary opacity-20' : 'bg-accent-primary hover:bg-accent-secondary text-white'}`}>Confirmar Arquivamento</button>
+
+          <div className="flex gap-2 pt-1">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="flex-1 py-1.5 glass-card border-glass/10 text-glass-muted font-bold uppercase tracking-widest text-[8px] hover:text-glass transition-all active:scale-95"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={!title.trim()}
+              style={{
+                backgroundColor: title.trim() ? 'var(--glass-accent)' : undefined,
+                boxShadow: title.trim() ? '0 4px 12px rgba(var(--accent-rgb), 0.3)' : 'none'
+              }}
+              className={`flex-1 py-1.5 font-bold tracking-widest text-[8px] transition-all uppercase active:scale-95 ${!title.trim()
+                ? 'glass-card border-glass/5 opacity-30 cursor-not-allowed text-glass-muted'
+                : 'text-white border-transparent'
+                }`}
+            >
+              Arquivar
+            </button>
           </div>
         </form>
       </div>

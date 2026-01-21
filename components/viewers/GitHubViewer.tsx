@@ -14,11 +14,10 @@ const TreeNode: React.FC<{ item: any; level: number; onFileSelect: (path: string
 
   return (
     <div className="flex flex-col select-none">
-      <div 
+      <div
         onClick={handleClick}
-        className={`flex items-center gap-2 py-1.5 px-3 hover:bg-accent-subtle/10 cursor-pointer transition-colors border-l-2 group ${
-          isOpen && isFolder ? 'border-accent-primary/40' : 'border-transparent'
-        }`}
+        className={`flex items-center gap-2 py-1.5 px-3 hover:bg-accent-subtle/10 cursor-pointer transition-colors border-l-2 group ${isOpen && isFolder ? 'border-accent-primary/40' : 'border-transparent'
+          }`}
         style={{ paddingLeft: `${level * 12 + 12}px` }}
       >
         <span className="text-text-tertiary">
@@ -31,7 +30,7 @@ const TreeNode: React.FC<{ item: any; level: number; onFileSelect: (path: string
           {item.name}
         </span>
       </div>
-      
+
       {isOpen && isFolder && item.items && (
         <div className="flex flex-col">
           {item.items.map((subItem: any) => (
@@ -65,7 +64,7 @@ const GitHubViewer: React.FC = () => {
   if (!token) {
     return (
       <div className="p-4 flex flex-col gap-4 animate-fade-in">
-        <div className="p-5 bg-accent-subtle/10 border border-border-visible">
+        <div className="p-4 bg-accent-subtle/10 border border-surface ">
           <h4 className="text-xs font-bold uppercase text-text-primary mb-3 flex items-center gap-2">
             <Key size={14} className="text-accent-primary" /> Token PAT
           </h4>
@@ -74,8 +73,8 @@ const GitHubViewer: React.FC = () => {
           </p>
         </div>
         <div className="space-y-4">
-          <input type="password" value={tokenInput} onChange={(e) => setTokenInput(e.target.value)} placeholder="TOKEN..." className="w-full bg-bg-primary border border-border-visible p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
-          <button onClick={() => updateToken(tokenInput)} className="w-full py-0.5 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg">Autenticar</button>
+          <input type="password" value={tokenInput} onChange={(e) => setTokenInput(e.target.value)} placeholder="TOKEN..." className="w-full bg-surface border border-surface  p-2.5 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
+          <button onClick={() => updateToken(tokenInput)} className="w-full py-2 bg-accent-primary hover:bg-accent-secondary  text-white font-bold text-[10px] uppercase tracking-widest transition-all shadow-lg">Autenticar</button>
         </div>
       </div>
     );
@@ -84,26 +83,27 @@ const GitHubViewer: React.FC = () => {
   if (!repoPath) {
     return (
       <div className="p-4 flex flex-col gap-4 animate-fade-in">
-        <div className="flex items-center gap-3 p-4 bg-accent-subtle/20 border border-border-visible text-accent-primary">
+        <div className="flex items-center gap-3 p-3 bg-accent-subtle/20 border border-surface  text-accent-primary">
           <CheckCircle2 size={16} />
           <span className="text-[10px] font-bold uppercase tracking-widest">Sincronizado</span>
         </div>
         <div className="space-y-4">
-          <input type="text" value={repoInput} onChange={(e) => setRepoInput(e.target.value)} placeholder="USUARIO/REPOS..." className="w-full bg-bg-primary border border-border-visible p-3 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
-          <button onClick={() => connectRepo(repoInput)} className="w-full py-0.5 bg-accent-primary hover:bg-accent-secondary text-white font-bold text-[10px] uppercase tracking-widest transition-all">Conectar</button>
+          <input type="text" value={repoInput} onChange={(e) => setRepoInput(e.target.value)} placeholder="USUARIO/REPOS..." className="w-full bg-surface border border-surface  p-2.5 text-[10px] font-mono text-text-primary focus:border-accent-primary outline-none uppercase" />
+          <button onClick={() => connectRepo(repoInput)} className="w-full py-2 bg-accent-primary hover:bg-accent-secondary  text-white font-bold text-[10px] uppercase tracking-widest transition-all">Conectar</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-bg-secondary animate-fade-in">
-      <div className="p-4 border-b border-border-visible bg-bg-primary/50 flex items-center justify-between">
+    <div className="flex flex-col h-full overflow-hidden bg-transparent">
+      {/* Action bar with repo info */}
+      <div className="px-2 py-1 flex items-center justify-between">
         <div className="flex items-center gap-2 overflow-hidden">
-          <Github size={16} className="text-accent-primary shrink-0" />
-          <span className="text-[11px] font-bold uppercase text-text-primary truncate">{repoPath}</span>
+          <Github size={14} className="text-glass-accent shrink-0" />
+          <span className="text-[10px] font-mono text-glass-secondary truncate">{repoPath}</span>
         </div>
-        <button onClick={refreshTree} className={`p-1.5 text-text-tertiary hover:text-accent-primary ${isLoading ? 'animate-spin' : ''}`}>
+        <button onClick={refreshTree} className={`p-1 text-glass-muted hover:text-glass-accent transition-all ${isLoading ? 'animate-spin' : ''}`}>
           <RefreshCcw size={14} />
         </button>
       </div>
@@ -111,7 +111,7 @@ const GitHubViewer: React.FC = () => {
       <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
         {isLoading && !tree ? (
           <div className="flex flex-col items-center justify-center p-12 gap-3 opacity-30">
-            <div className="w-4 h-4 border-2 border-accent-primary border-t-transparent animate-spin"></div>
+            <div className="w-4 h-4 border border-accent-primary border-t-transparent rounded-full animate-spin"></div>
             <span className="text-[9px] font-bold uppercase tracking-widest text-text-tertiary">Mapeando...</span>
           </div>
         ) : error ? (
@@ -126,14 +126,14 @@ const GitHubViewer: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="p-8 text-center text-[9px] text-text-tertiary font-bold uppercase tracking-widest italic border border-dashed border-border-visible m-2">
+          <div className="p-8 text-center text-[9px] text-text-tertiary font-bold uppercase tracking-widest italic border border-dashed border-surface  m-2">
             Vazio
           </div>
         )}
       </div>
 
-      <div className="p-4 border-t border-border-visible bg-bg-primary/50">
-        <button onClick={disconnect} className="w-full py-0.5 border border-border-visible text-red-400/70 hover:text-red-400 text-[9px] font-bold uppercase tracking-widest transition-all">Desconectar</button>
+      <div className="p-3 border-t border-glass glass-header">
+        <button onClick={disconnect} className="w-full py-2 border border-surface  text-red-400/70 hover:text-red-400 hover:border-red-400/30 text-[9px] font-bold uppercase tracking-widest transition-all">Desconectar</button>
       </div>
     </div>
   );

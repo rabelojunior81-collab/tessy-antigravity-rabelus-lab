@@ -1,0 +1,770 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   TESSY LIQUIDGLASS DESIGN SYSTEM
+   Inspired by RabelusOS - Complete Visual Hierarchy
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CSS VARIABLES - ROOT LEVEL
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Glass Core - These are dynamically set by VisualContext */
+  --glass-blur: 16px;
+  --glass-opacity: 0.65;
+
+  /* Accent - Set by VisualContext */
+  --glass-accent: #f97316;
+  --glass-accent-hover: #fb923c;
+  --accent-rgb: 249, 115, 22;
+
+  /* Wallpaper */
+  --wallpaper-url: url('https://images.unsplash.com/photo-1464802686167-b939a6910659?q=80&w=2933&auto=format&fit=crop');
+
+  /* Shadows */
+  --shadow-glass:
+    0 25px 50px -12px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  --shadow-modal:
+    0 50px 100px -20px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+
+  --shadow-card:
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK THEME (Default)
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root,
+:root.dark {
+  --glass-base: rgba(10, 10, 15, var(--glass-opacity));
+  --glass-panel: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-text: #f8fafc;
+  --glass-text-secondary: #94a3b8;
+  --glass-text-muted: #64748b;
+
+  --bg-solid: #050508;
+  --overlay-color: rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LIGHT THEME
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root.light {
+  --glass-base: rgba(255, 255, 255, var(--glass-opacity));
+  --glass-panel: rgba(0, 0, 0, 0.02);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-text: #0f172a;
+  --glass-text-secondary: #475569;
+  --glass-text-muted: #64748b;
+
+  --bg-solid: #f8fafc;
+  --overlay-color: rgba(255, 255, 255, 0.4);
+
+  --shadow-glass:
+    0 25px 50px -12px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+
+  --shadow-modal:
+    0 50px 100px -20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+
+  --shadow-card:
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+
+  color-scheme: light;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  color: var(--glass-text);
+  overflow: hidden;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  background: var(--bg-solid);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEVEL 0: WALLPAPER LAYER
+   The deepest layer - provides the visual backdrop for everything
+   ═══════════════════════════════════════════════════════════════════════════ */
+.wallpaper-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--wallpaper-url);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: var(--bg-solid);
+}
+
+/* Subtle vignette/darkening for depth */
+.wallpaper-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+}
+
+.light .wallpaper-layer::after {
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(255, 255, 255, 0.2) 100%);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEVEL 1: GLASS SHELL
+   App shell elements - Header, Sidebar
+   Lightest glass effect, allows maximum wallpaper visibility
+   ═══════════════════════════════════════════════════════════════════════════ */
+.glass-shell {
+  background: var(--glass-base);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.5)) saturate(1.2);
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.5)) saturate(1.2);
+  border-color: var(--glass-border);
+  border-radius: 0;
+  /* Square aesthetics */
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEVEL 2: GLASS PANEL
+   Main content areas - ViewerPanel, CoPilot, Terminal
+   Medium glass effect with depth shadows
+   ═══════════════════════════════════════════════════════════════════════════ */
+.glass-panel {
+  background: var(--glass-base);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.3) brightness(1.02);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.3) brightness(1.02);
+  box-shadow:
+    var(--shadow-glass),
+    0 0 30px -10px rgba(var(--accent-rgb), 0.05);
+  /* Subtle accent glow */
+  border: 1px solid rgba(var(--accent-rgb), 0.1);
+  /* Accent tinted border */
+  border-radius: 0;
+  /* Square aesthetics */
+  position: relative;
+}
+
+/* Glass texture overlay for realism */
+.glass-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Inner edge highlight for 3D effect */
+.glass-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+    inset 1px 0 0 0 rgba(255, 255, 255, 0.03),
+    inset -1px 0 0 0 rgba(255, 255, 255, 0.03),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+.light .glass-panel::after {
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
+    inset 1px 0 0 0 rgba(255, 255, 255, 0.3),
+    inset -1px 0 0 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEVEL 2.5: GLASS HEADER (for panel headers)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.glass-header {
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(var(--accent-rgb), 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.glass-header-compact {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+.light .glass-header {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEVEL 3: GLASS CARD
+   Individual items - Messages, list items, buttons
+   Subtle effect, mostly transparent
+   ═══════════════════════════════════════════════════════════════════════════ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    var(--shadow-card),
+    0 0 0 0 rgba(var(--accent-rgb), 0);
+  /* Transition target */
+  border-radius: 0;
+  /* Square aesthetics */
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(var(--accent-rgb), 0.2);
+  box-shadow:
+    var(--shadow-card),
+    0 4px 12px rgba(var(--accent-rgb), 0.1);
+}
+
+.light .glass-card {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.light .glass-card:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEVEL 4: GLASS MODAL
+   Floating modals - Settings, dialogs
+   Strongest glass effect, highest z-index
+   ═══════════════════════════════════════════════════════════════════════════ */
+.glass-modal {
+  background: var(--glass-base);
+  backdrop-filter: blur(calc(var(--glass-blur) * 1.5)) saturate(1.4) brightness(1.05);
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 1.5)) saturate(1.4) brightness(1.05);
+  box-shadow: var(--shadow-modal);
+  border: 1px solid rgba(var(--accent-rgb), 0.15);
+  /* Stronger accent border for modals */
+  border-radius: 0;
+  /* Square aesthetics */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Modal texture */
+.glass-modal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Modal edge highlight */
+.glass-modal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+    inset 1px 0 0 0 rgba(255, 255, 255, 0.05),
+    inset -1px 0 0 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.15);
+}
+
+.light .glass-modal::after {
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
+    inset 1px 0 0 0 rgba(255, 255, 255, 0.5),
+    inset -1px 0 0 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.08);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODAL OVERLAY
+   ═══════════════════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-color);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLASS BUTTON
+   ═══════════════════════════════════════════════════════════════════════════ */
+.glass-button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--glass-text);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 0;
+  /* Square aesthetics */
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.glass-button:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+.light .glass-button {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+}
+
+.light .glass-button:hover {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* Primary accent button */
+.glass-button-accent {
+  background: var(--glass-accent);
+  border-color: var(--glass-accent);
+  color: white;
+  box-shadow:
+    0 4px 16px rgba(var(--accent-rgb), 0.3),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+
+.glass-button-accent:hover {
+  background: var(--glass-accent-hover);
+  border-color: var(--glass-accent-hover);
+  box-shadow:
+    0 6px 24px rgba(var(--accent-rgb), 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLASS INPUT
+   ═══════════════════════════════════════════════════════════════════════════ */
+.glass-input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  color: var(--glass-text);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 0;
+  /* Square aesthetics */
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.glass-input:focus {
+  border-color: var(--glass-accent);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.2);
+}
+
+.glass-input::placeholder {
+  color: var(--glass-text-muted);
+}
+
+.light .glass-input {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TYPOGRAPHY HELPERS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.text-glass {
+  color: var(--glass-text);
+}
+
+.text-glass-secondary {
+  color: var(--glass-text-secondary);
+}
+
+.text-glass-muted {
+  color: var(--glass-text-muted);
+}
+
+.text-shadow-glass {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.light .text-shadow-glass {
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+  /* Square aesthetics */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--glass-accent);
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes zoomOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes softPulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes glowPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(var(--accent-rgb), 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.6);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.15s ease-out forwards;
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-zoom-out {
+  animation: zoomOut 0.2s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+.animate-soft-pulse {
+  animation: softPulse 2s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Reduce motion */
+.reduce-motion,
+.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Theme-aware surface color (white in dark, black in light) */
+:root,
+:root.dark {
+  --surface-rgb: 255, 255, 255;
+}
+
+:root.light {
+  --surface-rgb: 0, 0, 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   THEME-AWARE TEXT COLORS
+   ─────────────────────────────────────────────────────────────────────────────*/
+.text-glass {
+  color: var(--glass-text);
+}
+
+.text-glass-secondary {
+  color: var(--glass-text-secondary);
+}
+
+.text-glass-muted {
+  color: var(--glass-text-muted);
+}
+
+.text-glass-accent {
+  color: var(--glass-accent);
+}
+
+/* Legacy mapping for text-text-* classes used in components */
+.text-text-primary {
+  color: var(--glass-text);
+}
+
+.text-text-secondary {
+  color: var(--glass-text-secondary);
+}
+
+.text-text-tertiary {
+  color: var(--glass-text-muted);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ACCENT COLOR UTILITIES (Dynamic - follows user accent choice)
+   ─────────────────────────────────────────────────────────────────────────────*/
+.text-accent-primary {
+  color: var(--glass-accent);
+}
+
+.text-accent-secondary {
+  color: var(--glass-accent-hover);
+}
+
+.bg-accent-primary {
+  background: var(--glass-accent);
+}
+
+.bg-accent-secondary {
+  background: var(--glass-accent-hover);
+}
+
+.border-accent-primary {
+  border-color: var(--glass-accent);
+}
+
+.border-accent-secondary {
+  border-color: var(--glass-accent-hover);
+}
+
+.hover\:text-accent-primary:hover {
+  color: var(--glass-accent);
+}
+
+.hover\:bg-accent-primary:hover {
+  background: var(--glass-accent);
+}
+
+.hover\:border-accent-primary:hover {
+  border-color: var(--glass-accent);
+}
+
+/* Group hover variants for glass-accent */
+.group:hover .group-hover\:text-glass-accent {
+  color: var(--glass-accent);
+}
+
+.group:hover .group-hover\:bg-glass-accent {
+  background: var(--glass-accent);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   THEME-AWARE BACKGROUND COLORS
+   ─────────────────────────────────────────────────────────────────────────────*/
+.bg-glass-accent {
+  background: var(--glass-accent);
+}
+
+.bg-glass-base {
+  background: var(--glass-base);
+}
+
+/* Surface backgrounds (adapt to theme) */
+.bg-surface {
+  background: rgba(var(--surface-rgb), 0.03);
+}
+
+.bg-surface-hover {
+  background: rgba(var(--surface-rgb), 0.06);
+}
+
+.bg-surface-elevated {
+  background: rgba(var(--surface-rgb), 0.08);
+}
+
+.bg-surface-active {
+  background: rgba(var(--surface-rgb), 0.12);
+}
+
+/* Legacy mapping for bg-bg-* classes */
+.bg-bg-primary {
+  background: var(--glass-base);
+}
+
+.bg-bg-secondary {
+  background: rgba(var(--surface-rgb), 0.02);
+}
+
+.bg-bg-elevated {
+  background: rgba(var(--surface-rgb), 0.06);
+}
+
+/* Accent subtle backgrounds */
+.bg-accent-subtle {
+  background: rgba(var(--accent-rgb), 0.1);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   THEME-AWARE BORDER COLORS
+   ─────────────────────────────────────────────────────────────────────────────*/
+.border-glass {
+  border-color: var(--glass-border);
+}
+
+.border-surface {
+  border-color: rgba(var(--surface-rgb), 0.1);
+}
+
+.border-surface-subtle {
+  border-color: rgba(var(--surface-rgb), 0.05);
+}
+
+.border-visible {
+  border-color: rgba(var(--surface-rgb), 0.15);
+}
+
+.border-subtle {
+  border-color: rgba(var(--surface-rgb), 0.05);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   EFFECTS
+   ─────────────────────────────────────────────────────────────────────────────*/
+.glow-accent {
+  box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.4);
+}
+
+/* Selection */
+::selection {
+  background: rgba(var(--accent-rgb), 0.3);
+  color: var(--glass-text);
+}

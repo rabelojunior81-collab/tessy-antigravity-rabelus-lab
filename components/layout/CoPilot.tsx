@@ -86,55 +86,57 @@ const CoPilot: React.FC = () => {
 
   const toolbarItems = [
     { icon: FileText, label: 'Biblioteca', onClick: () => abrirViewer('library'), disabled: false },
-    { icon: Wand2, label: 'Otimizar', onClick: () => setIsOptimizeModalOpen(true), disabled: false },
+    { icon: Wand2, label: 'Otimizar', onClick: () => setIsOptimizeModalOpen(true), disabled: !inputText.trim() },
     { icon: Save, label: 'Salvar', onClick: () => setIsSaveModalOpen(true), disabled: !hasMessages },
     { icon: Share2, label: 'Partilhar', onClick: () => setIsShareModalOpen(true), disabled: !hasMessages },
     { icon: RotateCcw, label: 'Reiniciar', onClick: () => setIsRestartModalOpen(true), disabled: !hasMessages, color: 'text-red-400' },
   ];
 
   return (
-    <aside className="w-full h-full bg-bg-secondary/60 backdrop-blur-xl border-l border-border-visible flex flex-col z-[60] shrink-0">
+    <aside className="w-full h-full glass-panel flex flex-col z-[60] grow-0 pointer-events-auto overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-0.5 border-b border-border-visible bg-bg-primary/80 backdrop-blur-md shrink-0">
-        <div className="flex items-center gap-2">
-          <div className={`w-1.5 h-1.5 ${isLoading ? 'bg-accent-secondary animate-pulse shadow-[0_0_8px_#4a9eff]' : 'bg-accent-primary'}`}></div>
-          <h2 className="text-xs font-medium text-text-primary tracking-wide">Tessy Assistant</h2>
+      <div className="flex items-center justify-between px-2 py-0.5 glass-header shrink-0">
+        <div className="flex items-center gap-1.5">
+          <div style={{ backgroundColor: isLoading ? 'var(--glass-accent)' : undefined }} className={`w-1.5 h-1.5 ${isLoading ? 'animate-soft-pulse' : 'bg-glass-muted/40'}`}></div>
+          <h2 className="text-[9px] uppercase font-bold text-glass tracking-widest opacity-80">Tessy CoPilot</h2>
         </div>
         <button
           onClick={() => setIsControllersModalOpen(true)}
-          className="p-1.5 text-text-tertiary hover:text-accent-primary transition-all active:scale-95"
+          className="p-0.5 text-glass-muted hover:text-glass-accent transition-all active:scale-95"
           title="Parâmetros"
         >
-          <Settings2 size={16} />
+          <Settings2 size={12} />
         </button>
       </div>
 
-      <div className="flex-1 overflow-hidden flex flex-col bg-transparent relative">
-        <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 pb-6 relative">
+      <div className="flex-1 overflow-hidden flex flex-col relative">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2 pb-2 relative">
           {currentConversation?.turns.length === 0 && !isLoading && (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-20 animate-fade-in">
-              <p className="text-[11px] font-normal tracking-wider italic text-text-tertiary">READY FOR INSTRUCTION</p>
+              <p className="text-[11px] font-normal tracking-wider italic text-glass-muted">READY FOR INSTRUCTION</p>
             </div>
           )}
 
           {currentConversation?.turns.map((turn) => (
-            <div key={turn.id} className="space-y-6 animate-fade-in">
-              <div className="flex flex-col items-start gap-2">
-                <div className="w-full bg-bg-tertiary/60 border border-border-visible p-4 text-sm text-text-primary leading-relaxed font-normal">
+            <div key={turn.id} className="space-y-1 animate-fade-in">
+              {/* User Message */}
+              <div className="flex flex-col items-start gap-0.5">
+                <div className="w-full glass-card px-3 py-2 text-sm text-glass leading-relaxed font-normal border-l-2 border-l-glass-muted/30">
                   {turn.userMessage}
                 </div>
               </div>
 
-              <div className="flex flex-col items-start gap-2">
-
-                <div className="w-full bg-bg-tertiary/20 border border-border-visible p-5 prose max-w-none shadow-sm font-normal min-h-[60px]">
+              {/* Tessy Response */}
+              <div className="flex flex-col items-start gap-0.5">
+                <div className="w-full glass-card px-3 py-2 prose max-w-none font-normal min-h-[40px] border-l-2 border-l-glass-accent/50">
                   {(() => {
                     const isLast = turn.id === currentConversation?.turns[currentConversation.turns.length - 1].id;
                     if (isLast && isLoading && !turn.tessyResponse) {
                       return (
-                        <div className="flex items-center gap-3 animate-pulse">
-                          <div className="w-2 h-2 bg-accent-primary rounded-full"></div>
-                          <span className="text-sm text-text-secondary">Processando...</span>
+                        <div className="flex items-center gap-1.5 py-2 px-1">
+                          <div className="w-1.5 h-1.5 bg-glass-accent animate-soft-pulse"></div>
+                          <div className="w-1.5 h-1.5 bg-glass-accent animate-soft-pulse [animation-delay:200ms]"></div>
+                          <div className="w-1.5 h-1.5 bg-glass-accent animate-soft-pulse [animation-delay:400ms]"></div>
                         </div>
                       );
                     }
@@ -147,11 +149,11 @@ const CoPilot: React.FC = () => {
                           code({ node, inline, className, children, ...props }: any) {
                             const match = /language-(\w+)/.exec(className || '');
                             return !inline && match ? (
-                              <SyntaxHighlighter style={prismTheme as any} language={match[1]} PreTag="div" {...props} customStyle={{ margin: '1rem 0', padding: '16px', background: '#050505', borderRadius: '4px', border: '1px solid #27272a', fontSize: '12px' }}>
+                              <SyntaxHighlighter style={prismTheme as any} language={match[1]} PreTag="div" {...props} customStyle={{ margin: '0.5rem 0', padding: '12px', background: 'rgba(0,0,0,0.3)', borderRadius: '0', border: '1px solid var(--glass-border)', fontSize: '12px' }}>
                                 {String(children).replace(/\n$/, '')}
                               </SyntaxHighlighter>
                             ) : (
-                              <code className="bg-bg-elevated px-1 text-accent-primary font-normal" {...props}>{children}</code>
+                              <code className="bg-glass-accent/20 px-1 text-glass-accent font-normal" {...props}>{children}</code>
                             );
                           }
                         }}
@@ -181,43 +183,43 @@ const CoPilot: React.FC = () => {
                   })()}
 
                   {turn.tessyResponse && (
-                    <div className="flex items-center justify-end gap-3 mt-6 border-t border-border-subtle pt-4">
+                    <div className="flex items-center justify-end gap-2 mt-2 border-t border-glass pt-2">
                       <button
                         onClick={() => copyToClipboard(turn.tessyResponse)}
-                        className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
+                        className="p-1 text-glass-muted hover:text-glass-accent transition-all hover:scale-105 active:scale-95"
                         title="Copiar texto"
                       >
-                        <Copy size={14} />
+                        <Copy size={12} />
                       </button>
                       <button
                         onClick={() => openMarkdownModal(turn.tessyResponse)}
-                        className="p-1 text-text-tertiary hover:text-accent-primary transition-all hover:scale-110 active:scale-90"
+                        className="p-1 text-glass-muted hover:text-glass-accent transition-all hover:scale-105 active:scale-95"
                         title="Compartilhar em Markdown"
                       >
-                        <Download size={14} />
+                        <Download size={12} />
                       </button>
                       <button
                         onClick={() => sendFeedback(turn.id, 'positive')}
-                        className={`p-1 transition-all ${turn.feedback === 'positive' ? 'text-accent-primary scale-110' : 'text-text-tertiary hover:text-accent-primary hover:scale-110 active:scale-90'}`}
+                        className={`p-1 transition-all ${turn.feedback === 'positive' ? 'text-glass-accent scale-105' : 'text-glass-muted hover:text-glass-accent hover:scale-105 active:scale-95'}`}
                         title="Feedback positivo"
                       >
-                        <ThumbsUp size={14} fill={turn.feedback === 'positive' ? "currentColor" : "none"} />
+                        <ThumbsUp size={12} fill={turn.feedback === 'positive' ? "currentColor" : "none"} />
                       </button>
                       <button
                         onClick={() => sendFeedback(turn.id, 'negative')}
-                        className={`p-1 transition-all ${turn.feedback === 'negative' ? 'text-red-400 scale-110' : 'text-text-tertiary hover:text-red-400 hover:scale-110 active:scale-90'}`}
+                        className={`p-1 transition-all ${turn.feedback === 'negative' ? 'text-red-400 scale-105' : 'text-glass-muted hover:text-red-400 hover:scale-105 active:scale-95'}`}
                         title="Feedback negativo"
                       >
-                        <ThumbsDown size={14} fill={turn.feedback === 'negative' ? "currentColor" : "none"} />
+                        <ThumbsDown size={12} fill={turn.feedback === 'negative' ? "currentColor" : "none"} />
                       </button>
                     </div>
                   )}
                 </div>
 
                 {turn.groundingChunks && turn.groundingChunks.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2 px-1">
+                  <div className="mt-1 flex flex-wrap gap-1 px-1">
                     {turn.groundingChunks.map((chunk, idx) => chunk.web ? (
-                      <a key={idx} href={chunk.web.uri} target="_blank" rel="noopener noreferrer" className="text-[9px] font-medium uppercase px-2 py-1 bg-bg-primary/30 backdrop-blur-md border border-border-visible text-accent-primary hover:border-accent-primary transition-all tracking-wide">
+                      <a key={idx} href={chunk.web.uri} target="_blank" rel="noopener noreferrer" className="text-[9px] font-medium uppercase px-2 py-0.5 glass-card text-glass-accent hover:border-glass-accent transition-all tracking-wide">
                         {chunk.web.title}
                       </a>
                     ) : null)}
@@ -230,53 +232,53 @@ const CoPilot: React.FC = () => {
 
         </div>
 
-        <div className="px-4 pb-4 pt-1 bg-transparent shrink-0">
-          <div className="px-1 pb-2 flex items-center gap-4 bg-transparent">
+        <div className="px-3 pb-3 pt-1 shrink-0">
+          <div className="px-1 pb-2 flex items-center gap-3">
             {toolbarItems.map((item, idx) => (
               <button
                 key={idx}
                 onClick={item.onClick}
                 disabled={item.disabled}
                 title={item.label}
-                className={`p-1 transition-all ${item.color || 'text-text-tertiary hover:text-accent-primary'} ${item.disabled ? 'opacity-20 cursor-not-allowed' : 'hover:scale-110 active:scale-90'}`}
+                className={`p-1 transition-all ${item.color || 'text-glass-muted hover:text-glass-accent'} ${item.disabled ? 'opacity-20 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
               >
-                <item.icon size={18} />
+                <item.icon size={16} />
               </button>
             ))}
           </div>
 
           {attachedFiles.length > 0 && (
-            <div className="mb-4">
+            <div className="mb-3">
               <FilePreview files={attachedFiles} onRemove={removeFile} />
             </div>
           )}
 
-          <div className="flex items-end gap-3 bg-bg-tertiary/80 backdrop-blur-xl border border-border-visible p-2 focus-within:border-accent-primary transition-all shadow-xl">
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="p-1 text-text-tertiary hover:text-accent-primary shrink-0 transition-colors"
-              title="Anexar arquivo"
-            >
-              <Plus size={20} />
-            </button>
-            <input type="file" ref={fileInputRef} onChange={(e) => e.target.files && addFile(e.target.files[0])} className="hidden" />
-
+          <div className="flex items-end gap-0 glass-input p-0 focus-within:border-glass-accent transition-all">
             <textarea
               ref={textareaRef}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Digite sua instrução..."
-              className="flex-1 bg-transparent border-none outline-none text-text-primary text-sm font-normal resize-none min-h-[32px] py-1 leading-relaxed placeholder:text-text-tertiary/50 custom-scrollbar transition-[height] duration-200"
+              className="flex-1 bg-transparent border-none outline-none text-glass text-sm font-normal resize-none min-h-[24px] py-1 pl-1 leading-relaxed placeholder:text-glass-muted/50 custom-scrollbar transition-[height] duration-200"
             />
+
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="p-1 text-glass-muted hover:text-glass-accent shrink-0 transition-colors"
+              title="Anexar arquivo"
+            >
+              <Plus size={16} />
+            </button>
+            <input type="file" ref={fileInputRef} onChange={(e) => e.target.files && addFile(e.target.files[0])} className="hidden" />
 
             <button
               onClick={() => sendMessage()}
               disabled={isLoading || isUploadingFiles || (!inputText.trim() && attachedFiles.length === 0)}
-              className={`p-1 transition-all ${(!inputText.trim() && attachedFiles.length === 0) ? 'text-text-tertiary opacity-20' : 'text-accent-primary hover:scale-110 active:scale-90'}`}
+              className={`p-1 transition-all ${(!inputText.trim() && attachedFiles.length === 0) ? 'text-glass-muted opacity-20' : 'text-glass-accent hover:scale-110 active:scale-90'}`}
               title="Transmitir"
             >
-              <ArrowRight size={22} strokeWidth={3} />
+              <ArrowRight size={20} strokeWidth={3} />
             </button>
           </div>
         </div>
