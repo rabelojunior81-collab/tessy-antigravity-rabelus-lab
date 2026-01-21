@@ -19,8 +19,9 @@ import GitHubTokenModal from './components/GitHubTokenModal';
 import GeminiTokenModal from './components/modals/GeminiTokenModal';
 import PendingActionsModal from './components/modals/PendingActionsModal';
 import VisualSettingsModal from './components/modals/VisualSettingsModal';
-import { Menu, Moon, Sun, X, Settings, Palette } from 'lucide-react';
+import { Menu, Moon, Sun, X, Settings, Palette, BookOpen } from 'lucide-react';
 import { VisualProvider, useVisual } from './contexts/VisualContext';
+import AutoDocModal from './components/modals/AutoDocModal';
 
 const TessyLogo = React.memo(() => (
   <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
@@ -46,6 +47,7 @@ const AppContent: React.FC = () => {
   const { newConversation, factors } = useChat();
   const { setIsVisualModalOpen } = useVisual();
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
+  const [isAutoDocModalOpen, setIsAutoDocModalOpen] = useState(false);
 
   const {
     currentProjectId,
@@ -164,6 +166,14 @@ const AppContent: React.FC = () => {
           </button>
 
           <button
+            onClick={() => setIsAutoDocModalOpen(true)}
+            className="w-8 h-8 flex items-center justify-center glass-button text-glass-accent"
+            title="Auto-Documentation"
+          >
+            <BookOpen size={16} />
+          </button>
+
+          <button
             onClick={() => setIsGeminiModalOpen(true)}
             className="w-8 h-8 flex items-center justify-center glass-button text-glass-secondary"
             title="Configurar Gemini"
@@ -210,6 +220,10 @@ const AppContent: React.FC = () => {
       />
       <PendingActionsModal />
       <VisualSettingsModal />
+      <AutoDocModal
+        isOpen={isAutoDocModalOpen}
+        onClose={() => setIsAutoDocModalOpen(false)}
+      />
     </div >
   );
 };

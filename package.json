@@ -12,6 +12,8 @@
     "framer-motion": "^12.23.26",
     "jspdf": "^2.5.1",
     "lucide-react": "0.460.0",
+    "puppeteer": "^24.35.0",
+    "puppeteer-core": "^24.35.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-markdown": "^9.0.1",
@@ -19,6 +21,9 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.2",
+    "axios": "^1.13.2",
+    "cheerio": "^1.1.2",
+    "turndown": "^7.2.2",
     "vite": "^7.3.0"
   }
 }
