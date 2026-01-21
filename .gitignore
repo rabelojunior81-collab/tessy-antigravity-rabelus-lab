@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Rabelus Lab - Private Methodologies & Documentation
+# Keep internal knowledge out of public repository
+.agent/docs/ecosystem/
+.agent/brain/
