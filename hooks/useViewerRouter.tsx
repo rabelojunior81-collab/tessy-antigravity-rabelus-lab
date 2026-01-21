@@ -76,10 +76,7 @@ export const useViewerRouter = ({
       case 'files':
         return (
           <FileExplorer
-            onFileSelect={(content, fileName, language) => {
-              // TODO: Integrate with editor/terminal
-              console.log(`Opened: ${fileName} (${language})`);
-            }}
+            currentProjectId={currentProjectId}
           />
         );
       default:
