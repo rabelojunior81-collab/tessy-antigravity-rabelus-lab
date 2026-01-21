@@ -4,6 +4,7 @@ import ProjectModal from './components/ProjectModal';
 import { DateAnchor } from './components/DateAnchor';
 import { db, migrateToIndexedDB } from './services/dbService';
 import { RepositoryItem, Template } from './types';
+import { autoDocScheduler } from './services/autoDocScheduler';
 
 // Layout & Context Imports
 import { LayoutProvider, useLayoutContext } from './contexts/LayoutContext';
@@ -64,6 +65,9 @@ const AppContent: React.FC = () => {
     const boot = async () => {
       try {
         await migrateToIndexedDB();
+
+        // Initialize Auto-Documentation Scheduler (on-start sync)
+        await autoDocScheduler.initialize();
 
         const themeSetting = await db.settings.get('tessy-theme');
         if (themeSetting) setTheme(themeSetting.value);
