@@ -127,8 +127,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
               {/* Viewer Resize Handle */}
               <motion.div
                 onMouseDown={handleViewerResize}
-                className="w-[1px] bg-glass-border hover:bg-accent-primary/50 cursor-col-resize transition-all duration-200 relative group shrink-0 z-[70]"
-                title="Redimensionar painel"
+                className="w-[1px] bg-glass-border hover:bg-glass-accent/50 hover:shadow-[0_0_10px_rgba(var(--accent-rgb),0.3)] cursor-col-resize transition-all duration-200 relative group shrink-0 z-[70]"
+                title="Arraste para redimensionar painel"
               >
                 <div className="absolute inset-y-0 -left-1 -right-1 z-10 cursor-col-resize"></div>
               </motion.div>
@@ -164,11 +164,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           </div>
         </div>
 
-        {/* CoPilot Resize Handle - Invisible Layout Overlay */}
+        {/* CoPilot Resize Handle */}
         <div
           onMouseDown={handleCoPilotResize}
-          className="w-[1px] bg-glass-border hover:bg-accent-primary/50 cursor-col-resize transition-all duration-200 relative z-[70] shrink-0 group"
-          title="Redimensionar CoPilot"
+          className="w-[1px] bg-glass-border hover:bg-glass-accent/50 hover:shadow-[0_0_10px_rgba(var(--accent-rgb),0.3)] cursor-col-resize transition-all duration-200 relative z-[70] shrink-0 group"
+          title="Arraste para redimensionar CoPilot"
         >
           <div className="absolute inset-y-0 -left-1 -right-1 z-10 cursor-col-resize"></div>
         </div>
