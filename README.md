@@ -51,16 +51,25 @@ O coração da Tessy. Um assistente de chat contextual que entende todo o seu pr
 *   **Typewriter UX**: Respostas com cadência humana para melhor leitura cognitiva.
 *   **Auto-Scroll & Markdown**: Renderização rica de código com syntax highlighting.
 
-### 2. **Soberania de Dados (Local-First)**
+### 2. **Terminal Quantico**
+Shell real integrado com `node-pty` e `xterm.js` para execução de comandos diretamente na interface.
+![Terminal Conectado](docs/assets/terminal_connected.png)
+*   **Conexão Real**: PowerShell/Bash via WebSocket.
+*   **Colapsável**: Arraste ou clique duplo para minimizar.
+*   **Transparência LiquidGlass**: Fundo translúcido integrado ao tema.
+
+![Demo Terminal](docs/assets/terminal_demo.webp)
+
+### 3. **Soberania de Dados (Local-First)**
 Tudo reside na sua máquina (`c:\Dev_Room`).
 *   **Sem Nuvem Intermediária**: A comunicação é Direta (Sua Máquina <-> Google API).
 *   **Persistência Offline**: Projetos, histórico de chat e configurações salvos em `IndexedDB`.
 
-### 3. **Gestão de Projetos Ágil**
+### 4. **Gestão de Projetos Ágil**
 *   **Workspaces Isolados**: Alternância rápida entre múltiplos repositórios.
 *   **Git Integrado**: Clone, Pull, Push e Sync sem sair da interface.
 
-### 4. **Ecosistema Visual**
+### 5. **Ecosistema Visual**
 *   **Temas Dinâmicos**: Dark/Light com suporte a sintonização de cores de acento.
 *   **Modais de Vidro**: Interfaces flutuantes que não perdem o contexto de fundo.
 
