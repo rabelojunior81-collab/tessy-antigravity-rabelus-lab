@@ -1,24 +1,89 @@
-import React, { useEffect, useRef } from 'react';
+/**
+ * RealTerminal - Terminal real conectado ao PTY via WebSocket
+ * 
+ * Conecta ao servidor backend (localhost:3001) para fornecer
+ * acesso ao shell real do sistema (PowerShell/Bash).
+ */
+
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
-import { Terminal as TerminalIcon, Trash2, ShieldCheck } from 'lucide-react';
+import { AttachAddon } from '@xterm/addon-attach';
+import { Terminal as TerminalIcon, Trash2, Power, RefreshCw } from 'lucide-react';
 import '@xterm/xterm/css/xterm.css';
+
+const TERMINAL_SERVER_URL = 'ws://localhost:3002/terminal';
+
+type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
 const RealTerminal: React.FC = () => {
   const terminalRef = useRef<HTMLDivElement>(null);
   const xtermInstance = useRef<Terminal | null>(null);
   const fitAddonInstance = useRef<FitAddon | null>(null);
-  const lineBuffer = useRef<string>('');
+  const wsRef = useRef<WebSocket | null>(null);
+  const attachAddonRef = useRef<AttachAddon | null>(null);
 
-  const PROMPT = '\x1b[1;34m$\x1b[0m ';
+  const [status, setStatus] = useState<ConnectionStatus>('disconnected');
 
-  const writeWelcome = (term: Terminal) => {
-    term.writeln('\x1b[1;36mTESSY OS [Build 3.2.1-antigravity]\x1b[0m');
-    term.writeln('\x1b[1;32mNucleus Core Online.\x1b[0m');
-    term.writeln('');
-    term.write(PROMPT);
-  };
+  /**
+   * Connect to the terminal server via WebSocket
+   */
+  const connectToServer = useCallback(() => {
+    if (!xtermInstance.current) return;
 
+    // Clean up existing connection
+    if (wsRef.current) {
+      wsRef.current.close();
+    }
+    if (attachAddonRef.current) {
+      attachAddonRef.current.dispose();
+    }
+
+    setStatus('connecting');
+    const term = xtermInstance.current;
+
+    term.writeln('\x1b[1;33m⏳ Connecting to terminal server...\x1b[0m');
+
+    const ws = new WebSocket(TERMINAL_SERVER_URL);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      setStatus('connected');
+      term.clear();
+      term.writeln('\x1b[1;32m✓ Connected to real shell\x1b[0m');
+      term.writeln('');
+
+      // Attach xterm to WebSocket
+      const attachAddon = new AttachAddon(ws);
+      attachAddonRef.current = attachAddon;
+      term.loadAddon(attachAddon);
+
+      // Send initial resize
+      if (fitAddonInstance.current) {
+        fitAddonInstance.current.fit();
+        const { cols, rows } = term;
+        ws.send(JSON.stringify({ type: 'resize', cols, rows }));
+      }
+    };
+
+    ws.onerror = () => {
+      setStatus('error');
+      term.writeln('\x1b[1;31m✗ Failed to connect to terminal server\x1b[0m');
+      term.writeln('\x1b[33mMake sure the server is running: npm run terminal\x1b[0m');
+    };
+
+    ws.onclose = () => {
+      if (status !== 'error') {
+        setStatus('disconnected');
+        term.writeln('');
+        term.writeln('\x1b[1;33m⚡ Connection closed\x1b[0m');
+      }
+    };
+  }, [status]);
+
+  /**
+   * Initialize xterm.js
+   */
   useEffect(() => {
     if (!terminalRef.current) return;
 
@@ -58,53 +123,68 @@ const RealTerminal: React.FC = () => {
     xtermInstance.current = term;
     fitAddonInstance.current = fitAddon;
 
-    writeWelcome(term);
+    // Welcome message
+    term.writeln('\x1b[1;36m╔════════════════════════════════════╗\x1b[0m');
+    term.writeln('\x1b[1;36m║   TESSY OS Shell [Build 3.3.0]    ║\x1b[0m');
+    term.writeln('\x1b[1;36m╚════════════════════════════════════╝\x1b[0m');
+    term.writeln('');
+    term.writeln('\x1b[33mPress "Connect" to start a real shell session\x1b[0m');
 
-    const handleData = (data: string) => {
-      const code = data.charCodeAt(0);
-
-      if (data === '\r') { // Enter
-        term.write('\r\n');
-        const cmd = lineBuffer.current.trim();
-        if (cmd) {
-          term.writeln(`\x1b[31mError:\x1b[0m Command '${cmd}' not implemented in this build.`);
-        }
-        lineBuffer.current = '';
-        term.write(PROMPT);
-      } else if (code === 127) { // Backspace
-        if (lineBuffer.current.length > 0) {
-          lineBuffer.current = lineBuffer.current.slice(0, -1);
-          term.write('\b \b');
-        }
-      } else if (code < 32) {
-        // Ignore other control codes
-      } else {
-        lineBuffer.current += data;
-        term.write(data);
-      }
-    };
-
-    const dataDisposable = term.onData(handleData);
-
+    // Handle resize
     const resizeObserver = new ResizeObserver(() => {
       if (fitAddonInstance.current) {
         fitAddonInstance.current.fit();
+        // Send resize to PTY
+        if (wsRef.current?.readyState === WebSocket.OPEN && xtermInstance.current) {
+          const { cols, rows } = xtermInstance.current;
+          wsRef.current.send(JSON.stringify({ type: 'resize', cols, rows }));
+        }
       }
     });
     resizeObserver.observe(terminalRef.current);
 
     return () => {
-      dataDisposable.dispose();
       resizeObserver.disconnect();
+      wsRef.current?.close();
       term.dispose();
     };
   }, []);
 
+  /**
+   * Clear terminal
+   */
   const clearTerminal = () => {
     if (xtermInstance.current) {
       xtermInstance.current.clear();
-      lineBuffer.current = '';
-      writeWelcome(xtermInstance.current);
+    }
+  };
+
+  /**
+   * Disconnect from server
+   */
+  const disconnect = () => {
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+    setStatus('disconnected');
+  };
+
+  const getStatusColor = () => {
+    switch (status) {
+      case 'connected': return 'text-green-400';
+      case 'connecting': return 'text-yellow-400';
+      case 'error': return 'text-red-400';
+      default: return 'text-text-tertiary';
+    }
+  };
+
+  const getStatusText = () => {
+    switch (status) {
+      case 'connected': return 'Connected';
+      case 'connecting': return 'Connecting...';
+      case 'error': return 'Error';
+      default: return 'Offline';
     }
   };
 
@@ -114,9 +194,32 @@ const RealTerminal: React.FC = () => {
       <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
           <TerminalIcon size={14} className="text-accent-primary opacity-60" />
-          <span className="text-xs font-medium tracking-normal text-text-primary">System Shell v3.2</span>
+          <span className="text-xs font-medium tracking-normal text-text-primary">Real Shell</span>
+          <span className={`text-[10px] font-medium ${getStatusColor()}`}>
+            ● {getStatusText()}
+          </span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          {status === 'disconnected' || status === 'error' ? (
+            <button
+              onClick={connectToServer}
+              className="text-text-tertiary hover:text-green-400 transition-colors flex items-center gap-2"
+            >
+              <Power size={12} />
+              <span className="text-[10px] font-normal tracking-normal">Connect</span>
+            </button>
+          ) : status === 'connected' ? (
+            <button
+              onClick={disconnect}
+              className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-2"
+            >
+              <Power size={12} />
+              <span className="text-[10px] font-normal tracking-normal">Disconnect</span>
+            </button>
+          ) : (
+            <RefreshCw size={12} className="text-yellow-400 animate-spin" />
+          )}
+          <div className="h-4 w-px bg-border-subtle" />
           <button
             onClick={clearTerminal}
             className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-2"
@@ -124,11 +227,6 @@ const RealTerminal: React.FC = () => {
             <Trash2 size={12} />
             <span className="text-[10px] font-normal tracking-normal">Clear</span>
           </button>
-          <div className="h-4 w-px bg-border-subtle"></div>
-          <div className="flex items-center gap-2 text-[9px] font-medium text-text-tertiary uppercase tracking-wide">
-            <ShieldCheck size={12} className="text-accent-primary/50" />
-            Encrypted
-          </div>
         </div>
       </div>
 
