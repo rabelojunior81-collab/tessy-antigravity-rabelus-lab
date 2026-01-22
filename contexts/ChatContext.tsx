@@ -66,7 +66,7 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: string }> = ({ children, currentProjectId }) => {
-  const { setIsGeminiModalOpen } = useLayoutContext();
+  const { setIsGeminiModalOpen, selectedFile } = useLayoutContext();
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
   const [factors, setFactors] = useState<Factor[]>(INITIAL_FACTORS);
   const [isLoading, setIsLoading] = useState(false);
@@ -290,7 +290,8 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
         currentConversation.turns.filter(t => t.id !== tempTurnId),
         groundingEnabled,
         repoPath,
-        githubToken
+        githubToken,
+        selectedFile  // NOVO: Contexto do arquivo aberto para onisciência
       );
 
       // Atualiza com resposta final

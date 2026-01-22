@@ -1,11 +1,19 @@
 
 import { Factor } from "../../types";
 
+// Interface para contexto do arquivo aberto no editor
+export interface SelectedFileContext {
+  path: string;
+  content: string;
+  language: string;
+}
+
 export const getSystemInstruction = (
   currentDate: string,
   repoPath?: string,
   groundingEnabled: boolean = true,
-  factors: Factor[] = []
+  factors: Factor[] = [],
+  selectedFile?: SelectedFileContext | null
 ): string => {
   let instruction = `Você é Tessy, uma assistente avançada do Rabelus Lab.
 
@@ -17,7 +25,35 @@ IMPORTANTE: Ao responder sobre eventos, notícias, lançamentos ou qualquer info
 1. Responda apenas com base em fatos verificáveis ou dados obtidos através de ferramentas.
 2. Se você não souber a resposta ou não puder obtê-la via grounding/GitHub, admita que não possui a informação.
 3. NUNCA invente links, fatos históricos ou detalhes técnicos inexistentes.
+4. Se o usuário perguntar sobre "o arquivo aberto" ou "o código no editor", use APENAS as informações do contexto "ARQUIVO NO EDITOR" abaixo. Se não houver arquivo aberto, diga claramente que nenhum arquivo está visível para você.
 `;
+
+  // Contexto do arquivo aberto no editor (Onisciência)
+  if (selectedFile) {
+    const truncatedContent = selectedFile.content.length > 3000
+      ? selectedFile.content.slice(0, 3000) + '\n\n[... conteúdo truncado para economizar tokens ...]'
+      : selectedFile.content;
+
+    instruction += `
+**ARQUIVO NO EDITOR** (Canva Central):
+- **Caminho**: \`${selectedFile.path}\`
+- **Linguagem**: ${selectedFile.language}
+- **Conteúdo**:
+\`\`\`${selectedFile.language}
+${truncatedContent}
+\`\`\`
+
+Quando o usuário perguntar sobre "o arquivo aberto", "o código no editor", ou "o que estou editando", refira-se a este arquivo acima.
+`;
+  } else {
+    instruction += `
+**ARQUIVO NO EDITOR**: Nenhum arquivo está aberto no Canva Central no momento.
+Se o usuário perguntar sobre "o arquivo aberto" ou "o código no editor", informe que:
+- Nenhum arquivo está visível para você no momento
+- Peça para ele abrir um arquivo no editor central para que você possa analisá-lo
+NUNCA invente ou suponha qual arquivo pode estar aberto.
+`;
+  }
 
 
   if (repoPath) {
