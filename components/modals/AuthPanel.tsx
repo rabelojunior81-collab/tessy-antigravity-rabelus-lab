@@ -26,6 +26,7 @@ const AuthPanel: React.FC<AuthPanelProps> = ({ isOpen, onClose, onProviderUpdate
     const [connectedProviders, setConnectedProviders] = useState<AuthProvider['id'][]>([]);
     const [isClosing, setIsClosing] = useState(false);
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+    const [isEditing, setIsEditing] = useState(false);
 
     const activeProvider = AUTH_PROVIDERS.find(p => p.id === activeTab)!;
 
@@ -40,6 +41,7 @@ const AuthPanel: React.FC<AuthPanelProps> = ({ isOpen, onClose, onProviderUpdate
     useEffect(() => {
         loadCurrentToken();
         setSaveStatus('idle');
+        setIsEditing(false);
     }, [activeTab]);
 
     const loadConnectedProviders = async () => {
@@ -163,18 +165,35 @@ const AuthPanel: React.FC<AuthPanelProps> = ({ isOpen, onClose, onProviderUpdate
                             </a>
                         </div>
 
-                        <input
-                            type="password"
-                            value={tokenInput}
-                            onChange={(e) => setTokenInput(e.target.value)}
-                            placeholder={activeProvider.placeholder}
-                            className="w-full glass-input p-2 text-[10px] font-mono text-center text-glass focus:border-glass-accent outline-none placeholder:text-glass-muted/30"
-                            style={{
-                                borderColor: tokenInput && !tokenInput.includes('•')
-                                    ? (activeProvider.validator(tokenInput) ? '#22c55e' : '#ef4444')
-                                    : undefined
-                            }}
-                        />
+
+                        <div className="relative">
+                            <input
+                                type="password"
+                                value={tokenInput}
+                                onChange={(e) => setTokenInput(e.target.value)}
+                                disabled={!!tokenInput && tokenInput.includes('•') && !isEditing}
+                                placeholder={activeProvider.placeholder}
+                                className={`w-full glass-input p-2 text-[10px] font-mono text-center text-glass focus:border-glass-accent outline-none placeholder:text-glass-muted/30 ${!!tokenInput && tokenInput.includes('•') && !isEditing ? 'opacity-50 cursor-not-allowed' : ''
+                                    }`}
+                                style={{
+                                    borderColor: tokenInput && !tokenInput.includes('•')
+                                        ? (activeProvider.validator(tokenInput) ? '#22c55e' : '#ef4444')
+                                        : undefined
+                                }}
+                            />
+                            {tokenInput && tokenInput.includes('•') && !isEditing && (
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setTokenInput('');
+                                        setIsEditing(true);
+                                    }}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] bg-glass-surface px-2 py-0.5 rounded border border-glass-border hover:bg-glass-highlight hover:text-white text-glass-muted transition-colors uppercase font-bold tracking-wider"
+                                >
+                                    Alterar
+                                </button>
+                            )}
+                        </div>
                         <p className="text-[9px] text-glass-muted text-center px-2 opacity-70">
                             {activeProvider.helpText}
                         </p>

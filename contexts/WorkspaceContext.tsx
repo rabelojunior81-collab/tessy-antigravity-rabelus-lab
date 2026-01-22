@@ -20,6 +20,7 @@ import {
 import { FileEntry } from '../services/fileSystemService';
 import { FSAAdapter } from '../services/fsaAdapter';
 import * as gitService from '../services/gitService';
+import { getGitHubToken } from '../services/githubService';
 
 interface WorkspaceState {
     // Current workspace metadata
@@ -51,7 +52,7 @@ interface WorkspaceContextType extends WorkspaceState {
     readFileContent: (path: string) => Promise<string | null>;
     // Git actions
     gitPull: () => Promise<void>;
-    gitPush: (token: string) => Promise<void>;
+    gitPush: (token?: string) => Promise<void>;
     gitCommit: (message: string, files: string[]) => Promise<string | null>;
     gitStatus: () => Promise<gitService.GitStatusResult[]>;
 }
@@ -215,9 +216,12 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
         setState(prev => ({ ...prev, isLoading: true, error: null }));
 
         try {
+            // Get token if not provided
+            const effectiveToken = token || await getGitHubToken();
+
             await gitService.cloneRepository(state.fsAdapter, '/', {
                 url,
-                onAuth: token ? () => ({ username: 'oauth2', password: token }) : undefined,
+                onAuth: effectiveToken ? () => ({ username: 'oauth2', password: effectiveToken }) : undefined,
                 onProgress: (progress) => {
                     console.log(`Clone progress: ${progress.phase} ${progress.loaded}/${progress.total}`);
                 }
@@ -342,13 +346,19 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     }, [state.fsAdapter, refreshFileTree]);
 
     // Git Push
-    const gitPush = useCallback(async (token: string) => {
+    const gitPush = useCallback(async (token?: string) => {
         if (!state.fsAdapter) return;
 
         setState(prev => ({ ...prev, isLoading: true }));
         try {
+            // Get token if not provided
+            const effectiveToken = token || await getGitHubToken();
+            if (!effectiveToken) {
+                throw new Error("GitHub Token not found. Please add it in Settings.");
+            }
+
             await gitService.push(state.fsAdapter, '/', {
-                onAuth: () => ({ username: 'oauth2', password: token })
+                onAuth: () => ({ username: 'oauth2', password: effectiveToken })
             });
             setState(prev => ({ ...prev, isLoading: false }));
         } catch (e) {

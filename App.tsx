@@ -8,7 +8,7 @@ import { autoDocScheduler } from './services/autoDocScheduler';
 
 // Layout & Context Imports
 import { LayoutProvider, useLayoutContext } from './contexts/LayoutContext';
-import { GitHubProvider } from './contexts/GitHubContext';
+import { GitHubProvider, useGitHub } from './contexts/GitHubContext';
 import { WorkspaceProvider } from './contexts/WorkspaceContext';
 import { ChatProvider, useChat } from './contexts/ChatContext';
 import MainLayout from './components/layout/MainLayout';
@@ -50,6 +50,7 @@ const AppContent: React.FC = () => {
   const { selecionarArquivo } = useLayout();
   const { newConversation, factors } = useChat();
   const { setIsVisualModalOpen } = useVisual();
+  const { reloadAuth } = useGitHub();
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
   const [isAutoDocModalOpen, setIsAutoDocModalOpen] = useState(false);
   const [isProjectDocModalOpen, setIsProjectDocModalOpen] = useState(false);
@@ -148,7 +149,7 @@ const AppContent: React.FC = () => {
               <h1 className="text-xl font-bold tracking-tight leading-none text-glass">
                 tessy
               </h1>
-              <span className="text-[9px] font-medium text-glass-muted uppercase tracking-widest opacity-60">Rabelus Lab</span>
+              <span className="text-[9px] font-medium text-glass-muted uppercase tracking-widest">Rabelus Lab</span>
             </div>
           </div>
         </div>
@@ -210,11 +211,11 @@ const AppContent: React.FC = () => {
       </div>
 
       <footer className="h-5 border-t border-border-visible bg-bg-primary/80 backdrop-blur-md px-6 flex items-center justify-between text-[9px] text-text-tertiary font-normal tracking-wide shrink-0 z-sticky">
-        <span className="opacity-40 uppercase">© 2025 Rabelus Lab System</span>
+        <span className="text-glass-secondary uppercase">© 2025 Rabelus Lab System</span>
         <div className="flex items-center space-x-6">
           <div className="flex items-center gap-2">
             <div style={{ backgroundColor: 'var(--glass-accent)' }} className="w-1.5 h-1.5 animate-pulse"></div>
-            <span style={{ color: 'var(--glass-accent)' }} className="uppercase hidden xs:inline">Stable Build v3.2.1</span>
+            <span style={{ color: 'var(--glass-accent)' }} className="uppercase hidden xs:inline">Tesseract v4.6.0 (Nucleus)</span>
           </div>
         </div>
       </footer>
@@ -248,6 +249,9 @@ const AppContent: React.FC = () => {
       <AuthPanel
         isOpen={isAuthPanelOpen}
         onClose={() => setIsAuthPanelOpen(false)}
+        onProviderUpdate={() => {
+          reloadAuth();
+        }}
       />
     </div >
   );

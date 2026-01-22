@@ -16,7 +16,12 @@ const TERMINAL_SERVER_URL = 'ws://localhost:3002/terminal';
 
 type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 
-const RealTerminal: React.FC = () => {
+interface RealTerminalProps {
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
+}
+
+const RealTerminal: React.FC<RealTerminalProps> = ({ isCollapsed = false, onToggleCollapse }) => {
   const terminalRef = useRef<HTMLDivElement>(null);
   const xtermInstance = useRef<Terminal | null>(null);
   const fitAddonInstance = useRef<FitAddon | null>(null);
@@ -89,24 +94,25 @@ const RealTerminal: React.FC = () => {
 
     const term = new Terminal({
       theme: {
-        background: '#0d1b2a',
-        foreground: '#f0f8ff',
-        cursor: '#4a9eff',
-        selectionBackground: 'rgba(74, 158, 255, 0.3)',
+        background: 'transparent',
+        foreground: '#f8fafc',
+        cursor: '#f97316',
+        selectionBackground: 'rgba(249, 115, 22, 0.3)',
         black: '#000000',
-        red: '#ff5555',
-        green: '#50fa7b',
-        yellow: '#f1fa8c',
-        blue: '#bd93f9',
-        magenta: '#ff79c6',
-        cyan: '#8be9fd',
-        white: '#f8f8f2',
+        red: '#ef4444',
+        green: '#22c55e',
+        yellow: '#eab308',
+        blue: '#3b82f6',
+        magenta: '#ec4899',
+        cyan: '#06b6d4',
+        white: '#ffffff',
       },
       fontFamily: '"JetBrains Mono", Menlo, Monaco, "Courier New", monospace',
       fontSize: 13,
       cursorBlink: true,
       cursorStyle: 'block',
       allowProposedApi: true,
+      allowTransparency: true,
     });
 
     const fitAddon = new FitAddon();
@@ -125,14 +131,15 @@ const RealTerminal: React.FC = () => {
 
     // Welcome message
     term.writeln('\x1b[1;36m╔════════════════════════════════════╗\x1b[0m');
-    term.writeln('\x1b[1;36m║   TESSY OS Shell [Build 3.3.0]    ║\x1b[0m');
+    term.writeln('\x1b[1;36m║   TESSY OS Shell [Build 4.6.0]    ║\x1b[0m');
     term.writeln('\x1b[1;36m╚════════════════════════════════════╝\x1b[0m');
     term.writeln('');
     term.writeln('\x1b[33mPress "Connect" to start a real shell session\x1b[0m');
 
     // Handle resize
     const resizeObserver = new ResizeObserver(() => {
-      if (fitAddonInstance.current) {
+      // Handle resize only if not collapsed
+      if (!isCollapsed && fitAddonInstance.current) {
         fitAddonInstance.current.fit();
         // Send resize to PTY
         if (wsRef.current?.readyState === WebSocket.OPEN && xtermInstance.current) {
@@ -189,13 +196,21 @@ const RealTerminal: React.FC = () => {
   };
 
   return (
-    <div className="h-full bg-[#0d1b2a] border-t border-border-visible flex flex-col shrink-0 relative overflow-hidden">
+    <div
+      className={`glass-panel flex flex-col shrink-0 relative overflow-hidden transition-all duration-300 ease-in-out ${isCollapsed ? 'h-[26px] !border-b-0' : 'h-full'}`}
+    >
       {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-md shrink-0">
-        <div className="flex items-center gap-3">
-          <TerminalIcon size={14} className="text-accent-primary opacity-60" />
-          <span className="text-xs font-medium tracking-normal text-text-primary">Real Shell</span>
-          <span className={`text-[10px] font-medium ${getStatusColor()}`}>
+      <div className="flex items-center justify-between px-3 py-1 glass-header shrink-0">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onToggleCollapse}
+            className="text-glass-accent opacity-80 hover:opacity-100 transition-opacity"
+            title={isCollapsed ? "Expandir Terminal" : "Colapsar Terminal"}
+          >
+            <TerminalIcon size={12} />
+          </button>
+          <span className="text-[10px] font-bold tracking-widest text-glass uppercase">Terminal Quantico</span>
+          <span className={`text-[9px] font-medium ${getStatusColor()}`}>
             ● {getStatusText()}
           </span>
         </div>
@@ -203,29 +218,29 @@ const RealTerminal: React.FC = () => {
           {status === 'disconnected' || status === 'error' ? (
             <button
               onClick={connectToServer}
-              className="text-text-tertiary hover:text-green-400 transition-colors flex items-center gap-2"
+              className="text-glass-muted hover:text-glass-accent transition-colors flex items-center gap-1.5"
             >
-              <Power size={12} />
-              <span className="text-[10px] font-normal tracking-normal">Connect</span>
+              <Power size={11} />
+              <span className="text-[9px] font-medium tracking-wide uppercase">Connect</span>
             </button>
           ) : status === 'connected' ? (
             <button
               onClick={disconnect}
-              className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-2"
+              className="text-glass-muted hover:text-red-400 transition-colors flex items-center gap-1.5"
             >
-              <Power size={12} />
-              <span className="text-[10px] font-normal tracking-normal">Disconnect</span>
+              <Power size={11} />
+              <span className="text-[9px] font-medium tracking-wide uppercase">Disconnect</span>
             </button>
           ) : (
-            <RefreshCw size={12} className="text-yellow-400 animate-spin" />
+            <RefreshCw size={11} className="text-glass-accent animate-spin" />
           )}
-          <div className="h-4 w-px bg-border-subtle" />
+          <div className="h-3 w-px bg-glass-border" />
           <button
             onClick={clearTerminal}
-            className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-2"
+            className="text-glass-muted hover:text-glass-accent transition-colors flex items-center gap-1.5"
           >
-            <Trash2 size={12} />
-            <span className="text-[10px] font-normal tracking-normal">Clear</span>
+            <Trash2 size={11} />
+            <span className="text-[9px] font-medium tracking-wide uppercase">Clear</span>
           </button>
         </div>
       </div>
@@ -233,15 +248,20 @@ const RealTerminal: React.FC = () => {
       {/* xterm.js Container */}
       <div
         ref={terminalRef}
-        className="flex-1 w-full h-full p-2 bg-[#0d1b2a]"
+        className={`flex-1 w-full h-full p-2 bg-transparent transition-all duration-300 ${isCollapsed ? 'hidden' : 'block'}`}
       />
 
       <style>{`
         .xterm-viewport::-webkit-scrollbar { width: 4px; }
         .xterm-viewport::-webkit-scrollbar-track { background: transparent; }
-        .xterm-viewport::-webkit-scrollbar-thumb { background: rgba(86, 156, 214, 0.3); }
-        .xterm { padding: 12px; }
-        .xterm-cursor { box-shadow: 0 0 10px #4a9eff; }
+        .xterm-viewport::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
+        .xterm-viewport::-webkit-scrollbar-thumb:hover { background: var(--glass-accent); }
+        .xterm { padding: 8px; }
+        .xterm-cursor { box-shadow: 0 0 10px var(--glass-accent); }
+        /* LiquidGlass Blur Effect behind Terminal Text */
+        .xterm-screen canvas {
+             /* Ensuring the text is sharp but the background feels integrated */
+        }
       `}</style>
     </div>
   );

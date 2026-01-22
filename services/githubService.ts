@@ -245,43 +245,24 @@ async function decryptToken(encryptedData: EncryptedData): Promise<string> {
 
 // --- Public Token Management ---
 
+import { getToken, setToken, clearToken } from './authProviders';
+
 export const getGitHubToken = async (): Promise<string | null> => {
   try {
-    const secret = await db.secrets.get('github-token');
-    if (!secret?.value) return null;
-
-    if (secret.value.startsWith('ghp_')) {
-      await setGitHubToken(secret.value);
-      return secret.value;
-    }
-
-    try {
-      const encryptedData = JSON.parse(secret.value);
-      if (encryptedData.ciphertext && encryptedData.iv) {
-        return await decryptToken(encryptedData);
-      }
-    } catch (parseError) {
-      if (secret.value.startsWith('ghp_')) return secret.value;
-      return null;
-    }
-
-    return null;
+    // Legacy migration check (optional): If we wanted to check 'db.secrets' we could,
+    // but for "Clean Slate" convergence, we just read from the central authority.
+    return await getToken('github');
   } catch (err) {
-    console.error('Falha na recuperação/descriptografia do token:', err);
+    console.error('Falha na recuperação do token GitHub:', err);
     return null;
   }
 };
 
 export const setGitHubToken = async (token: string): Promise<void> => {
   try {
-    const encrypted = await encryptToken(token);
-    await db.secrets.put({
-      id: 'github-token',
-      key: 'token',
-      value: JSON.stringify(encrypted)
-    });
+    await setToken('github', token);
   } catch (err) {
-    console.error('Falha na criptografia do token:', err);
+    console.error('Falha no salvamento do token GitHub:', err);
     throw err;
   }
 };

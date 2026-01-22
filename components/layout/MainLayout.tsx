@@ -24,6 +24,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     larguraCoPilot, ajustarLarguraCoPilot
   } = useLayout();
 
+  const [isTerminalCollapsed, setIsTerminalCollapsed] = React.useState(false);
+  const [isResizing, setIsResizing] = React.useState(false);
+
   const getViewerTitle = () => {
     switch (viewerAberto) {
       case 'history': return 'Histórico';
@@ -57,16 +60,25 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 
   const handleTerminalResize = (e: React.MouseEvent) => {
     e.preventDefault();
+    setIsResizing(true);
     const startY = e.clientY;
-    const startHeight = alturaTerminal;
+    const startHeight = isTerminalCollapsed ? 26 : alturaTerminal;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
       const delta = startY - moveEvent.clientY;
-      const newHeight = Math.min(Math.max(startHeight + delta, 150), 400);
-      ajustarAlturaTerminal(newHeight);
+      const rawHeight = startHeight + delta;
+
+      if (rawHeight < 60) {
+        if (!isTerminalCollapsed) setIsTerminalCollapsed(true);
+      } else {
+        if (isTerminalCollapsed) setIsTerminalCollapsed(false);
+        const newHeight = Math.min(Math.max(rawHeight, 60), 600);
+        ajustarAlturaTerminal(newHeight);
+      }
     };
 
     const onMouseUp = () => {
+      setIsResizing(false);
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -134,14 +146,21 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           {/* Terminal Resize Handle */}
           <div
             onMouseDown={handleTerminalResize}
-            className="h-[1px] bg-glass-border hover:bg-accent-primary/50 cursor-row-resize transition-all duration-200 relative group shrink-0 z-[70]"
-            title="Redimensionar terminal"
+            onDoubleClick={() => setIsTerminalCollapsed(!isTerminalCollapsed)}
+            className={`h-[1px] bg-glass-border hover:bg-glass-accent/50 cursor-row-resize transition-all duration-300 relative group shrink-0 z-[70] ${isResizing ? 'bg-glass-accent shadow-[0_0_15px_rgba(var(--accent-rgb),0.5)]' : ''}`}
+            title="Arraste para redimensionar ou duplo clique para colapsar"
           >
             <div className="absolute inset-x-0 -top-1 -bottom-1 z-10 cursor-row-resize"></div>
           </div>
 
-          <div style={{ height: `${alturaTerminal}px` }} className="shrink-0 flex flex-col">
-            <RealTerminal />
+          <div
+            style={{ height: isTerminalCollapsed ? '26px' : `${alturaTerminal}px` }}
+            className={`shrink-0 flex flex-col ${isResizing ? '' : 'transition-all duration-300 ease-in-out'}`}
+          >
+            <RealTerminal
+              isCollapsed={isTerminalCollapsed}
+              onToggleCollapse={() => setIsTerminalCollapsed(!isTerminalCollapsed)}
+            />
           </div>
         </div>
 

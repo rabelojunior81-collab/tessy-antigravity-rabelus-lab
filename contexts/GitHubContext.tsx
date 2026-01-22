@@ -1,9 +1,9 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
-import { 
-  fetchRepositoryStructure, 
-  fetchFileContent, 
-  getGitHubToken, 
+import {
+  fetchRepositoryStructure,
+  fetchFileContent,
+  getGitHubToken,
   setGitHubToken as ghSetToken,
   setGitHubQueueListener,
   performCommitChanges,
@@ -30,6 +30,7 @@ interface GitHubContextType extends GitHubState {
   getFileContent: (path: string) => Promise<GitHubFile>;
   approveAction: (id: string) => Promise<void>;
   rejectAction: (id: string) => void;
+  reloadAuth: () => Promise<void>;
   isActionsModalOpen: boolean;
   setIsActionsModalOpen: (open: boolean) => void;
 }
@@ -57,7 +58,7 @@ export const GitHubProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
 
     setState(prev => ({ ...prev, token, repoPath }));
-    
+
     if (token && repoPath) {
       refreshTreeInternal(token, repoPath);
     }
@@ -65,7 +66,7 @@ export const GitHubProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   useEffect(() => {
     loadInitialState();
-    
+
     // Subscribe to pending actions queue
     setGitHubQueueListener((action) => {
       setState(prev => ({
@@ -144,7 +145,7 @@ export const GitHubProvider: React.FC<{ children: ReactNode }> = ({ children }) 
           await performCreatePullRequest(params.token, params.repoPath, params.title, params.body, params.head, params.base);
           break;
       }
-      
+
       setState(prev => ({
         ...prev,
         pendingActions: prev.pendingActions.filter(a => a.id !== id),
@@ -174,6 +175,7 @@ export const GitHubProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       getFileContent,
       approveAction,
       rejectAction,
+      reloadAuth: loadInitialState,
       isActionsModalOpen,
       setIsActionsModalOpen
     }}>
