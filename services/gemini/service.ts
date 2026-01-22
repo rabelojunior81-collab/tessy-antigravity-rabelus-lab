@@ -2,7 +2,7 @@
 import { Type } from "@google/genai";
 import { getAIClient, MODEL_FLASH, MODEL_PRO } from "./client";
 import { githubTools } from "./tools";
-import { getSystemInstruction, OPTIMIZATION_INSTRUCTION, SelectedFileContext } from "./prompts";
+import { getSystemInstruction, OPTIMIZATION_INSTRUCTION } from "./prompts";
 import { Factor, AttachedFile, OptimizationResult, ConversationTurn, GroundingChunk } from "../../types";
 import * as githubService from "../githubService";
 import { db, generateUUID } from '../dbService';
@@ -128,22 +128,14 @@ export const applyFactorsAndGenerate = async (
   history: ConversationTurn[] = [],
   groundingEnabled: boolean = true,
   repoPath?: string,
-  githubTokenParam?: string | null,
-  selectedFile?: SelectedFileContext | null  // NOVO: Contexto do arquivo aberto
+  githubTokenParam?: string | null
 ): Promise<GenerateResponse> => {
   if (!interpretation) return { text: "Interpretação inválida." };
-
-  // Log de diagnóstico para onisciência
-  if (selectedFile) {
-    console.log(`[Gemini] 📄 Contexto do arquivo injetado: ${selectedFile.path}`);
-  } else {
-    console.log(`[Gemini] ⚠️ Nenhum arquivo aberto para injetar como contexto`);
-  }
 
   try {
     const ai = getAIClient(geminiToken);
     const currentDateStr = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-    const systemInstruction = getSystemInstruction(currentDateStr, repoPath, groundingEnabled, factors, selectedFile);
+    const systemInstruction = getSystemInstruction(currentDateStr, repoPath, groundingEnabled, factors);
     const modelChoice = factors.find(f => f.id === 'model')?.value || MODEL_FLASH;
 
     const contents: any[] = [];
