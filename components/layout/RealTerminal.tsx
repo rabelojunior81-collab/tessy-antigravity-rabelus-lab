@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { Terminal } from 'xterm';
+import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal as TerminalIcon, Trash2, ShieldCheck } from 'lucide-react';
-import 'xterm/css/xterm.css';
+import '@xterm/xterm/css/xterm.css';
 
 const RealTerminal: React.FC = () => {
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -49,10 +49,10 @@ const RealTerminal: React.FC = () => {
 
     // Mount to DOM
     term.open(terminalRef.current);
-    
+
     // Initial fit
     setTimeout(() => {
-        fitAddon.fit();
+      fitAddon.fit();
     }, 100);
 
     xtermInstance.current = term;
@@ -62,7 +62,7 @@ const RealTerminal: React.FC = () => {
 
     const handleData = (data: string) => {
       const code = data.charCodeAt(0);
-      
+
       if (data === '\r') { // Enter
         term.write('\r\n');
         const cmd = lineBuffer.current.trim();
@@ -117,7 +117,7 @@ const RealTerminal: React.FC = () => {
           <span className="text-xs font-medium tracking-normal text-text-primary">System Shell v3.2</span>
         </div>
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={clearTerminal}
             className="text-text-tertiary hover:text-red-400 transition-colors flex items-center gap-2"
           >
@@ -126,18 +126,18 @@ const RealTerminal: React.FC = () => {
           </button>
           <div className="h-4 w-px bg-border-subtle"></div>
           <div className="flex items-center gap-2 text-[9px] font-medium text-text-tertiary uppercase tracking-wide">
-             <ShieldCheck size={12} className="text-accent-primary/50" />
-             Encrypted
+            <ShieldCheck size={12} className="text-accent-primary/50" />
+            Encrypted
           </div>
         </div>
       </div>
 
       {/* xterm.js Container */}
-      <div 
-        ref={terminalRef} 
+      <div
+        ref={terminalRef}
         className="flex-1 w-full h-full p-2 bg-[#0d1b2a]"
       />
-      
+
       <style>{`
         .xterm-viewport::-webkit-scrollbar { width: 4px; }
         .xterm-viewport::-webkit-scrollbar-track { background: transparent; }
