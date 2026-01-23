@@ -1,4 +1,4 @@
-# Tessy "Tesseract" (v4.6.0)
+# Tessy "Tesseract" (v4.6.1)
 **Rabelus Lab's Private Cognitive Expansion (AGI Node)**
 
 ![Tessy Tesseract Hero](docs/assets/hero_v4.png)
@@ -9,13 +9,13 @@
 
 ## 🌌 O Que é a Tessy?
 
-A Tessy é uma plataforma de **Hiper-Engenharia Assistida por IA**, construída com uma arquitetura **Local-First**, **Glassmorphic** e **Molecular**. Ela integra o poder do **Google Gemini 2.0 Pro** diretamente no seu fluxo de trabalho de desenvolvimento, com soberania total de dados.
+A Tessy é uma plataforma de **Hiper-Engenharia Assistida por IA**, construída com uma arquitetura **Local-First**, **Glassmorphic** e **Molecular**. Ela integra o poder do **Modelo Agnostico (Atualmente Gemini 2.0 Flash Exp)** diretamente no seu fluxo de trabalho.
 
 ### Diferenciais do Tesseract (v4.6):
-*   **🔒 Segurança Soberana**: Criptografia AES-256 derivada de senha mestra local (Zero-Trust). Suas chaves de API nunca tocam nossos servidores, pois *não temos servidores*.
-*   **🧠 Memória Associativa**: Contexto contínuo via `IndexedDB` e `FileSystemHandle`. A Tessy "lembra" do seu projeto inteiro localmente.
-*   **💎 Design LiquidGlass**: Uma interface futurista, fluida e imersiva (`backdrop-filter: blur(16px)`), projetada para induzir estado de Flow.
-*   **⚡ Terminal Quântico**: Execução de código real via `node-pty` e `xterm.js` no backend local.
+*   **🔒 Segurança Soberana**: Criptografia AES-256 derivada de senha mestra local (Zero-Trust).
+*   **🧠 Memória Associativa**: Contexto contínuo via `IndexedDB` e `FileSystemHandle`.
+*   **💎 Design LiquidGlass**: Uma interface futurista, fluida e imersiva (`backdrop-filter: blur(16px)`).
+*   **⚡ Terminal Quântico**: Execução de código real via `node-pty`.
 
 ---
 
@@ -35,7 +35,7 @@ graph TD
         App -->|Context| Git[🐙 GitHub Context]
     end
 
-    Chat <-->|Stream| GeminiAPI[Google Gemini API]
+    Chat <-->|Stream| GeminiAPI[LLM Agnostic API]
     FS <-->|R/W| LocalFS[Hard Drive]
     Git <-->|Sync| GitHubAPI[GitHub Remote]
 ```
@@ -46,53 +46,18 @@ graph TD
 
 ### 1. **CoPilot "Antigravity"**
 O coração da Tessy. Um assistente de chat contextual que entende todo o seu projeto.
-![CoPilot V4](docs/assets/copilot_v4.png)
 *   **Multi-Modal**: Aceita texto, imagens e arquivos.
-*   **Typewriter UX**: Respostas com cadência humana para melhor leitura cognitiva.
-*   **Auto-Scroll & Markdown**: Renderização rica de código com syntax highlighting.
+*   **Typewriter UX**: Respostas com cadência humana.
+*   **Auto-Scroll & Markdown**: Renderização rica de código.
 
 ### 2. **Terminal Quantico**
-Shell real integrado com `node-pty` e `xterm.js` para execução de comandos diretamente na interface.
-![Terminal Conectado](docs/assets/terminal_connected.png)
+Shell real integrado com `node-pty` e `xterm.js`.
 *   **Conexão Real**: PowerShell/Bash via WebSocket.
-*   **Colapsável**: Arraste ou clique duplo para minimizar.
-*   **Transparência LiquidGlass**: Fundo translúcido integrado ao tema.
+*   **Transparência LiquidGlass**: Fundo translúcido integrado.
 
-![Demo Terminal](docs/assets/terminal_demo.webp)
-
-### 3. **Soberania de Dados (Local-First)**
-Tudo reside na sua máquina (`c:\Dev_Room`).
-*   **Sem Nuvem Intermediária**: A comunicação é Direta (Sua Máquina <-> Google API).
-*   **Persistência Offline**: Projetos, histórico de chat e configurações salvos em `IndexedDB`.
-
-### 4. **Gestão de Projetos Ágil**
+### 3. **Gestão de Projetos Ágil**
 *   **Workspaces Isolados**: Alternância rápida entre múltiplos repositórios.
-*   **Git Integrado**: Clone, Pull, Push e Sync sem sair da interface.
-
-### 5. **Ecosistema Visual**
-*   **Temas Dinâmicos**: Dark/Light com suporte a sintonização de cores de acento.
-*   **Modais de Vidro**: Interfaces flutuantes que não perdem o contexto de fundo.
-
----
-
-## 🛠️ Instalação e Execução
-
-### Pré-requisitos
-*   Node.js v20+
-*   Navegador Moderno (Chrome/Edge v120+)
-
-### Quick Start
-```bash
-# 1. Clone o repositório
-git clone https://github.com/rabelojunior81/tessy-antigravity-rabelus-lab.git
-
-# 2. Instale as dependências
-npm install
-
-# 3. Inicie o Núcleo (Frontend + Backend)
-npm start
-```
-Acesse em: `http://localhost:3000`
+*   **Git Integrado**: Clone, Pull, Push e Sync.
 
 ---
 
@@ -100,8 +65,9 @@ Acesse em: `http://localhost:3000`
 
 | Versão | Codename | Status | Destaque |
 | :--- | :--- | :--- | :--- |
-| **v4.6.0** | **Tesseract** | 🟢 **Current** | Segurança Master Password, Limpeza de Código, Rebranding. |
-| v3.3.0 | Antigravity | 🟡 Legacy | Integração Terminal, Refatoração Estilo. |
+| **v4.6.1** | **Tesseract** | 🟢 **Current** | Purge de Alucinações, Model Agnostic Core, Saneamento Documental. |
+| v3.3 -> v4.5 | The Lost Era | 🟣 **Archived** | Período de evolução rápida e indocumentada. |
+| v3.2.4 | Antigravity | 🟡 Legacy | Integração Terminal, Refatoração Estilo. |
 | v2.1.0 | Genesis | 🔴 Deprecated | POC Inicial, Dexie implementation. |
 
 ---

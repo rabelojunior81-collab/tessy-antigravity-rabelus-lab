@@ -18,7 +18,7 @@ import { useViewerRouter } from './hooks/useViewerRouter';
 
 // Modals & Icons
 import GitHubTokenModal from './components/GitHubTokenModal';
-import GeminiTokenModal from './components/modals/GeminiTokenModal';
+// GeminiTokenModal removido - Central de Autenticação unificada via AuthPanel
 import PendingActionsModal from './components/modals/PendingActionsModal';
 import VisualSettingsModal from './components/modals/VisualSettingsModal';
 import AuthPanel from './components/modals/AuthPanel';
@@ -44,8 +44,8 @@ const AppContent: React.FC = () => {
     setIsMobileMenuOpen,
     setSelectedProjectId,
     setSelectedLibraryItem,
-    isGeminiModalOpen,
-    setIsGeminiModalOpen
+    isAuthPanelOpen,
+    setIsAuthPanelOpen
   } = useLayoutContext();
   const { selecionarArquivo } = useLayout();
   const { newConversation, factors } = useChat();
@@ -54,9 +54,11 @@ const AppContent: React.FC = () => {
   const [isGitHubTokenModalOpen, setIsGitHubTokenModalOpen] = useState(false);
   const [isAutoDocModalOpen, setIsAutoDocModalOpen] = useState(false);
   const [isProjectDocModalOpen, setIsProjectDocModalOpen] = useState(false);
-  const [isAuthPanelOpen, setIsAuthPanelOpen] = useState(false);
+
+  // Ponte de Compatibilidade removida - Migração concluída para LayoutContext
 
   const {
+    // ... (linhas 60-244 permanecem iguais)
     currentProjectId,
     switchProject,
     isProjectModalOpen,
@@ -231,11 +233,7 @@ const AppContent: React.FC = () => {
         onClose={() => setIsGitHubTokenModalOpen(false)}
         onSuccess={() => setIsGitHubTokenModalOpen(false)}
       />
-      <GeminiTokenModal
-        isOpen={isGeminiModalOpen}
-        onClose={() => setIsGeminiModalOpen(false)}
-        onSuccess={() => setIsGeminiModalOpen(false)}
-      />
+      {/* GeminiTokenModal removido - usar AuthPanel */}
       <PendingActionsModal />
       <VisualSettingsModal />
       <AutoDocModal

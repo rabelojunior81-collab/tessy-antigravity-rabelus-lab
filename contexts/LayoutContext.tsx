@@ -28,8 +28,8 @@ interface LayoutContextType {
   setIsMobileMenuOpen: (open: boolean) => void;
   setSelectedProjectId: (id: string | null) => void;
   setSelectedLibraryItem: (item: Template | RepositoryItem | { isCreating: boolean } | null) => void;
-  isGeminiModalOpen: boolean;
-  setIsGeminiModalOpen: (open: boolean) => void;
+  isAuthPanelOpen: boolean;
+  setIsAuthPanelOpen: (open: boolean) => void;
 }
 
 const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
@@ -40,7 +40,7 @@ export const LayoutProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedLibraryItem, setSelectedLibraryItem] = useState<Template | RepositoryItem | { isCreating: boolean } | null>(null);
-  const [isGeminiModalOpen, setIsGeminiModalOpen] = useState(false);
+  const [isAuthPanelOpen, setIsAuthPanelOpen] = useState(false);
 
   // Initialize values from localStorage or defaults
   const [terminalHeight, setTerminalHeight] = useState(() => {
@@ -99,8 +99,8 @@ export const LayoutProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       setIsMobileMenuOpen,
       setSelectedProjectId,
       setSelectedLibraryItem,
-      isGeminiModalOpen,
-      setIsGeminiModalOpen
+      isAuthPanelOpen,
+      setIsAuthPanelOpen
     }}>
       {children}
     </LayoutContext.Provider>

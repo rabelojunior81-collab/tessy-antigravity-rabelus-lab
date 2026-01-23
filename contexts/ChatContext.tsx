@@ -66,7 +66,8 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: string }> = ({ children, currentProjectId }) => {
-  const { setIsGeminiModalOpen } = useLayoutContext();
+  const { setIsAuthPanelOpen } = useLayoutContext();
+  // ... (linhas 70-272 permanecem iguais)
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
   const [factors, setFactors] = useState<Factor[]>(INITIAL_FACTORS);
   const [isLoading, setIsLoading] = useState(false);
@@ -271,10 +272,11 @@ export const ChatProvider: React.FC<{ children: ReactNode; currentProjectId: str
       const geminiToken = await getGeminiToken();
 
       if (!geminiToken) {
-        setIsGeminiModalOpen(true);
+        // Redireciona para Central de Autenticação (AuthPanel) via estado global
+        setIsAuthPanelOpen(true);
         setStatusMessage('CHAVE GEMINI AUSENTE');
         setIsLoading(false);
-        return; // Note: Should probably remove the optimistic turn or show error in it.
+        return;
       }
 
       const interpretation = await interpretIntent(geminiToken, currentInput, currentFiles, currentConversation.turns);
