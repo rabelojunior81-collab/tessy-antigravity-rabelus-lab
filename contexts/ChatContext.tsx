@@ -22,8 +22,8 @@ const INITIAL_FACTORS: Factor[] = [
     type: 'dropdown',
     label: 'Modelo de Linguagem',
     enabled: true,
-    value: 'gemini-2.0-flash-exp',
-    options: ['gemini-2.0-flash-exp', 'gemini-1.5-pro', 'gemini-1.5-flash']
+    value: 'gemini-3-flash-preview',
+    options: ['gemini-3-flash-preview', 'gemini-3-pro-preview', 'gemini-flash-lite-latest']
   },
   {
     id: 'format',

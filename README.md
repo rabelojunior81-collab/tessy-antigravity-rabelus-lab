@@ -9,7 +9,7 @@
 
 ## 🌌 O Que é a Tessy?
 
-A Tessy é uma plataforma de **Hiper-Engenharia Assistida por IA**, construída com uma arquitetura **Local-First**, **Glassmorphic** e **Molecular**. Ela integra o poder do **Modelo Agnostico (Atualmente Gemini 2.0 Flash Exp)** diretamente no seu fluxo de trabalho.
+A Tessy é uma plataforma de **Hiper-Engenharia Assistida por IA**, construída com uma arquitetura **Local-First**, **Glassmorphic** e **Molecular**. Ela integra o poder do **Modelo Agnostico (Atualmente Gemini 3 Flash Preview)** diretamente no seu fluxo de trabalho.
 
 ### Diferenciais do Tesseract (v4.6):
 *   **🔒 Segurança Soberana**: Criptografia AES-256 derivada de senha mestra local (Zero-Trust).
