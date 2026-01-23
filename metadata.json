@@ -1,6 +1,6 @@
 {
   "name": "tessy // Rabelus Lab",
-  "description": "Professional AI Prompt Engineering IDE powered by Gemini 3. Advanced context management, GitHub synchronization, and precision intent interpretation. Purged of legacy ghost components.",
+  "description": "Professional AI Prompt Engineering IDE powered by Gemini 2.0. Advanced context management, GitHub synchronization, and precision intent interpretation. Purged of legacy ghost components.",
   "requestFramePermissions": [
     "camera",
     "microphone"
